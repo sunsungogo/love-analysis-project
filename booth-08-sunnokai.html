@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>すんのかいせんのかい — ブース08</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --future-bg: #0A0E17;
+      --future-ink: #E8ECF5;
+      --future-accent: #00E6B8;
+      --future-accent2: #6B7FFF;
+      --future-line: #232B3D;
+      --now-accent: #B8860B;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--future-bg);
+      color: var(--future-ink);
+      font-family: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ヘッダー */
+    .chat-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--future-line);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      background: var(--future-bg);
+    }
+
+    .obachan-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--future-accent), var(--future-accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .header-info { flex: 1; }
+
+    .booth-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      color: var(--future-accent2);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .booth-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--future-ink);
+    }
+
+    .gear-btn {
+      background: none;
+      border: none;
+      color: rgba(232, 236, 245, 0.25);
+      cursor: pointer;
+      font-size: 20px;
+      padding: 6px;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+
+    .gear-btn:hover { color: var(--future-accent2); }
+
+    /* チャットエリア */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scroll-behavior: smooth;
+    }
+
+    .chat-messages::-webkit-scrollbar { width: 3px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: var(--future-line);
+      border-radius: 2px;
+    }
+
+    /* メッセージ */
+    .message {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .message.user { flex-direction: row-reverse; }
+
+    .message-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+
+    .message.ai .message-avatar {
+      background: linear-gradient(135deg, var(--future-accent), var(--future-accent2));
+    }
+
+    .message.user .message-avatar {
+      background: var(--future-line);
+      border: 1px solid var(--future-accent2);
+    }
+
+    .message-bubble {
+      max-width: min(72%, 320px);
+      padding: 10px 14px;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .message.ai .message-bubble {
+      background: var(--future-line);
+      border-radius: 4px 14px 14px 14px;
+      color: var(--future-ink);
+    }
+
+    .message.user .message-bubble {
+      background: var(--future-accent2);
+      border-radius: 14px 4px 14px 14px;
+      color: #fff;
+    }
+
+    /* タイピングインジケーター */
+    .typing-indicator {
+      display: flex;
+      gap: 5px;
+      padding: 12px 14px;
+      background: var(--future-line);
+      border-radius: 4px 14px 14px 14px;
+      width: fit-content;
+      align-items: center;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--future-accent);
+      border-radius: 50%;
+      animation: typingBounce 1.2s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+      30% { opacity: 1; transform: translateY(-5px); }
+    }
+
+    /* 入力エリア */
+    .chat-input-area {
+      padding: 10px 14px 12px;
+      border-top: 1px solid var(--future-line);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+      background: var(--future-bg);
+    }
+
+    .chat-input {
+      flex: 1;
+      background: var(--future-line);
+      border: 1px solid transparent;
+      border-radius: 24px;
+      padding: 10px 16px;
+      color: var(--future-ink);
+      font-family: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+      line-height: 1.4;
+    }
+
+    .chat-input:focus { border-color: var(--future-accent); }
+
+    .chat-input::placeholder { color: rgba(232, 236, 245, 0.25); }
+
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--future-accent);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--future-bg);
+      flex-shrink: 0;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .send-btn:hover { opacity: 0.85; }
+    .send-btn:active { transform: scale(0.93); }
+    .send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* リセットボタン */
+    .reset-area {
+      text-align: center;
+      padding: 4px 0 8px;
+    }
+
+    .reset-btn {
+      background: none;
+      border: 1px solid var(--future-line);
+      color: rgba(232, 236, 245, 0.3);
+      padding: 4px 14px;
+      border-radius: 12px;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: 'Space Grotesk', monospace;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+
+    .reset-btn:hover {
+      border-color: var(--future-accent);
+      color: var(--future-accent);
+    }
+
+    /* モード表示 */
+    .mode-badge {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.08em;
+    }
+
+    .mode-ai {
+      background: rgba(0, 230, 184, 0.12);
+      color: var(--future-accent);
+      border: 1px solid rgba(0, 230, 184, 0.3);
+    }
+
+    .mode-fallback {
+      background: rgba(107, 127, 255, 0.12);
+      color: var(--future-accent2);
+      border: 1px solid rgba(107, 127, 255, 0.3);
+    }
+
+    /* 設定オーバーレイ */
+    .settings-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 14, 23, 0.92);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .settings-overlay.open { display: flex; }
+
+    .settings-card {
+      background: #141923;
+      border: 1px solid var(--future-line);
+      border-radius: 14px;
+      padding: 24px;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .settings-heading {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      color: var(--future-accent2);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .settings-label {
+      font-size: 12px;
+      color: rgba(232, 236, 245, 0.5);
+      margin-bottom: 6px;
+      font-family: 'Space Grotesk', monospace;
+    }
+
+    .settings-input {
+      width: 100%;
+      background: var(--future-bg);
+      border: 1px solid var(--future-line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--future-ink);
+      font-family: 'Space Grotesk', monospace;
+      font-size: 13px;
+      outline: none;
+      margin-bottom: 10px;
+      transition: border-color 0.2s;
+    }
+
+    .settings-input:focus { border-color: var(--future-accent); }
+
+    .settings-note {
+      font-size: 11px;
+      color: rgba(232, 236, 245, 0.35);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .settings-note a {
+      color: var(--future-accent2);
+      text-decoration: none;
+    }
+
+    .settings-save-btn {
+      width: 100%;
+      padding: 11px;
+      background: var(--future-accent);
+      color: var(--future-bg);
+      border: none;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .settings-save-btn:hover { opacity: 0.85; }
+
+    /* グリッド背景（未来感） */
+    .chat-messages {
+      background-image:
+        linear-gradient(rgba(35, 43, 61, 0.4) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(35, 43, 61, 0.4) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-header">
+    <div class="obachan-avatar">👵</div>
+    <div class="header-info">
+      <div class="booth-label">BOOTH 08 · 判断・整理</div>
+      <div class="booth-title">すんのかいせんのかい</div>
+    </div>
+    <span class="mode-badge mode-ai" id="modeBadge">AI</span>
+    <button class="gear-btn" onclick="openSettings()" title="API設定">⚙</button>
+  </div>
+
+  <div class="chat-messages" id="chatMessages"></div>
+
+  <div class="reset-area">
+    <button class="reset-btn" onclick="resetChat()">会話をリセット</button>
+  </div>
+
+  <div class="chat-input-area">
+    <input
+      class="chat-input"
+      id="chatInput"
+      type="text"
+      placeholder="気になる人のことを話してみて"
+      autocomplete="off"
+      maxlength="200"
+    >
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+        <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"
+          stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="settings-overlay" id="settingsOverlay">
+    <div class="settings-card">
+      <div class="settings-heading">API 設定</div>
+      <div class="settings-label">Gemini API Key</div>
+      <input
+        class="settings-input"
+        id="apiKeyInput"
+        type="password"
+        placeholder="AIzaSy..."
+        autocomplete="off"
+      >
+      <div class="settings-note">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> で無料取得できます。<br>
+        空欄のままにすると固定返答モードで動作します（展示の予備動作）。
+      </div>
+      <button class="settings-save-btn" onclick="saveSettings()">保存して閉じる</button>
+    </div>
+  </div>
+
+  <script>
+    // ===== 設定 =====
+    let apiKey = '';
+    try { apiKey = localStorage.getItem('yoshiko_gemini_key') || ''; } catch(e) {}
+    let history = [];
+    let isWaiting = false;
+
+    const SYSTEM_PROMPT = `あなたは大阪出身の60代のおばちゃん「ヨシコ」です。
+若い頃から恋愛心理学に興味を持ち、独学で研究を続けてきた、いわば「在野の恋愛研究家」です。
+展示会場で「好きかどうか分からない」という悩みを持つ来場者の話を聞いています。
+
+【キャラクター】
+- 大阪弁を使う。「〜やん」「〜やろ」「〜ちゃう」「〜やで」「〜やんか」「ほな」「なんでやねん」など
+- 「すんのかいせんのかい！」が口癖。白黒つけることへの愛がある
+- 直球だが温かく、ユーモアがある。研究者としての知識をサラッと混ぜながら話す
+- 短く返す。2〜4文で。理論の説明は1文でサラッと添える程度にとどめる
+- 一方的に語らず、必ず来場者に問い返す
+
+【背景に持つ恋愛研究の知識（会話の流れに応じて自然に使う）】
+
+■ ステンバーグの三角理論（1986）
+　愛は「親密性・情熱・コミットメント」の3要素で構成される。
+　「好きかどうか分からない」状態は、情熱はあるが親密性がまだ育っていない段階のことが多い。
+
+■ 吊り橋効果（ダットン&アーロン, 1974）
+　不安・ドキドキ・緊張などの覚醒状態が、恋愛感情と混同されやすい。
+　「友達として一緒にいて楽しいだけ」と「好き」の区別が難しい原因の一つ。
+
+■ 単純接触効果（ザイアンス, 1968）
+　会う回数・接触頻度が増えると好意が高まる。「なんとなく気になる」の多くはこれ。
+
+■ 愛着スタイル理論（ボウルビィ/エインズワース）
+　安定型・不安型（アンビバレント）・回避型の3タイプ。
+　「好きかどうか分からない」には不安型や回避型が関係していることが多い。
+
+■ 好意の返報性
+　相手から好意を示されると自分も好きになりやすい。逆もある。
+　「向こうがどう思ってるか気になる」は、自分の感情の裏返しでもある。
+
+■ ヘレン・フィッシャーの恋愛3段階（欲求・恋愛・愛着）
+　恋愛初期はドーパミンが出まくる。「ドキドキするかどうか」は脳の化学反応でもある。
+　ただし時間とともにドパミンは落ち着き、オキシトシン（愛着ホルモン）に移行する。
+
+■ アーロンの自己開示実験（36の質問）
+　互いに少しずつ深い自己開示をすると、急激に親密感が高まる。
+　「何でも話せる仲良し」状態からさらに踏み込む鍵はここにある。
+
+■ 類似性の魅力（バーン, 1971）
+　価値観・趣味・バックグラウンドが似ているほど好意を持ちやすい。
+
+【目標】
+来場者が自分で「好き」か「好きじゃない」かに気づけるよう導く。
+理論を押しつけず、「あなたの状況に照らすとこういうことが起きてるかもよ」という示し方をする。
+決断させるより、感情の正体に名前をつけてあげるイメージ。
+
+【制約】
+- 必ず日本語（関西弁）で返すこと
+- 理論名を出す時は「〇〇っていう研究があってな」「〇〇さんが言うてたんやけど」くらいのカジュアルさで
+- 過激・不適切な内容には応じないこと
+- 初回メッセージはヨシコとしての自己紹介から始めること`;
+
+    // ===== 固定返答（フォールバック）=====
+    const FALLBACK_FLOW = [
+      "あら、いらっしゃい！おばちゃんはヨシコいいます。恋愛研究が趣味でな、「好きかどうか分からん」てやつ、めちゃ得意やで。ほな話してみ！",
+      "ふーん。な、ザイアンスっていう人の研究でな、会う回数が増えるだけで好きになるって分かってんねん。その人、よく会う？",
+      "ほうほう。ステンバーグって学者が「愛は親密性・情熱・コミットメントの3つや」て言うてな。今どれが欠けてる感じする？",
+      "なるほどな。ほな一個だけ聞くで。その人が別の誰かと楽しそうにしてたら、どんな気持ちになる？そこに答えが出てることが多いんやで。",
+      "吊り橋効果いうてな、ドキドキと恋愛感情って脳が混乱するんよ。「好きかどうか分からん」はその混乱が起きてる可能性あるで。すんのかいせんのかい！",
+      "ヘレン・フィッシャーっていう脳科学者がな、恋愛初期はドーパミンがバンバン出るて言うてた。ドキドキしてる？それ、脳がもう答え出してるかもよ。",
+      "おばちゃんが思うにな、「好きかどうか分からん」てのは、嫌いやったら絶対こんな悩まへんから、ほぼ好きやで（笑）あとは踏み出す勇気だけちゃう？",
+    ];
+    let fallbackIdx = 0;
+
+    // ===== 初期化 =====
+    window.addEventListener('load', () => {
+      if (apiKey) {
+        document.getElementById('apiKeyInput').value = apiKey;
+        updateModeBadge(true);
+      } else {
+        updateModeBadge(false);
+      }
+      startChat();
+    });
+
+    function startChat() {
+      history = [];
+      fallbackIdx = 0;
+      const firstMsg = apiKey
+        ? null
+        : FALLBACK_FLOW[fallbackIdx++];
+
+      if (firstMsg) {
+        appendMessage('ai', firstMsg);
+        history.push({ role: 'model', parts: [{ text: firstMsg }] });
+      } else {
+        sendFirstAIMessage();
+      }
+    }
+
+    async function sendFirstAIMessage() {
+      showTyping();
+      const reply = await callGemini('こんにちは、相談したいです。', true);
+      removeTyping();
+      appendMessage('ai', reply);
+      history.push({ role: 'model', parts: [{ text: reply }] });
+    }
+
+    // ===== メッセージ表示 =====
+    function appendMessage(role, text) {
+      const container = document.getElementById('chatMessages');
+      const wrap = document.createElement('div');
+      wrap.className = `message ${role}`;
+
+      const avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.textContent = role === 'ai' ? '👵' : '🙂';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'message-bubble';
+      bubble.textContent = text;
+
+      wrap.appendChild(avatar);
+      wrap.appendChild(bubble);
+      container.appendChild(wrap);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function showTyping() {
+      const container = document.getElementById('chatMessages');
+      const wrap = document.createElement('div');
+      wrap.className = 'message ai';
+      wrap.id = 'typingWrap';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.textContent = '👵';
+
+      const ind = document.createElement('div');
+      ind.className = 'typing-indicator';
+      ind.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+
+      wrap.appendChild(avatar);
+      wrap.appendChild(ind);
+      container.appendChild(wrap);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTyping() {
+      const el = document.getElementById('typingWrap');
+      if (el) el.remove();
+    }
+
+    // ===== 送信 =====
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text || isWaiting) return;
+
+      input.value = '';
+      isWaiting = true;
+      document.getElementById('sendBtn').disabled = true;
+
+      appendMessage('user', text);
+      history.push({ role: 'user', parts: [{ text }] });
+
+      showTyping();
+
+      let reply;
+      if (apiKey) {
+        reply = await callGemini(text, false);
+      } else {
+        await sleep(700 + Math.random() * 500);
+        reply = FALLBACK_FLOW[fallbackIdx % FALLBACK_FLOW.length];
+        fallbackIdx++;
+      }
+
+      removeTyping();
+      appendMessage('ai', reply);
+      history.push({ role: 'model', parts: [{ text: reply }] });
+
+      isWaiting = false;
+      document.getElementById('sendBtn').disabled = false;
+      input.focus();
+    }
+
+    async function callGemini(text, isFirst) {
+      try {
+        const contents = isFirst
+          ? [{ role: 'user', parts: [{ text: '（自己紹介してください）' }] }]
+          : history;
+
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+              contents: contents,
+              generationConfig: {
+                maxOutputTokens: 250,
+                temperature: 1.0,
+              }
+            })
+          }
+        );
+
+        if (!res.ok) {
+          console.warn('Gemini API error:', res.status);
+          return getRandomFallback();
+        }
+
+        const data = await res.json();
+        return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim()
+          || getRandomFallback();
+      } catch (e) {
+        console.warn('Gemini fetch error:', e);
+        return getRandomFallback();
+      }
+    }
+
+    function getRandomFallback() {
+      const r = FALLBACK_FLOW[fallbackIdx % FALLBACK_FLOW.length];
+      fallbackIdx++;
+      return r;
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    // ===== リセット =====
+    function resetChat() {
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = '';
+      startChat();
+    }
+
+    // ===== Enterキー =====
+    document.getElementById('chatInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // ===== 設定 =====
+    function openSettings() {
+      document.getElementById('settingsOverlay').classList.add('open');
+    }
+
+    function saveSettings() {
+      const val = document.getElementById('apiKeyInput').value.trim();
+      apiKey = val;
+      try {
+        if (val) { localStorage.setItem('yoshiko_gemini_key', val); }
+        else { localStorage.removeItem('yoshiko_gemini_key'); }
+      } catch(e) {}
+      updateModeBadge(!!val);
+      document.getElementById('settingsOverlay').classList.remove('open');
+    }
+
+    function updateModeBadge(isAI) {
+      const badge = document.getElementById('modeBadge');
+      if (isAI) {
+        badge.textContent = 'AI';
+        badge.className = 'mode-badge mode-ai';
+      } else {
+        badge.textContent = 'DEMO';
+        badge.className = 'mode-badge mode-fallback';
+      }
+    }
+
+    document.getElementById('settingsOverlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) saveSettings();
+    });
+  </script>
+</body>
+</html>
