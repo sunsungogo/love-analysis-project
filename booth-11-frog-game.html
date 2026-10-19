@@ -782,7 +782,7 @@
     </div>
 
     <div class="r-bias-card">
-      <div class="r-bias-head">🔍 蛙化の背景にある無意識のバイアス</div>
+      <div class="r-bias-head">🔍 蛙化の背景にある思い込みのクセ</div>
       <div class="r-bias-item">
         <div class="r-bias-term">理想化バイアス</div>
         <div class="r-bias-body">片思い中に作り上げた「完璧な相手像」が現実の人間らしさと衝突したとき、幻滅が強く起きる。</div>
@@ -792,11 +792,11 @@
         <div class="r-bias-body">「好かれすぎると価値が下がる」感覚。手に入らないものほど魅力的に見えるというバイアス。</div>
       </div>
       <div class="r-bias-item">
-        <div class="r-bias-term">ジェンダー役割バイアス</div>
-        <div class="r-bias-body">「男性はリードすべき」「女性はしとやかであるべき」などの無意識の規範が、些細な行動への嫌悪を生む。</div>
+        <div class="r-bias-term">性別への固定した期待</div>
+        <div class="r-bias-body">「男性はリードすべき」「女性はしとやかであるべき」などの無意識の思い込みが、些細な行動への嫌悪を生む。</div>
       </div>
       <div class="r-bias-item">
-        <div class="r-bias-term">完璧主義バイアス</div>
+        <div class="r-bias-term">恋人への過度な完璧さへの期待</div>
         <div class="r-bias-body">食事マナー・言動・外見など、恋人にだけ異常な完璧さを求める傾向。親しくなるほど細部が気になる。</div>
       </div>
     </div>
@@ -1061,7 +1061,7 @@
         const s = SCENARIOS[i];
         const div = document.createElement('div');
         div.className = 'r-triggered-item';
-        div.innerHTML = `${s.text}<span class="bias-tag">潜むバイアス：${s.bias}</span>`;
+        div.innerHTML = `${s.text}<span class="bias-tag">背景にある思い込み：${s.bias}</span>`;
         list.appendChild(div);
       });
     }
