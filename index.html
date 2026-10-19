@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>恋愛未来設計展</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;700;900&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #F7F3EE;
+      --paper:   #FFFFFF;
+      --ink:     #1C1814;
+      --sub:     #7A7260;
+      --line:    #DDD5C0;
+      --red:     #B83232;
+      --red-bg:  #FDF0F0;
+      --sans:    'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+      --serif:   'Noto Serif JP', serif;
+      --mono:    'Space Grotesk', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      min-height: 100dvh;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--ink);
+      color: #fff;
+      padding: 28px 24px 24px;
+      text-align: center;
+    }
+
+    .sh-kicker {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 10px;
+    }
+
+    .sh-title {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .sh-sub {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.55);
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--sub);
+      padding: 24px 20px 10px;
+    }
+
+    /* ── Tool list ── */
+    .tool-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--line);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tool-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--paper);
+      padding: 16px 20px 16px 16px;
+      text-decoration: none;
+      color: inherit;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.12s;
+    }
+
+    .tool-card:active {
+      background: #F5F0E8;
+    }
+
+    .tc-num {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--ink);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      gap: 2px;
+    }
+
+    .tc-num-n {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .tc-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tc-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      line-height: 1.3;
+    }
+
+    .tc-desc {
+      font-size: 11px;
+      color: var(--sub);
+      line-height: 1.5;
+    }
+
+    .tc-tag {
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.06em;
+      border: 1px solid var(--line);
+      color: var(--sub);
+      border-radius: 4px;
+      padding: 2px 6px;
+      white-space: nowrap;
+    }
+
+    .tc-arrow {
+      flex-shrink: 0;
+      color: var(--sub);
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      padding: 28px 20px 40px;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--sub);
+      letter-spacing: 0.08em;
+      line-height: 2;
+    }
+
+    .footer-qr {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 8px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--sub);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="sh-kicker">100BANCH 採択プロジェクト</div>
+  <div class="sh-title">恋愛未来設計展</div>
+  <div class="sh-sub">Love Analysis Project — Digital Tools</div>
+</header>
+
+<div class="section-label">スマホで使えるツール — 7本</div>
+
+<div class="tool-list">
+
+  <a class="tool-card" href="booth-05-community-game.html">
+    <div class="tc-num"><span>BOOTH</span><span class="tc-num-n">05</span></div>
+    <div class="tc-body">
+      <div class="tc-name">コミュニティ相性診断</div>
+      <div class="tc-desc">好きな人との「住む世界」の重なりを診断</div>
+    </div>
+    <div class="tc-tag">Q&A</div>
+    <div class="tc-arrow">›</div>
+  </a>
+
+  <a class="tool-card" href="booth-06-timing-game.html">
+    <div class="tc-num"><span>BOOTH</span><span class="tc-num-n">06</span></div>
+    <div class="tc-body">
+      <div class="tc-name">関係性温度チェック</div>
+      <div class="tc-desc">今の関係が"冷え"てるか"熱い"かを測定</div>
+    </div>
+    <div class="tc-tag">Q&A</div>
+    <div class="tc-arrow">›</div>
+  </a>
+
+  <a class="tool-card" href="booth-10-openself-game.html">
+    <div class="tc-num"><span>BOOTH</span><span class="tc-num-n">10</span></div>
+    <div class="tc-body">
+      <div class="tc-name">自己開示カード</div>
+      <div class="tc-desc">どこまで話せる？開示レベルをカードで探る</div>
+    </div>
+    <div class="tc-tag">カード</div>
+    <div class="tc-arrow">›</div>
+  </a>
+
+  <a class="tool-card" href="booth-11-frog-game.html">
+    <div class="tc-num"><span>BOOTH</span><span class="tc-num-n">11</span></div>
+    <div class="tc-body">
+      <div class="tc-name">蛙化現象チェック</div>
+      <div class="tc-desc">好かれた瞬間に冷める？蛙化度を判定</div>
+    </div>
+    <div class="tc-tag">シナリオ</div>
+    <div class="tc-arrow">›</div>
+  </a>
+
+  <a class="tool-card" href="booth-12-cheating-game.html">
+    <div class="tc-num"><span>BOOTH</span><span class="tc-num-n">12</span></div>
+    <div class="tc-body">
+      <div class="tc-name">失恋フェーズ診断</div>
+      <div class="tc-desc">今あなたの失恋はどのフェーズにいる？</div>
+    </div>
+    <div class="tc-tag">4択</div>
+    <div class="tc-arrow">›</div>
+  </a>
+
+  <a class="tool-card" href="booth-14-noreply-game.html">
+    <div class="tc-num"><span>BOOTH</span><span class="tc-num-n">14</span></div>
+    <div class="tc-body">
+      <div class="tc-name">脈なし判定</div>
+      <div class="tc-desc">相手の行動パターンから脈あり・なしを判定</div>
+    </div>
+    <div class="tc-tag">チェック</div>
+    <div class="tc-arrow">›</div>
+  </a>
+
+  <a class="tool-card" href="booth-15-cooling-game.html">
+    <div class="tc-num"><span>BOOTH</span><span class="tc-num-n">15</span></div>
+    <div class="tc-body">
+      <div class="tc-name">冷め症状診断</div>
+      <div class="tc-desc">気持ちの冷えは一時的？それとも本物？</div>
+    </div>
+    <div class="tc-tag">スライダー</div>
+    <div class="tc-arrow">›</div>
+  </a>
+
+</div>
+
+<footer class="site-footer">
+  Love Analysis Project<br>
+  sunsungogo.github.io/love-analysis-project
+  <br>
+  <a class="footer-qr" href="qr-index.html">QRコード一覧 →</a>
+</footer>
+
+</body>
+</html>
