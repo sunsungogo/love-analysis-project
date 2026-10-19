@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>蛙化バイアス気づきゲーム — ブース11</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Space+Grotesk:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:     #F5F1E4;
+      --ink:    #2A2823;
+      --accent: #B8860B;
+      --sub:    #7A7060;
+      --line:   #D9D2BC;
+      --white:  #FDFAF3;
+      --sans:   'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+      --mono:   'Space Grotesk', monospace;
+      --serif:  'Noto Serif JP', serif;
+
+      /* カードタイプ別 */
+      --sc-border: #2A2823;
+      --rx-cold:   #A02828;
+      --rx-warm:   #1E5C1A;
+      --rx-mid:    #5C5C1E;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #DDD8C5;
+      font-family: var(--sans);
+      color: var(--ink);
+      padding: 16px;
+    }
+
+    /* ─── ページ ─── */
+    .page {
+      background: var(--bg);
+      width: 210mm;
+      margin: 0 auto 12px;
+      padding: 12mm 14mm;
+    }
+
+    .page-rule {
+      break-after: page;
+    }
+
+    /* ─── PAGE 1：ルール説明 ─── */
+
+    .game-header {
+      text-align: center;
+      border-bottom: 3px solid var(--ink);
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+
+    .game-tag {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      color: var(--sub);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .game-title {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 5px;
+    }
+
+    .game-title span {
+      font-size: 18px;
+      opacity: 0.6;
+    }
+
+    .game-subtitle {
+      font-size: 9.5px;
+      color: var(--sub);
+      line-height: 1.7;
+    }
+
+    /* ─── 概念説明 ─── */
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .concept-box {
+      border: 1.5px solid var(--line);
+      border-radius: 4px;
+      padding: 9px 11px;
+      background: var(--white);
+    }
+
+    .concept-label {
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .concept-title {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .concept-body {
+      font-size: 9.5px;
+      line-height: 1.65;
+      color: var(--sub);
+    }
+
+    .concept-link {
+      border-left: 3px solid var(--accent);
+      background: rgba(184,134,11,0.07);
+      padding: 7px 10px;
+      font-size: 9.5px;
+      line-height: 1.65;
+      border-radius: 0 3px 3px 0;
+      margin-bottom: 14px;
+    }
+
+    /* ─── ルール ─── */
+    .rules-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border-bottom: 1.5px solid var(--ink);
+      padding-bottom: 4px;
+      margin-bottom: 10px;
+    }
+
+    .rules-flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .rule-step {
+      text-align: center;
+    }
+
+    .rule-num {
+      width: 24px;
+      height: 24px;
+      background: var(--ink);
+      color: var(--bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      margin: 0 auto 5px;
+    }
+
+    .rule-text {
+      font-size: 9px;
+      line-height: 1.6;
+      color: var(--ink);
+      text-align: center;
+    }
+
+    .rule-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--line);
+      padding-top: 4px;
+    }
+
+    /* ─── カード説明 ─── */
+    .card-types {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .ctype {
+      border: 1.5px solid var(--line);
+      border-radius: 4px;
+      padding: 7px 8px;
+      text-align: center;
+      font-size: 9px;
+      line-height: 1.6;
+    }
+
+    .ctype-icon {
+      font-size: 18px;
+      margin-bottom: 3px;
+    }
+
+    .ctype-name {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    /* ─── バイアス一覧 ─── */
+    .bias-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-bottom: 1.5px solid var(--ink);
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+
+    .bias-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .bias-item {
+      font-size: 9px;
+      line-height: 1.5;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 4px 7px;
+      background: var(--white);
+      display: flex;
+      gap: 4px;
+    }
+
+    .bias-num {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ─── 将来像 ─── */
+    .future-strip {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 8px 12px;
+      border-radius: 4px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 9.5px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .future-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      color: #B8E0D4;
+      white-space: nowrap;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    .page-footer {
+      padding-top: 6px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 8px;
+      color: var(--sub);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── PAGE 2：カードシート ─── */
+
+    .card-sheet-header {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .card-sheet-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 3px;
+    }
+
+    .card-sheet-note {
+      font-size: 8.5px;
+      color: var(--sub);
+    }
+
+    /* ─── カードグリッド ─── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5mm;
+      margin-bottom: 4mm;
+    }
+
+    .scene-card {
+      border: 1.5px dashed var(--sub);
+      border-radius: 4px;
+      padding: 4px;
+      height: 46mm;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .scene-inner {
+      border: 1px solid var(--ink);
+      border-radius: 3px;
+      padding: 5px 7px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--white);
+    }
+
+    .scene-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 3px;
+    }
+
+    .scene-booth {
+      font-family: var(--mono);
+      font-size: 7px;
+      color: var(--sub);
+      letter-spacing: 0.08em;
+    }
+
+    .scene-num {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .scene-text {
+      font-size: 9px;
+      line-height: 1.6;
+      flex: 1;
+      color: var(--ink);
+    }
+
+    .scene-scene-label {
+      font-family: var(--mono);
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--sub);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .scene-bias {
+      margin-top: 4px;
+      padding-top: 3px;
+      border-top: 1px dashed var(--line);
+      font-family: var(--mono);
+      font-size: 7.5px;
+      color: var(--sub);
+      line-height: 1.4;
+    }
+
+    .scene-bias strong {
+      color: var(--accent);
+      font-size: 7px;
+      font-weight: 700;
+      display: block;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .scene-q {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--ink);
+      text-align: center;
+      padding: 2px 0;
+    }
+
+    /* 判定カード */
+    .react-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5mm;
+    }
+
+    .react-card {
+      border: 1.5px dashed var(--sub);
+      border-radius: 4px;
+      padding: 3px;
+      height: 22mm;
+    }
+
+    .react-inner {
+      border-radius: 3px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .react-inner.cold { background: #F5D8D8; border: 1px solid var(--rx-cold); }
+    .react-inner.warm { background: #D8F0D8; border: 1px solid var(--rx-warm); }
+    .react-inner.mid  { background: #F5F0D8; border: 1px solid var(--rx-mid); }
+
+    .react-icon { font-size: 14px; line-height: 1; }
+
+    .react-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .react-inner.cold .react-label { color: var(--rx-cold); }
+    .react-inner.warm .react-label { color: var(--rx-warm); }
+    .react-inner.mid  .react-label { color: var(--rx-mid); }
+
+    .react-sub {
+      font-family: var(--mono);
+      font-size: 7px;
+      color: var(--sub);
+    }
+
+    /* ─── 印刷 ─── */
+    @media print {
+      body { background: none; padding: 0; }
+      .page { width: 210mm; margin: 0; }
+      .page-rule { page-break-after: always; }
+      .print-btn { display: none; }
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+    }
+    .print-btn:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">印刷する</button>
+
+  <!-- ===== PAGE 1：ルール説明 ===== -->
+  <div class="page page-rule">
+
+    <div class="game-header">
+      <div class="game-tag">恋愛未来設計展 · BOOTH 11 · Card Game Prototype</div>
+      <div class="game-title">蛙化バイアス気づきゲーム <span>🐸</span></div>
+      <div class="game-subtitle">
+        「蛙化現象」の引き金になっているのは、意外と「無意識の思い込み（アンコンシャスバイアス）」かもしれない。<br>
+        このゲームでは、日常の恋愛シナリオを通じて自分の中の偏見に気づくことを目指します。
+      </div>
+    </div>
+
+    <!-- 概念 -->
+    <div class="concept-grid">
+      <div class="concept-box">
+        <div class="concept-label">What is 蛙化現象?</div>
+        <div class="concept-title">好きだった相手が急に冷める</div>
+        <div class="concept-body">
+          片思いの相手が自分に好意を示した途端、あるいは相手のちょっとした言動を目撃した瞬間に急に気持ちが冷める現象。2004年に藤澤伸介氏が命名。原因については複数の仮説があり、現在も研究中。
+        </div>
+      </div>
+      <div class="concept-box">
+        <div class="concept-label">What is アンコンシャスバイアス?</div>
+        <div class="concept-title">無意識の思い込み・先入観</div>
+        <div class="concept-body">
+          自分では気づいていない偏った見方・判断のくせ。「男性はデートをリードすべき」「恋人は完璧であるべき」などの無意識の前提が、些細な場面での幻滅を引き起こしている可能性がある。
+        </div>
+      </div>
+    </div>
+    <div class="concept-link">
+      <strong>ゲームの前提：</strong>「蛙化のトリガー」の多くは「相手はこうあるべき」「恋愛とはこういうもの」という無意識の前提から生まれている。このゲームはその前提に気づくことを目的としており、「冷めること」の正誤を問うものではありません。
+    </div>
+
+    <!-- ルール -->
+    <div class="rules-title">How to Play — 遊び方</div>
+
+    <div class="rules-flow">
+      <div class="rule-step">
+        <div class="rule-num">1</div>
+        <div class="rule-text">進行役がシナリオカードを1枚引き、声に出して読む</div>
+      </div>
+      <div class="rule-arrow">→</div>
+      <div class="rule-step">
+        <div class="rule-num">2</div>
+        <div class="rule-text">参加者全員が判定カードを裏向きに一枚選ぶ（5秒以内）</div>
+      </div>
+      <div class="rule-arrow">→</div>
+      <div class="rule-step">
+        <div class="rule-num">3</div>
+        <div class="rule-text">「せーの」で一斉オープン。判断のばらつきを確認</div>
+      </div>
+      <div class="rule-arrow">→</div>
+      <div class="rule-step">
+        <div class="rule-num">4</div>
+        <div class="rule-text">各自が「なぜそう感じたか」を一言シェア（正解なし）</div>
+      </div>
+      <div class="rule-arrow">→</div>
+      <div class="rule-step">
+        <div class="rule-num">5</div>
+        <div class="rule-text">カード裏面の「潜むバイアス」を進行役が読み上げる</div>
+      </div>
+    </div>
+
+    <!-- カード種類 -->
+    <div class="card-types">
+      <div class="ctype">
+        <div class="ctype-icon">🃏</div>
+        <span class="ctype-name">SCENE CARD</span>
+        シナリオカード<br>15枚。進行役が読み上げる。
+      </div>
+      <div class="ctype">
+        <div class="ctype-icon" style="color:#A02828;">🔴</div>
+        <span class="ctype-name" style="color:#A02828;">COLD CARD</span>
+        「冷める」判定カード<br>人数分用意する。
+      </div>
+      <div class="ctype">
+        <div class="ctype-icon" style="color:#1E5C1A;">🟢</div>
+        <span class="ctype-name" style="color:#1E5C1A;">WARM CARD</span>
+        「冷めない」判定カード<br>人数分用意する。
+      </div>
+      <div class="ctype">
+        <div class="ctype-icon" style="color:#5C5C1E;">🟡</div>
+        <span class="ctype-name" style="color:#5C5C1E;">MID CARD</span>
+        「どちらでも」カード<br>人数分用意する。
+      </div>
+    </div>
+
+    <!-- バイアス一覧 -->
+    <div class="bias-title">15 Scenarios — 潜むバイアスの一覧</div>
+    <div class="bias-list">
+      <div class="bias-item"><span class="bias-num">01</span><span>「デートはスマートにこなすべき」</span></div>
+      <div class="bias-item"><span class="bias-num">02</span><span>「デートで失敗してはいけない」</span></div>
+      <div class="bias-item"><span class="bias-num">03</span><span>「男性はデートをリードすべき」</span></div>
+      <div class="bias-item"><span class="bias-num">04</span><span>「好かれすぎると価値が下がる」</span></div>
+      <div class="bias-item"><span class="bias-num">05</span><span>「デート代は男性が払うもの」</span></div>
+      <div class="bias-item"><span class="bias-num">06</span><span>「追いかける側の方が燃える」</span></div>
+      <div class="bias-item"><span class="bias-num">07</span><span>「男性は女性より稼ぐべき」</span></div>
+      <div class="bias-item"><span class="bias-num">08</span><span>「男性は感情を出すべきでない」</span></div>
+      <div class="bias-item"><span class="bias-num">09</span><span>「恋人は食事マナーが完璧であるべき」</span></div>
+      <div class="bias-item"><span class="bias-num">10</span><span>「好きな人は完璧であるべき」</span></div>
+      <div class="bias-item"><span class="bias-num">11</span><span>「好きな人は誰にでも優しいはず」</span></div>
+      <div class="bias-item"><span class="bias-num">12</span><span>「既読がついたら即返すのが誠実」</span></div>
+      <div class="bias-item"><span class="bias-num">13</span><span>「自分は愛される価値がない」</span></div>
+      <div class="bias-item"><span class="bias-num">14</span><span>「好意は少しずつ示されるべき」</span></div>
+      <div class="bias-item"><span class="bias-num">15</span><span>「恋人は自分より優れているべき」</span></div>
+    </div>
+
+    <!-- 将来像 -->
+    <div class="future-strip">
+      <span class="future-label">Future Vision</span>
+      <span>企業・コミュニティ向けワークショッププログラム化——恋愛バイアスの気づきから始まり、職場・家庭・育児でのジェンダーバイアスへと展開する体験型研修。「蛙化現象に隠れていたのは社会の思い込みだった」という気づきが出発点になる。</span>
+    </div>
+
+    <div class="page-footer">
+      <span>恋愛未来設計展 · Love Analysis Project（100BANCH採択プロジェクト）</span>
+      <span>BOOTH 11 · 蛙化してしまう</span>
+    </div>
+
+  </div><!-- /page 1 -->
+
+  <!-- ===== PAGE 2：カードシート ===== -->
+  <div class="page">
+
+    <div class="card-sheet-header">
+      <div class="card-sheet-title">Card Sheet — 点線に沿って切り取って使用</div>
+      <div class="card-sheet-note">シナリオカード 15枚 ＋ 判定カード（3種 × 各3セット分）</div>
+    </div>
+
+    <!-- シナリオカード -->
+    <div class="card-grid">
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">01</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            デート中、相手が会計でスマホのクーポンを出して使った。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「デートはスマートにこなすべき」節約より体裁を優先する思い込み。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">02</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            Suicaの残高が足りなくて改札で止まり、相手が少し慌てていた。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「デートで失敗してはいけない」完璧な段取りを無意識に求めている。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">03</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            フードコートで席をどこにするか決められず、相手がうろうろしていた。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「（男性は）デートをリードすべき」性別に基づく役割の固定化。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">04</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            付き合う前は嬉しかった長文のLINEが、両思いになった途端に重く感じた。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「好かれすぎると価値が下がる」希少性のバイアスが働いている。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">05</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            デートの会計で相手が「今日は割り勘でいい？」と言ってきた。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「デート代は男性が払うもの」ジェンダー役割の無意識の内面化。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">06</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            ずっと片思いしていた相手から突然「好き」と告白された途端に気持ちが冷めた。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「追いかける側の方が燃える」ゲーム的恋愛観が前提にある。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">07</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            付き合ってから、相手の年収が自分より低いことを知った。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「男性は女性より稼ぐべき」経済力と男性価値を結びつけている。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">08</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            一緒に映画を観ていたら、相手（男性）が泣いていた。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「男性は感情を出すべきでない」感情表現に性別を求めている。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">09</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            一緒に食事をしたら、相手の箸の持ち方が少し変だった。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「恋人は食事マナーが完璧であるべき」細部の完璧さへの過大な要求。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">10</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            「できる人」と思っていた相手が、仕事で思わぬ失敗をするところを見てしまった。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「好きな人は完璧であるべき」片思い中の理想化が現実と衝突。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">11</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            自分には優しい相手が、飲食店の店員にやや横柄な態度をとっていた。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「好きな人は誰にでも優しいはず」一面的な「良い人像」の固定。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">12</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            夜にLINEを送ったら既読がついたのに、3時間以上返信がなかった。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「既読がついたら即返すのが誠実」テキスト速度で愛情を測っている。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">13</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            告白されたとき「なんで自分を好きなんだろう？」と不思議に感じ、相手が信用できなくなった。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「自分は愛される価値がない」認知的不協和が嫌悪感として現れる。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">14</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            付き合い始めてすぐ、相手が「大好き」と何度も言ってきた。嬉しいはずなのにゾワっとした。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「好意は少しずつ示されるべき」感情の表現ペースに規範を持っている。</div>
+        </div>
+      </div>
+
+      <div class="scene-card">
+        <div class="scene-inner">
+          <div class="scene-head"><span class="scene-booth">B-11 · SCENE</span><span class="scene-num">15</span></div>
+          <div class="scene-text">
+            <span class="scene-scene-label">SCENARIO</span>
+            交際してから、自分の方が収入・学歴が「上」だと気づいた。なんとなく気持ちが引いた。
+          </div>
+          <div class="scene-q">あなたは 冷める？</div>
+          <div class="scene-bias"><strong>潜むバイアス</strong>「恋人は自分より優れているべき」尊敬と愛情を混同している。</div>
+        </div>
+      </div>
+
+    </div><!-- /card-grid -->
+
+    <!-- 判定カード (3セット) -->
+    <div class="react-grid">
+      <div class="react-card"><div class="react-inner cold"><div class="react-icon">🔴</div><div class="react-label">冷める</div><div class="react-sub">COLD</div></div></div>
+      <div class="react-card"><div class="react-inner warm"><div class="react-icon">🟢</div><div class="react-label">冷めない</div><div class="react-sub">WARM</div></div></div>
+      <div class="react-card"><div class="react-inner mid"><div class="react-icon">🟡</div><div class="react-label">どちらでも</div><div class="react-sub">MID</div></div></div>
+      <div class="react-card"><div class="react-inner cold"><div class="react-icon">🔴</div><div class="react-label">冷める</div><div class="react-sub">COLD</div></div></div>
+      <div class="react-card"><div class="react-inner warm"><div class="react-icon">🟢</div><div class="react-label">冷めない</div><div class="react-sub">WARM</div></div></div>
+      <div class="react-card"><div class="react-inner mid"><div class="react-icon">🟡</div><div class="react-label">どちらでも</div><div class="react-sub">MID</div></div></div>
+      <div class="react-card"><div class="react-inner cold"><div class="react-icon">🔴</div><div class="react-label">冷める</div><div class="react-sub">COLD</div></div></div>
+      <div class="react-card"><div class="react-inner warm"><div class="react-icon">🟢</div><div class="react-label">冷めない</div><div class="react-sub">WARM</div></div></div>
+      <div class="react-card"><div class="react-inner mid"><div class="react-icon">🟡</div><div class="react-label">どちらでも</div><div class="react-sub">MID</div></div></div>
+    </div>
+
+    <div class="page-footer" style="margin-top:6px;">
+      <span>恋愛未来設計展 · BOOTH 11 · 蛙化してしまう</span>
+      <span>シナリオカード 15枚 ＋ 判定カード各3セット — Card Sheet</span>
+    </div>
+
+  </div><!-- /page 2 -->
+
+</body>
+</html>

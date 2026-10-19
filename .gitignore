@@ -1,0 +1,8 @@
+# Gemini AI chat booths — fill in HARDCODED_API_KEY before exhibition, keep local only
+booth-03-friendzone.html
+booth-08-sunnokai.html
+
+# Generated images
+Gemini_Generated_Image_*.jpg
+*.jpg
+*.png

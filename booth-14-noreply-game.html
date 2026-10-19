@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>脈なし判定 — ブース14</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;700;900&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:     #F4F0E6;
+      --paper:  #FFFEF9;
+      --ink:    #1C1814;
+      --sub:    #7A7260;
+      --line:   #DDD5C0;
+
+      --g-bg:     #E5F2E8; --g-ink:    #1A5E2A; --g-accent: #28A745; --g-line: #B0D8B8;
+      --y-bg:     #FFF8D6; --y-ink:    #6B4E00; --y-accent: #E0A800; --y-line: #E0CF7A;
+      --r-bg:     #FDEAEA; --r-ink:    #7A1F1F; --r-accent: #C0392B; --r-line: #F0A8A8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      overflow: hidden;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 480px;
+      height: 100dvh;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ════════════════════════════
+       START SCREEN
+    ════════════════════════════ */
+    #s-start {
+      background: var(--ink);
+      justify-content: flex-start;
+      padding: 0;
+    }
+
+    .start-top {
+      width: 100%;
+      padding: 56px 28px 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .start-kicker {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(244,240,230,0.4);
+      margin-bottom: 20px;
+    }
+
+    .start-h1 {
+      font-size: 38px;
+      font-weight: 900;
+      color: var(--bg);
+      line-height: 1.15;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+
+    .start-sub {
+      font-size: 13px;
+      color: rgba(244,240,230,0.5);
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+
+    .start-zones {
+      display: flex;
+      gap: 8px;
+      margin-bottom: auto;
+    }
+
+    .start-zone-chip {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .szc-g { background: var(--g-bg); color: var(--g-ink); }
+    .szc-y { background: var(--y-bg); color: var(--y-ink); }
+    .szc-r { background: var(--r-bg); color: var(--r-ink); }
+
+    .start-bottom {
+      width: 100%;
+      padding: 24px 28px 32px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .start-meta {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      color: rgba(244,240,230,0.3);
+      line-height: 1.7;
+    }
+
+    .btn-start {
+      white-space: nowrap;
+      padding: 0 28px;
+      height: 52px;
+      background: var(--bg);
+      color: var(--ink);
+      border: none;
+      border-radius: 8px;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      letter-spacing: 0.04em;
+      transition: transform 0.1s, opacity 0.1s;
+    }
+
+    .btn-start:active { transform: scale(0.96); opacity: 0.85; }
+
+    /* ════════════════════════════
+       CHECK SCREEN
+    ════════════════════════════ */
+    #s-check {
+      padding: 0;
+      background: var(--bg);
+      justify-content: flex-start;
+    }
+
+    .ck-header {
+      width: 100%;
+      padding: 12px 20px 10px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+
+    .ck-top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .ck-score {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      transition: color 0.4s;
+      min-width: 40px;
+    }
+
+    .ck-badge {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 3px 10px;
+      border-radius: 4px;
+      transition: background 0.4s, color 0.4s;
+    }
+
+    .ck-count {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      color: var(--sub);
+      margin-left: auto;
+    }
+
+    .ck-gauge-track {
+      width: 100%;
+      height: 4px;
+      background: var(--line);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .ck-gauge-fill {
+      height: 100%;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.45s ease, background-color 0.5s ease;
+    }
+
+    /* Scrollable body */
+    .ck-body {
+      flex: 1;
+      width: 100%;
+      overflow-y: auto;
+      padding: 12px 16px 0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Checklist item */
+    .ck-item {
+      background: var(--paper);
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px 14px 14px;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .ck-item.checked {
+      background: var(--g-bg);
+      border-color: var(--g-accent);
+    }
+
+    .ck-item:active { transform: scale(0.985); }
+
+    /* Check circle */
+    .ci-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1.5px solid var(--line);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s, border-color 0.18s;
+      margin-top: 1px;
+    }
+
+    .ck-item.checked .ci-circle {
+      background: var(--g-accent);
+      border-color: var(--g-accent);
+    }
+
+    .ci-check-mark {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      opacity: 0;
+      transition: opacity 0.15s;
+      line-height: 1;
+    }
+
+    .ck-item.checked .ci-check-mark { opacity: 1; }
+
+    /* Item content */
+    .ci-body { flex: 1; min-width: 0; }
+
+    .ci-weight-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 7px;
+    }
+
+    .ci-dots { display: flex; gap: 3px; }
+
+    .ci-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    .ci-dot.on  { background: var(--ink); }
+    .ci-dot.off { background: var(--line); }
+
+    .ck-item.checked .ci-dot.on  { background: var(--g-ink); }
+    .ck-item.checked .ci-dot.off { background: var(--g-line); }
+
+    .ci-wlabel {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: var(--sub);
+    }
+
+    .ck-item.checked .ci-wlabel { color: var(--g-ink); opacity: 0.7; }
+
+    .ci-text {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.6;
+      color: var(--ink);
+      margin-bottom: 6px;
+      white-space: pre-line;
+    }
+
+    .ck-item.checked .ci-text { color: var(--g-ink); }
+
+    .ci-ctx {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 11px;
+      color: var(--sub);
+      line-height: 1.7;
+    }
+
+    .ck-item.checked .ci-ctx { color: var(--g-ink); opacity: 0.75; }
+
+    /* Footer */
+    .ck-footer {
+      width: 100%;
+      padding: 12px 16px 20px;
+      background: var(--bg);
+      border-top: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+
+    .ck-hint {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      color: var(--sub);
+      text-align: center;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    .btn-diagnose {
+      width: 100%;
+      height: 56px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      border-radius: 10px;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: transform 0.1s, opacity 0.1s;
+    }
+
+    .btn-diagnose:active { transform: scale(0.97); opacity: 0.9; }
+
+    /* ════════════════════════════
+       RESULT SCREEN
+    ════════════════════════════ */
+    #s-result {
+      justify-content: flex-start;
+      padding-bottom: 32px;
+      overflow-y: auto;
+    }
+
+    .result-header {
+      width: 100%;
+      padding: 56px 24px 32px;
+      flex-shrink: 0;
+      transition: background 0.5s ease;
+    }
+
+    .r-kicker {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .r-verdict-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .r-name {
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+      animation: nameReveal 0.6s 0.4s both cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes nameReveal {
+      from { transform: translateY(12px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .r-score-line {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      opacity: 0.7;
+    }
+
+    .r-desc {
+      font-size: 14px;
+      line-height: 1.8;
+      margin-top: 12px;
+      animation: nameReveal 0.6s 0.6s both ease-out;
+    }
+
+    .r-action {
+      width: calc(100% - 32px);
+      margin: 0 16px 16px;
+      background: var(--paper);
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      animation: nameReveal 0.6s 0.8s both ease-out;
+    }
+
+    .r-action-head {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .r-step { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+    .r-step:last-child { margin-bottom: 0; }
+
+    .r-step-num {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #fff;
+    }
+
+    .r-step-text { font-size: 13px; line-height: 1.7; color: var(--ink); }
+
+    .r-bias {
+      width: calc(100% - 32px);
+      margin: 0 16px 16px;
+      border: 1.5px solid var(--line);
+      border-left: 4px solid var(--ink);
+      border-radius: 0 12px 12px 0;
+      padding: 16px;
+      background: var(--paper);
+      animation: nameReveal 0.6s 1s both ease-out;
+    }
+
+    .r-bias-title {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 12px;
+    }
+
+    .r-bias-item { margin-bottom: 10px; }
+    .r-bias-item:last-child { margin-bottom: 0; }
+
+    .r-bias-term { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+
+    .r-bias-desc {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 11px;
+      color: var(--sub);
+      line-height: 1.7;
+    }
+
+    .r-ng {
+      width: calc(100% - 32px);
+      margin: 0 16px 16px;
+      animation: nameReveal 0.6s 1.1s both ease-out;
+    }
+
+    .r-ng-title {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--r-ink);
+      margin-bottom: 10px;
+    }
+
+    .r-ng-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .r-ng-item {
+      background: var(--r-bg);
+      border: 1px solid var(--r-line);
+      border-radius: 8px;
+      padding: 9px 10px 9px 28px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--r-ink);
+      position: relative;
+    }
+
+    .r-ng-item::before {
+      content: '✕';
+      position: absolute;
+      left: 10px;
+      top: 9px;
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 700;
+      font-size: 10px;
+      color: var(--r-accent);
+    }
+
+    .btn-retry {
+      width: calc(100% - 32px);
+      margin: 0 16px;
+      height: 52px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--sub);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      animation: nameReveal 0.6s 1.2s both ease-out;
+    }
+
+    .btn-retry:hover, .btn-retry:active { border-color: var(--ink); color: var(--ink); }
+
+    .r-ref {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      color: rgba(28,24,20,0.25);
+      text-align: center;
+      line-height: 1.6;
+      padding: 16px 16px 0;
+      animation: nameReveal 0.6s 1.3s both ease-out;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ═══ START ═══ -->
+  <div class="screen" id="s-start">
+    <div class="start-top">
+      <div class="start-kicker">BOOTH 14 · 判断・整理 · Love Analysis Project</div>
+      <div class="start-h1">脈なし<br>判定</div>
+      <div class="start-sub">
+        「返信が来ない」は脈なしとは限らない。<br>
+        でも見極めは必要だ。<br>
+        8つの観察で、今の状態を診断する。
+      </div>
+      <div class="start-zones">
+        <div class="start-zone-chip szc-g">🟢 様子見</div>
+        <div class="start-zone-chip szc-y">🟡 一度引く</div>
+        <div class="start-zone-chip szc-r">🔴 見切り時期</div>
+      </div>
+    </div>
+    <div class="start-bottom">
+      <div class="start-meta">
+        8 観察項目<br>
+        当てはまるものを選ぶ
+      </div>
+      <button class="btn-start" onclick="startGame()">診断スタート →</button>
+    </div>
+  </div>
+
+  <!-- ═══ CHECK ═══ -->
+  <div class="screen" id="s-check">
+    <div class="ck-header">
+      <div class="ck-top-row">
+        <div class="ck-score" id="ck-score">0 pt</div>
+        <div class="ck-badge" id="ck-badge">🟢 様子見</div>
+        <div class="ck-count" id="ck-count">0 / 8 選択中</div>
+      </div>
+      <div class="ck-gauge-track">
+        <div class="ck-gauge-fill" id="ck-gauge"></div>
+      </div>
+    </div>
+
+    <div class="ck-body" id="ck-body"></div>
+
+    <div class="ck-footer">
+      <div class="ck-hint">当てはまる状況をタップして選ぶ · 複数選択可</div>
+      <button class="btn-diagnose" onclick="showResults()">判定を見る →</button>
+    </div>
+  </div>
+
+  <!-- ═══ RESULT ═══ -->
+  <div class="screen" id="s-result">
+    <div class="result-header" id="result-header">
+      <div class="r-kicker">BOOTH 14 · 脈なし判定</div>
+      <div class="r-verdict-label" id="r-verdict-label"></div>
+      <div class="r-name" id="r-name"></div>
+      <div class="r-score-line" id="r-score-line"></div>
+      <div class="r-desc" id="r-desc"></div>
+    </div>
+
+    <div class="r-action" id="r-action">
+      <div class="r-action-head">次のアクション</div>
+      <div id="r-steps"></div>
+    </div>
+
+    <div class="r-bias">
+      <div class="r-bias-title">⚠ 判断を狂わせる認知バイアス</div>
+      <div class="r-bias-item">
+        <div class="r-bias-term">確証バイアス</div>
+        <div class="r-bias-desc">脈ありのサインだけを記憶し、そっけない態度を過小評価する傾向。</div>
+      </div>
+      <div class="r-bias-item">
+        <div class="r-bias-term">サンクコスト効果</div>
+        <div class="r-bias-desc">「もうこれだけ時間と感情を注いだから」という理由で諦めにくくなる。</div>
+      </div>
+      <div class="r-bias-item">
+        <div class="r-bias-term">透明性の錯覚</div>
+        <div class="r-bias-desc">「これだけ好意を示せば伝わっているはず」という思い込みで動く。</div>
+      </div>
+      <div class="r-bias-item">
+        <div class="r-bias-term">ザイアンス効果の誤用</div>
+        <div class="r-bias-desc">接触は逆U字型——増やしすぎると好感度は下がる。嫌いな相手への接触増加は逆効果。</div>
+      </div>
+    </div>
+
+    <div class="r-ng">
+      <div class="r-ng-title">絶対にやってはいけないこと</div>
+      <div class="r-ng-grid">
+        <div class="r-ng-item">返信がないのに連続メッセージを送る</div>
+        <div class="r-ng-item">「なんで返信くれないの？」と問い詰める</div>
+        <div class="r-ng-item">SNSで相手の行動を過剰チェック</div>
+        <div class="r-ng-item">断られた直後に再度誘う</div>
+        <div class="r-ng-item">共通の友人を通じて探る</div>
+        <div class="r-ng-item">返信が来たとき過度に長文で返す</div>
+      </div>
+    </div>
+
+    <button class="btn-retry" onclick="resetGame()">🔄 もう一度判定する</button>
+    <div class="r-ref">
+      Murray et al. (2002) · Hazan & Shaver (1987) · Zajonc (1968) · Baumeister et al. (2001)
+    </div>
+  </div>
+
+</div>
+<script>
+  const QUESTIONS = [
+    { pt:2, text:'以前は返信が早かった相手なのに\n最近明らかに遅くなった',            ctx:'絶対的な返信速度より「変化」が重要。その人の普通から外れた変化がベースライン変化' },
+    { pt:1, text:'連絡はいつも自分から始めで\n相手から来たことがほとんどない',        ctx:'どちらが関係を維持しようとしているかが、開始行動の非対称性から見えてくる' },
+    { pt:1, text:'返信が来ても「笑」「そうですね」など\n会話を広げないものが続く',    ctx:'質問や話題の提供がないのは、関係を発展させたくないサインの可能性' },
+    { pt:2, text:'SNSを更新・反応しているのに\n個別メッセージには返ってこない',       ctx:'一対多の反応と一対一の応答は意図が違う。これが最も信頼度の高い単一サイン' },
+    { pt:2, text:'誘いに毎回「忙しい」「また今度」と\n断られる（代替案・日程がない）',ctx:'代替案や具体的な日程提案がない断りは、会いたくない意思の間接的な表現' },
+    { pt:2, text:'対面でも目が合わない、そっけない\n話を早く切り上げようとする',      ctx:'非言語コミュニケーションはテキストより正直。接近と回避行動の差が意図を示す' },
+    { pt:3, text:'「友達として」という言葉を\n繰り返し使われた',                      ctx:'「友達として」は意識的なカテゴリー指定。関係の枠組みを明示している可能性が高い' },
+    { pt:3, text:'一度意図的に連絡を止めてみたが\n相手から来ることはなかった',        ctx:'最も信頼度の高い行動テスト。相手が関係維持に動機を持っているか直接確認できる' },
+  ];
+
+  const MAX_SCORE = 16;
+
+  const ZONES = {
+    green: {
+      max:3, label:'GREEN ZONE', name:'様子見', icon:'🟢',
+      headerBg:'var(--g-bg)', headerInk:'var(--g-ink)', accent:'var(--g-accent)',
+      gaugeBg:'var(--g-accent)',
+      desc:'現時点では致命的なサインは少ない。ただし、観察は続けること。',
+      steps:['返信が来ない理由を冷静に分析する（仕事・性格・状況）','感情が不安定な日はメッセージを送らない','対面での反応も積極的に観察する','直接会う機会があれば、自然な接点を作る']
+    },
+    yellow: {
+      max:7, label:'YELLOW ZONE', name:'一度引く', icon:'🟡',
+      headerBg:'var(--y-bg)', headerInk:'var(--y-ink)', accent:'var(--y-accent)',
+      gaugeBg:'var(--y-accent)',
+      desc:'いくつかの曖昧なサインがある。一歩引いて相手の行動を観察する時期。',
+      steps:['1〜2週間、こちらから連絡するのをやめてみる','相手が自分から連絡してくるか観察する','友人として自然な関係を保ちながら様子を見る','変化がなければ、気持ちの整理を始める準備をする']
+    },
+    red: {
+      max:99, label:'RED ZONE', name:'見切り時期', icon:'🔴',
+      headerBg:'var(--r-bg)', headerInk:'var(--r-ink)', accent:'var(--r-accent)',
+      gaugeBg:'var(--r-accent)',
+      desc:'複数の明確なサインが重なっている。感情的な判断より、事実ベースで状況を評価しよう。',
+      steps:['「脈なし」を事実として受け入れる準備をする','自分の生活・趣味・人間関係に集中する時間を意図的に増やす','次の可能性を探す環境を整える（新しい出会いの場、自己投資）','友人関係は壊さず、自然体の距離感を保つ']
+    }
+  };
+
+  let checked = new Set();
+
+  show('s-start');
+
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function getZone(s) {
+    if (s <= ZONES.green.max)  return 'green';
+    if (s <= ZONES.yellow.max) return 'yellow';
+    return 'red';
+  }
+
+  function buildChecklist() {
+    const body = document.getElementById('ck-body');
+    body.innerHTML = '';
+    const wlabels = { 1:'軽度サイン', 2:'中度サイン', 3:'重要サイン' };
+    QUESTIONS.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'ck-item';
+      div.id = `ci-${i}`;
+      div.onclick = () => toggleItem(i);
+
+      const dots = [1,2,3].map(d =>
+        `<span class="ci-dot ${d <= q.pt ? 'on' : 'off'}"></span>`
+      ).join('');
+
+      div.innerHTML =
+        `<div class="ci-circle"><span class="ci-check-mark">✓</span></div>` +
+        `<div class="ci-body">` +
+          `<div class="ci-weight-row"><div class="ci-dots">${dots}</div><span class="ci-wlabel">${wlabels[q.pt]}</span></div>` +
+          `<div class="ci-text">${q.text}</div>` +
+          `<div class="ci-ctx">${q.ctx}</div>` +
+        `</div>`;
+      body.appendChild(div);
+    });
+    body.scrollTop = 0;
+  }
+
+  function toggleItem(i) {
+    if (checked.has(i)) checked.delete(i);
+    else checked.add(i);
+    document.getElementById(`ci-${i}`).classList.toggle('checked', checked.has(i));
+    updateHeader();
+  }
+
+  function calcScore() {
+    let s = 0;
+    checked.forEach(i => { s += QUESTIONS[i].pt; });
+    return s;
+  }
+
+  function updateHeader() {
+    const s = calcScore();
+    const zone = getZone(s);
+    const z = ZONES[zone];
+    const pct = Math.min((s / MAX_SCORE) * 100, 100);
+
+    document.getElementById('ck-score').textContent = `${s} pt`;
+    document.getElementById('ck-score').style.color = z.accent;
+
+    const badge = document.getElementById('ck-badge');
+    badge.textContent = `${z.icon} ${z.name}`;
+    badge.style.background = z.headerBg;
+    badge.style.color = z.headerInk;
+
+    document.getElementById('ck-count').textContent = `${checked.size} / 8 選択中`;
+
+    const gauge = document.getElementById('ck-gauge');
+    gauge.style.width = `${pct}%`;
+    gauge.style.backgroundColor = z.gaugeBg;
+  }
+
+  function startGame() {
+    checked = new Set();
+    buildChecklist();
+    updateHeader();
+    show('s-check');
+  }
+
+  function showResults() {
+    const s = calcScore();
+    const zone = getZone(s);
+    const z = ZONES[zone];
+
+    const header = document.getElementById('result-header');
+    header.style.background = z.headerBg;
+    header.style.color = z.headerInk;
+
+    document.getElementById('r-verdict-label').textContent = z.label;
+    document.getElementById('r-name').textContent = z.name;
+    document.getElementById('r-score-line').textContent = `スコア ${s} / ${MAX_SCORE} pt · ${checked.size} 項目が該当`;
+    document.getElementById('r-desc').textContent = z.desc;
+
+    const stepsEl = document.getElementById('r-steps');
+    stepsEl.innerHTML = '';
+    z.steps.forEach((step, i) => {
+      const div = document.createElement('div');
+      div.className = 'r-step';
+      div.innerHTML =
+        `<div class="r-step-num" style="background:${z.accent}">${i + 1}</div>` +
+        `<div class="r-step-text">${step}</div>`;
+      stepsEl.appendChild(div);
+    });
+
+    const action = document.getElementById('r-action');
+    action.style.borderLeftColor = z.accent;
+    action.style.borderLeftWidth = '4px';
+
+    show('s-result');
+    document.getElementById('s-result').scrollTop = 0;
+  }
+
+  function resetGame() {
+    checked = new Set();
+    show('s-start');
+  }
+</script>
+</body>
+</html>

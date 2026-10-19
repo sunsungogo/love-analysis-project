@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>素の自分を開く質問カード — ブース10</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Space+Grotesk:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #F5F1E4;
+      --ink:      #2A2823;
+      --accent:   #B8860B;
+      --sub:      #7A7060;
+      --line:     #D9D2BC;
+      --ruled:    #E8E0CC;
+      --white:    #FDFAF3;
+      --sans:     'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+      --mono:     'Space Grotesk', monospace;
+      --serif:    'Noto Serif JP', serif;
+
+      --lv1-bg:   #EFF5EF; --lv1-ink: #2A4A2A; --lv1-acc: #5C8C5C;
+      --lv2-bg:   #EFF2F8; --lv2-ink: #2A3060; --lv2-acc: #4A5CAA;
+      --lv3-bg:   #F5EEF0; --lv3-ink: #50202A; --lv3-acc: #9A4050;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #DDD8C5;
+      font-family: var(--sans);
+      color: var(--ink);
+      padding: 16px;
+    }
+
+    .page {
+      background: var(--bg);
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      position: relative;
+      padding-bottom: 12mm;
+    }
+
+    /* ─── ページ左側のタブ色帯 ─── */
+    .page::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: linear-gradient(
+        to bottom,
+        var(--ink) 0%, var(--ink) 22%,
+        var(--lv1-acc) 22%, var(--lv1-acc) 48%,
+        var(--lv2-acc) 48%, var(--lv2-acc) 74%,
+        var(--lv3-acc) 74%, var(--lv3-acc) 100%
+      );
+    }
+
+    /* ─── ヘッダー ─── */
+    .journal-header {
+      padding: 10mm 14mm 8px 16mm;
+      border-bottom: 1.5px solid var(--ink);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .header-tag {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--sub);
+    }
+
+    .header-booth {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+
+    .header-title {
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 5px;
+    }
+
+    .header-sub {
+      font-size: 9.5px;
+      color: var(--sub);
+      line-height: 1.65;
+    }
+
+    /* ─── 使い方ボックス ─── */
+    .how-to {
+      margin: 8px 14mm 0 16mm;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 7px 11px;
+      background: var(--white);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .how-label {
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-transform: uppercase;
+      white-space: nowrap;
+      padding-top: 1px;
+    }
+
+    .how-steps {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .how-step {
+      display: flex;
+      gap: 5px;
+      font-size: 9px;
+      line-height: 1.55;
+      color: var(--sub);
+    }
+
+    .how-step-num {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+
+    /* ─── 本文エリア ─── */
+    .content {
+      padding: 0 14mm 0 16mm;
+    }
+
+    /* ─── レベルブロック ─── */
+    .level-block {
+      margin-top: 10px;
+    }
+
+    .level-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0 5px;
+    }
+
+    .level-badge {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .level-block.lv1 .level-badge { background: var(--lv1-bg); color: var(--lv1-ink); border: 1px solid var(--lv1-acc); }
+    .level-block.lv2 .level-badge { background: var(--lv2-bg); color: var(--lv2-ink); border: 1px solid var(--lv2-acc); }
+    .level-block.lv3 .level-badge { background: var(--lv3-bg); color: var(--lv3-ink); border: 1px solid var(--lv3-acc); }
+
+    .level-name {
+      font-family: var(--serif);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .level-block.lv1 .level-name { color: var(--lv1-ink); }
+    .level-block.lv2 .level-name { color: var(--lv2-ink); }
+    .level-block.lv3 .level-name { color: var(--lv3-ink); }
+
+    .level-note {
+      font-size: 8.5px;
+      color: var(--sub);
+      margin-left: auto;
+      font-family: var(--mono);
+    }
+
+    .level-rule {
+      height: 1px;
+      margin-bottom: 7px;
+    }
+
+    .level-block.lv1 .level-rule { background: var(--lv1-acc); opacity: 0.4; }
+    .level-block.lv2 .level-rule { background: var(--lv2-acc); opacity: 0.4; }
+    .level-block.lv3 .level-rule { background: var(--lv3-acc); opacity: 0.4; }
+
+    /* ─── 質問カード ─── */
+    .q-card {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 0 10px;
+      margin-bottom: 7px;
+    }
+
+    .q-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .level-block.lv1 .q-num { background: var(--lv1-bg); color: var(--lv1-ink); border: 1px solid var(--lv1-acc); }
+    .level-block.lv2 .q-num { background: var(--lv2-bg); color: var(--lv2-ink); border: 1px solid var(--lv2-acc); }
+    .level-block.lv3 .q-num { background: var(--lv3-bg); color: var(--lv3-ink); border: 1px solid var(--lv3-acc); }
+
+    .q-body {}
+
+    .q-text {
+      font-size: 10.5px;
+      line-height: 1.6;
+      color: var(--ink);
+      margin-bottom: 3px;
+    }
+
+    .q-write {
+      border-bottom: 1px solid var(--ruled);
+      height: 14px;
+      margin-bottom: 2px;
+    }
+
+    /* 2行の回答欄 */
+    .q-write-2 {
+      border-bottom: 1px solid var(--ruled);
+      height: 14px;
+      margin-bottom: 2px;
+    }
+
+    .q-hint {
+      font-size: 8px;
+      color: var(--sub);
+      font-family: var(--mono);
+      margin-top: 1px;
+    }
+
+    /* ─── ボーナス（ふたりで） ─── */
+    .bonus-block {
+      margin-top: 10px;
+      border: 1.5px solid var(--accent);
+      border-radius: 4px;
+      padding: 8px 11px;
+      background: rgba(184,134,11,0.05);
+    }
+
+    .bonus-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 7px;
+    }
+
+    .bonus-badge {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      background: rgba(184,134,11,0.12);
+      padding: 2px 7px;
+      border-radius: 10px;
+      border: 1px solid var(--accent);
+    }
+
+    .bonus-name {
+      font-family: var(--serif);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .bonus-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .bonus-card {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 0 8px;
+    }
+
+    /* ─── まとめ振り返り ─── */
+    .reflect-box {
+      margin-top: 10px;
+      border-top: 1px dashed var(--line);
+      padding-top: 7px;
+    }
+
+    .reflect-label {
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 700;
+      color: var(--sub);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .reflect-area {
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 5px 8px;
+      background: var(--white);
+      min-height: 30px;
+    }
+
+    .ruled-line {
+      border-bottom: 1px solid var(--ruled);
+      height: 18px;
+    }
+
+    /* ─── 将来像 ─── */
+    .future-strip {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 7px 11px;
+      margin: 10px 14mm 0 16mm;
+      border-radius: 4px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 9px;
+      line-height: 1.6;
+    }
+
+    .future-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      color: #B8E0D4;
+      white-space: nowrap;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    /* ─── フッター ─── */
+    .page-footer {
+      margin: 8px 14mm 0 16mm;
+      padding-top: 5px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 8px;
+      color: var(--sub);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── 印刷 ─── */
+    @media print {
+      body { background: none; padding: 0; }
+      .page { width: 210mm; min-height: 297mm; margin: 0; }
+      .print-btn { display: none; }
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+    }
+    .print-btn:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">印刷する</button>
+
+  <div class="page">
+
+    <!-- ヘッダー -->
+    <div class="journal-header">
+      <div class="header-top">
+        <span class="header-tag">恋愛未来設計展 · 空間・体験 · Self-Disclosure</span>
+        <span class="header-booth">BOOTH 10</span>
+      </div>
+      <div class="header-title">素の自分を開く質問シート</div>
+      <div class="header-sub">
+        人が本当の自分を見せるには、段階がある。社会心理学者 Altman &amp; Taylor（1973）の「社会的浸透理論」によると、<br>
+        開示は外側の層から内側の核へと、少しずつ深まっていく。このシートはその道筋を3段階でたどる質問集です。
+      </div>
+    </div>
+
+    <!-- 使い方 -->
+    <div class="how-to">
+      <span class="how-label">How to use</span>
+      <div class="how-steps">
+        <div class="how-step"><span class="how-step-num">①</span><span>パートナー（または気になる人）と向かい合って使う</span></div>
+        <div class="how-step"><span class="how-step-num">②</span><span>質問を一つ読み上げ、交互に答える（相手が答えたら自分も同じ深さで答える）</span></div>
+        <div class="how-step"><span class="how-step-num">③</span><span>「答えたくない」はパスOK。無理に進めない</span></div>
+        <div class="how-step"><span class="how-step-num">④</span><span>LEVEL 1 → 2 → 3 の順に進む</span></div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- LEVEL 1 -->
+      <div class="level-block lv1">
+        <div class="level-head">
+          <span class="level-badge">LEVEL 1</span>
+          <span class="level-name">好みと日常 — 外側の自分</span>
+          <span class="level-note">社会的浸透理論：外側の層</span>
+        </div>
+        <div class="level-rule"></div>
+
+        <div class="q-card">
+          <div class="q-num">1</div>
+          <div class="q-body">
+            <div class="q-text">今、一番「幸せだな」と感じる瞬間はどんなときですか？</div>
+            <div class="q-write"></div><div class="q-write"></div>
+            <div class="q-hint">→ 肯定的な感情の共有が開示のハードルを下げる</div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-num">2</div>
+          <div class="q-body">
+            <div class="q-text">子どものころ、熱中していたものは何ですか？</div>
+            <div class="q-write"></div><div class="q-write"></div>
+            <div class="q-hint">→ 無邪気な自分へのアクセスから素の自分の開示が始まる</div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-num">3</div>
+          <div class="q-body">
+            <div class="q-text">あなたにとって「理想の一日」はどんな一日ですか？</div>
+            <div class="q-write"></div><div class="q-write"></div>
+            <div class="q-hint">→ Aron et al.（1997）が実証した親密化促進質問のひとつ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEVEL 2 -->
+      <div class="level-block lv2">
+        <div class="level-head">
+          <span class="level-badge">LEVEL 2</span>
+          <span class="level-name">価値観と記憶 — 中間の自分</span>
+          <span class="level-note">社会的浸透理論：中間層</span>
+        </div>
+        <div class="level-rule"></div>
+
+        <div class="q-card">
+          <div class="q-num">4</div>
+          <div class="q-body">
+            <div class="q-text">これまでで「本当によかった」と思える経験を1つ教えてください。</div>
+            <div class="q-write"></div><div class="q-write"></div>
+            <div class="q-hint">→ 肯定的な記憶の開示はより深い開示への橋渡しになる</div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-num">5</div>
+          <div class="q-body">
+            <div class="q-text">「こんな人になりたい」と思う人物はいますか？どんな部分が好きですか？</div>
+            <div class="q-write"></div><div class="q-write"></div>
+            <div class="q-hint">→ 理想の投影を通じて、その人が大切にしている価値観が自然に語られる</div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-num">6</div>
+          <div class="q-body">
+            <div class="q-text">誰かに「ありがとう」と伝えそびれていることがありますか？</div>
+            <div class="q-write"></div><div class="q-write"></div>
+            <div class="q-hint">→ 後悔や感謝を語ることで感情の深い層が開かれる</div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-num">7</div>
+          <div class="q-body">
+            <div class="q-text">「これだけは譲れない」と感じる価値観や信念はありますか？</div>
+            <div class="q-write"></div><div class="q-write"></div>
+            <div class="q-hint">→ 中核的な自己開示。相手の本質を知るための最重要質問</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEVEL 3 -->
+      <div class="level-block lv3">
+        <div class="level-head">
+          <span class="level-badge">LEVEL 3</span>
+          <span class="level-name">恐れと脆弱性 — 内側の核</span>
+          <span class="level-note">Brené Brown：脆弱性の領域</span>
+        </div>
+        <div class="level-rule"></div>
+
+        <div class="q-card">
+          <div class="q-num">8</div>
+          <div class="q-body">
+            <div class="q-text">自分のどんな部分を、一番「見られたくない」と思いますか？</div>
+            <div class="q-write"></div><div class="q-write"></div>
+            <div class="q-hint">→ シェーム（羞恥心）の核心。Brené Brownが脆弱性の入口とする質問</div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-num">9</div>
+          <div class="q-body">
+            <div class="q-text">あなたが「愛されている」と感じるのはどんな瞬間ですか？</div>
+            <div class="q-write"></div><div class="q-write"></div>
+            <div class="q-hint">→ 愛の言語（Love Language）の探索。何を求めているかを具体的に知る</div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-num">10</div>
+          <div class="q-body">
+            <div class="q-text">恋愛で「これが一番怖い」と感じることは何ですか？</div>
+            <div class="q-write"></div><div class="q-write"></div>
+            <div class="q-hint">→ 愛着スタイルに直接触れる。相互開示で親密度が急上昇する（Aron et al. 1997）</div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-num">11</div>
+          <div class="q-body">
+            <div class="q-text">今のあなたに、5年前の自分が会ったら何と言うと思いますか？</div>
+            <div class="q-write"></div><div class="q-write"></div>
+            <div class="q-hint">→ 自己成長の物語を語ることで、現在の本当の自分が言語化される</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BONUS -->
+      <div class="bonus-block">
+        <div class="bonus-head">
+          <span class="bonus-badge">BONUS</span>
+          <span class="bonus-name">ふたりで答える質問 — 「私たち」の視点</span>
+        </div>
+        <div class="bonus-grid">
+          <div class="q-card bonus-card">
+            <div class="q-num" style="background:#FDF5E0;color:#7A5C00;border:1px solid var(--accent);font-family:var(--mono);font-size:10px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">B1</div>
+            <div class="q-body">
+              <div class="q-text" style="font-size:9.5px;">私たちが出会ってよかったと思えることを、ひとつ教えてください。</div>
+              <div class="q-write" style="border-bottom:1px solid var(--ruled);height:14px;margin-bottom:2px;"></div>
+              <div class="q-write" style="border-bottom:1px solid var(--ruled);height:14px;margin-bottom:2px;"></div>
+            </div>
+          </div>
+          <div class="q-card bonus-card">
+            <div class="q-num" style="background:#FDF5E0;color:#7A5C00;border:1px solid var(--accent);font-family:var(--mono);font-size:10px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">B2</div>
+            <div class="q-body">
+              <div class="q-text" style="font-size:9.5px;">私のことで「もっと知りたい」と思っていることはありますか？</div>
+              <div class="q-write" style="border-bottom:1px solid var(--ruled);height:14px;margin-bottom:2px;"></div>
+              <div class="q-write" style="border-bottom:1px solid var(--ruled);height:14px;margin-bottom:2px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 振り返り -->
+      <div class="reflect-box">
+        <div class="reflect-label">Reflection — 今日この質問で気づいたこと</div>
+        <div class="reflect-area">
+          <div class="ruled-line"></div>
+          <div class="ruled-line"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- 将来像 -->
+    <div class="future-strip">
+      <span class="future-label">Future Vision</span>
+      <span>カップル向け「素の自分を出す」宿泊プランへ拡張——チェックイン時に質問カードが届き、滞在を通じて段階的な自己開示を自然に促す空間設計。会話ログをもとに「今日どこまで話せたか」を可視化するサービス。</span>
+    </div>
+
+    <div class="page-footer">
+      <span>恋愛未来設計展 · Love Analysis Project（100BANCH採択プロジェクト）</span>
+      <span>BOOTH 10 · 素の自分を出せない</span>
+    </div>
+
+  </div><!-- /page -->
+</body>
+</html>

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>都合のいい人、診断室。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F3EEE3;
+    --paper-deep: #EAE2D0;
+    --ink: #2B2A26;
+    --ink-soft: #6B6559;
+    --indigo: #3E4A63;
+    --indigo-deep: #2B3549;
+    --indigo-pale: #DEE3EA;
+    --line: #C9C0AC;
+    --warn: #A65A3E;
+    --safe: #4F7A63;
+    --card: #FBF8F0;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: border-box;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #21201C;
+      --paper-deep: #171613;
+      --ink: #EDE7D8;
+      --ink-soft: #A79E8C;
+      --indigo: #8FA0C2;
+      --indigo-deep: #C4D0E4;
+      --indigo-pale: #333C4F;
+      --line: #46402F;
+      --warn: #D98B6D;
+      --safe: #8FBBA0;
+      --card: #29281F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #21201C;
+    --paper-deep: #171613;
+    --ink: #EDE7D8;
+    --ink-soft: #A79E8C;
+    --indigo: #8FA0C2;
+    --indigo-deep: #C4D0E4;
+    --indigo-pale: #333C4F;
+    --line: #46402F;
+    --warn: #D98B6D;
+    --safe: #8FBBA0;
+    --card: #29281F;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Zen Kaku Gothic New", "Shippori Mincho", serif;
+    min-height: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px 20px 72px;
+    position: relative;
+  }
+  .wrap::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: -1;
+    background-image: repeating-linear-gradient(transparent, transparent 37px, var(--line) 38px);
+    opacity: .28;
+    pointer-events: none;
+  }
+  header.hero {
+    padding: 12px 4px 28px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 28px;
+  }
+  .kicker {
+    font-family: "Shippori Mincho", serif;
+    font-size: 13px;
+    letter-spacing: .08em;
+    color: var(--ink-soft);
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 800;
+    font-size: clamp(28px, 7vw, 38px);
+    line-height: 1.45;
+    margin: 0 0 14px;
+    letter-spacing: .01em;
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--indigo);
+    box-shadow: inset 0 -0.32em 0 var(--indigo-pale);
+  }
+  .lede {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 0;
+  }
+  section { margin-bottom: 36px; }
+  label.field-label {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+    line-height: 1.7;
+  }
+  textarea {
+    width: 100%;
+    min-height: 190px;
+    resize: vertical;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 18px;
+    font-family: "Zen Kaku Gothic New", sans-serif;
+    font-size: 15.5px;
+    line-height: 2;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .2s ease;
+  }
+  textarea:focus { border-color: var(--indigo); }
+  textarea::placeholder { color: var(--ink-soft); opacity: .55; }
+
+  .mode-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .mode-tab {
+    flex: 1;
+    font-family: "Zen Kaku Gothic New", sans-serif;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    background: var(--paper-deep);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 9px 12px;
+    cursor: pointer;
+  }
+  .mode-tab.active {
+    background: var(--indigo);
+    border-color: var(--indigo);
+    color: var(--paper);
+  }
+
+  .drop-zone {
+    background: var(--card);
+    border: 1.5px dashed var(--line);
+    border-radius: 4px;
+    padding: 28px 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s ease;
+  }
+  .drop-zone.dragover { border-color: var(--indigo); }
+  .drop-hint {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .thumb-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 14px;
+  }
+  .thumb-row:empty { margin-top: 0; }
+  .thumb {
+    position: relative;
+    width: 74px;
+    height: 74px;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .thumb .rm {
+    position: absolute;
+    top: 2px; right: 2px;
+    width: 20px; height: 20px;
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .img-unavailable {
+    font-size: 13px;
+    color: var(--warn);
+    margin-top: 12px;
+  }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .example-btn {
+    font-family: "Zen Kaku Gothic New", sans-serif;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 6px 14px;
+    cursor: pointer;
+  }
+  .example-btn:hover { border-color: var(--indigo); color: var(--indigo); }
+
+  .submit-row {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  button.primary {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: .04em;
+    background: var(--indigo);
+    color: var(--paper);
+    border: none;
+    border-radius: 2px;
+    padding: 14px 30px;
+    cursor: pointer;
+    transition: background .15s ease, transform .08s ease;
+  }
+  button.primary:hover:not(:disabled) { background: var(--indigo-deep); }
+  button.primary:active:not(:disabled) { transform: scale(.98); }
+  button.primary:disabled { opacity: .45; cursor: default; }
+  .status-text {
+    font-size: 13px;
+    color: var(--ink-soft);
+    min-height: 18px;
+  }
+
+  .stop-btn {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    border-radius: 20px;
+    padding: 5px 14px;
+    cursor: pointer;
+  }
+
+  #result { display: none; }
+  #result.show { display: block; animation: rise .5s ease both; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--ink-soft);
+    font-size: 12px;
+    margin: 44px 0 30px;
+  }
+  .divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .score-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 26px 24px 24px;
+    margin-bottom: 22px;
+  }
+  .score-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .score-label {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .score-num {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 800;
+  }
+  .score-num .big { font-size: 40px; color: var(--indigo); }
+  .score-num .unit { font-size: 15px; color: var(--ink-soft); margin-left: 2px; }
+
+  .meter {
+    position: relative;
+    height: 6px;
+    background: var(--indigo-pale);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 14px 0 10px;
+  }
+  .meter-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: var(--indigo);
+    border-radius: 4px;
+    transition: width 1.1s cubic-bezier(.2,.8,.2,1);
+  }
+  .meter-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+
+  .type-tag {
+    display: inline-block;
+    font-family: "Shippori Mincho", serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--indigo);
+    background: var(--indigo-pale);
+    padding: 5px 14px 6px;
+    border-radius: 3px;
+    margin-bottom: 14px;
+  }
+
+  .insight-card {
+    background: var(--indigo-pale);
+    border-radius: 4px;
+    padding: 22px 22px 20px;
+    margin-bottom: 16px;
+  }
+  .advice-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 22px 22px 20px;
+    margin-bottom: 22px;
+  }
+  .insight-heading {
+    font-family: "Shippori Mincho", serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin: 0 0 12px;
+    letter-spacing: .02em;
+  }
+  .insight-text {
+    font-size: 14.5px;
+    line-height: 2;
+    color: var(--indigo-deep);
+    margin: 0;
+  }
+  .insight-text b {
+    font-weight: 700;
+    color: var(--indigo-deep);
+  }
+  .advice-text {
+    font-size: 15px;
+    line-height: 1.95;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .highlight-block h2 {
+    font-family: "Shippori Mincho", serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+  }
+  .transcript {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 20px 20px;
+    font-size: 15px;
+    line-height: 2.15;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .transcript mark {
+    background: none;
+    color: inherit;
+    position: relative;
+    box-shadow: inset 0 -0.62em 0 #C98A5E55;
+    padding: 0 1px;
+    cursor: help;
+  }
+  :root[data-theme="dark"] .transcript mark,
+  @media (prefers-color-scheme: dark) { .transcript mark { box-shadow: inset 0 -0.62em 0 #D98B6D44; } }
+
+  .phrase-notes {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .phrase-note {
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+    padding-left: 14px;
+    border-left: 2px solid var(--warn);
+  }
+  .phrase-note b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .retry-row {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+  }
+  button.ghost {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-family: "Zen Kaku Gothic New", sans-serif;
+    font-size: 13px;
+    border-radius: 20px;
+    padding: 9px 20px;
+    cursor: pointer;
+  }
+  button.ghost:hover { color: var(--indigo); border-color: var(--indigo); }
+
+  .errbox {
+    background: var(--card);
+    border: 1px solid var(--warn);
+    border-radius: 4px;
+    padding: 16px 18px;
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-top: 16px;
+  }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    line-height: 1.8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #result.show { animation: none; }
+    .meter-fill { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">人間関係設計室 — 展示体験 01</p>
+    <h1>その優しさ、<br><em>都合よく</em>使われていませんか。</h1>
+    <p class="lede">
+      誰かとのやりとりを貼り付けてください。
+      AIが会話の中から「都合のいい人」になりかけているサインを
+      心理学の視点から読み解きます。
+    </p>
+  </header>
+
+  <section id="input-section">
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="text" id="tabText">文章を貼る</button>
+      <button class="mode-tab" data-mode="image" id="tabImage">スクショを送る</button>
+    </div>
+
+    <div id="modeText">
+      <label class="field-label" for="chatlog">LINEやインスタのやりとりを、そのまま貼り付けてください（自分の発言だけでも診断できます）</label>
+      <textarea id="chatlog" placeholder="例）
+りょう 19:42
+今日って空いてたりする？急なんだけどw
+
+自分 19:43
+あ、大丈夫だよ！何時から？
+
+りょう 19:44
+ごめんいつも頼っちゃって
+
+自分 19:44
+全然気にしないで、いつでも言って！"></textarea>
+
+      <div class="examples">
+        <button class="example-btn" data-sample="1">サンプルを試す①</button>
+        <button class="example-btn" data-sample="2">サンプルを試す②</button>
+      </div>
+    </div>
+
+    <div id="modeImage" style="display:none;">
+      <label class="field-label">トーク画面のスクリーンショットを選んでください（複数枚可、最大<span id="imgMaxCount">4</span>枚）</label>
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="imgInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple style="display:none;">
+        <p class="drop-hint" id="dropHint">タップしてスクショを選択</p>
+        <div class="thumb-row" id="thumbRow"></div>
+      </div>
+      <p class="img-unavailable" id="imgUnavailable" style="display:none;">
+        この環境では画像診断がご利用いただけません。「文章を貼る」からお試しください。
+      </p>
+    </div>
+
+    <div class="submit-row">
+      <button class="primary" id="diagBtn">診断する</button>
+      <span class="status-text" id="statusText"></span>
+      <button class="stop-btn" id="stopBtn" style="display:none;">やめる</button>
+    </div>
+  </section>
+
+  <div id="result">
+    <div class="divider">診断結果</div>
+
+    <div class="score-card">
+      <div class="score-top">
+        <span class="score-label">都合のいい人 傾向スコア</span>
+        <span class="score-num"><span class="big" id="scoreNum">–</span><span class="unit">/ 100</span></span>
+      </div>
+      <div class="meter"><div class="meter-fill" id="meterFill"></div></div>
+      <div class="meter-labels"><span>自分軸</span><span>相手軸</span></div>
+
+      <div style="margin-top:20px;">
+        <span class="type-tag" id="typeTag">–</span>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <h2 class="insight-heading">心理学的には、こう説明できます</h2>
+      <p class="insight-text" id="insightText">–</p>
+    </div>
+
+    <div class="advice-card">
+      <h2 class="insight-heading">今、できそうなこと</h2>
+      <p class="advice-text" id="adviceText">–</p>
+    </div>
+
+    <div class="highlight-block">
+      <h2>会話の中で、気になった部分</h2>
+      <div class="transcript" id="transcriptView"></div>
+      <div class="phrase-notes" id="phraseNotes"></div>
+    </div>
+
+    <div class="retry-row">
+      <button class="ghost" id="retryBtn">別のやりとりで診断し直す</button>
+    </div>
+  </div>
+
+  <div id="errArea"></div>
+
+  <footer>
+    この診断はAIによる簡易的な参考結果です。断定や評価を目的としたものではありません。<br>
+    入力内容は診断のためだけに使われ、保存・公開されることはありません。
+  </footer>
+</div>
+
+<script>
+(function () {
+  const SAMPLES = {
+    "1": `2026/11/12（木）\n\nりょう 19:42\n今日って空いてたりする？急なんだけどw\n\n自分 19:43\nあ、大丈夫だよ！何時から？\n\nりょう 19:44\nごめんいつも頼っちゃって\n\n自分 19:44\n全然気にしないで、いつでも言って！\n\nりょう 19:50\nほんと助かる〜他の人だと大体断られるからさ\n\n自分 19:51\n私でよければいくらでも頼って〜`,
+    "2": `2026/11/09（月）\n\n自分 21:03\n明日って空いてたりする？\n\nみさき 21:40\nあーごめん、その日ちょっと厳しいかも！\n\n自分 21:41\nあ、大丈夫だよ全然！また今度で🙆\n\nみさき 22:15\nありがとう、埋め合わせするね〜\n\n自分 22:16\n気にしないで〜楽しみにしてるね`
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const chatlog = $("chatlog");
+  const diagBtn = $("diagBtn");
+  const stopBtn = $("stopBtn");
+  const statusText = $("statusText");
+  const resultEl = $("result");
+  const errArea = $("errArea");
+  const inputSection = $("input-section");
+  const tabText = $("tabText");
+  const tabImage = $("tabImage");
+  const modeText = $("modeText");
+  const modeImage = $("modeImage");
+  const dropZone = $("dropZone");
+  const imgInput = $("imgInput");
+  const thumbRow = $("thumbRow");
+  const dropHint = $("dropHint");
+  const imgUnavailable = $("imgUnavailable");
+
+  let currentMode = "text";
+  let selectedFiles = [];
+  let maxImages = 4;
+
+  function setMode(mode) {
+    currentMode = mode;
+    tabText.classList.toggle("active", mode === "text");
+    tabImage.classList.toggle("active", mode === "image");
+    modeText.style.display = mode === "text" ? "block" : "none";
+    modeImage.style.display = mode === "image" ? "block" : "none";
+  }
+  tabText.addEventListener("click", () => setMode("text"));
+  tabImage.addEventListener("click", () => setMode("image"));
+
+  document.querySelectorAll(".example-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      chatlog.value = SAMPLES[btn.dataset.sample];
+      chatlog.focus();
+    });
+  });
+
+  function renderThumbs() {
+    thumbRow.innerHTML = "";
+    selectedFiles.forEach((file, i) => {
+      const url = URL.createObjectURL(file);
+      const div = document.createElement("div");
+      div.className = "thumb";
+      div.innerHTML = `<img src="${url}" alt="スクリーンショット${i+1}"><button class="rm" data-i="${i}">×</button>`;
+      thumbRow.appendChild(div);
+    });
+    thumbRow.querySelectorAll(".rm").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selectedFiles.splice(Number(btn.dataset.i), 1);
+        renderThumbs();
+      });
+    });
+    dropHint.textContent = selectedFiles.length
+      ? `${selectedFiles.length}枚選択中（タップして変更）`
+      : "タップしてスクショを選択";
+  }
+
+  dropZone.addEventListener("click", () => imgInput.click());
+  imgInput.addEventListener("change", () => {
+    const incoming = Array.from(imgInput.files || []);
+    selectedFiles = [...selectedFiles, ...incoming].slice(0, maxImages);
+    renderThumbs();
+    imgInput.value = "";
+  });
+  ["dragover", "dragenter"].forEach(ev => dropZone.addEventListener(ev, (e) => {
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+  }));
+  ["dragleave", "drop"].forEach(ev => dropZone.addEventListener(ev, (e) => {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+  }));
+  dropZone.addEventListener("drop", (e) => {
+    const incoming = Array.from(e.dataTransfer?.files || []).filter(f => f.type.startsWith("image/"));
+    selectedFiles = [...selectedFiles, ...incoming].slice(0, maxImages);
+    renderThumbs();
+  });
+
+  let sampleFn = null;
+  let imagesSupported = false;
+  let ctl = null;
+
+  async function initSample() {
+    try {
+      sampleFn = await window.claude?.use?.("sample");
+    } catch (e) {
+      sampleFn = null;
+    }
+    if (sampleFn) {
+      try {
+        const limits = await sampleFn.limits?.();
+        if (limits?.images) {
+          imagesSupported = true;
+          maxImages = limits.images.maxCount || 4;
+          $("imgMaxCount").textContent = maxImages;
+        }
+      } catch (e) { /* 画像未対応として扱う */ }
+    }
+    if (!imagesSupported) {
+      imgUnavailable.style.display = "block";
+      dropZone.style.display = "none";
+    }
+  }
+  initSample();
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function renderTranscriptWithHighlights(rawText, phrases) {
+    let html = escapeHtml(rawText);
+    const seen = new Set();
+    const list = (phrases || [])
+      .filter(p => p && p.quote && p.quote.trim().length >= 2 && !seen.has(p.quote) && seen.add(p.quote))
+      .sort((a, b) => b.quote.length - a.quote.length);
+
+    list.forEach((p, i) => {
+      const esc = escapeHtml(p.quote);
+      const idx = html.indexOf(esc);
+      if (idx === -1) return;
+      const openTag = `<mark data-i="${i}" title="${escapeHtml(p.note || "")}">`;
+      html = html.slice(0, idx) + openTag + esc + "</mark>" + html.slice(idx + esc.length);
+    });
+    return { html, used: list };
+  }
+
+  function showError(code) {
+    const map = {
+      not_granted: "この体験にはAIの利用許可が必要です。表示された確認ダイアログで「許可」を選んでからもう一度お試しください。",
+      rate_limited: "少し混み合っています。しばらく待ってからもう一度お試しください。",
+      sampling_disabled: "現在この環境ではAI診断を利用できません。スタッフまでお声がけください。",
+      refused: "その内容は診断できませんでした。別のやりとりでお試しください。",
+      empty_completion: "うまく読み取れませんでした。もう少し長めの会話文で試してみてください。",
+      prompt_too_large: "文章が長すぎるようです。少し短くして貼り付け直してください。",
+      image_rejected: "画像を読み取れませんでした。別のスクリーンショットでお試しいただくか、「文章を貼る」からお試しください。",
+      images_unavailable: "この環境では画像診断がご利用いただけません。「文章を貼る」からお試しください。",
+      default: "診断中に問題が発生しました。もう一度お試しください。"
+    };
+    errArea.innerHTML = `<div class="errbox">${map[code] || map.default}</div>`;
+  }
+
+  function setBusy(busy) {
+    diagBtn.disabled = busy;
+    stopBtn.style.display = busy ? "inline-block" : "none";
+    statusText.textContent = busy ? "会話を読んでいます…" : "";
+  }
+
+  async function runDiagnosis() {
+    const text = chatlog.value.trim();
+    const useImages = currentMode === "image";
+
+    if (useImages && selectedFiles.length === 0) {
+      dropZone.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    if (!useImages && !text) {
+      chatlog.focus();
+      return;
+    }
+    errArea.innerHTML = "";
+    resultEl.classList.remove("show");
+    resultEl.style.display = "none";
+
+    if (!sampleFn) {
+      sampleFn = await window.claude?.use?.("sample");
+    }
+    if (!sampleFn) {
+      showError("sampling_disabled");
+      return;
+    }
+
+    ctl = new AbortController();
+    setBusy(true);
+
+    const basePrompt = useImages
+      ? `あなたは恋愛・対人関係の心理を専門とするカウンセラーです。添付された画像は、ある人のトーク画面（LINEなど）のスクリーンショットです。画面内の会話から、書き手本人と思われる側（画面の右側・自分の発言として表示されている側が一般的）が「都合のいい人」になりかけているサイン（例：断れない、自己犠牲的な言い回し、過剰な譲歩、相手の要求を無条件に受け入れる、罪悪感の利用に応じてしまう等）を分析してください。複数枚ある場合は時系列順の会話として扱ってください。`
+      : `あなたは恋愛・対人関係の心理を専門とするカウンセラーです。以下は、ある人が誰かとやり取りした会話ログです。この会話から、書き手（「自分」と書かれている側、あるいは主に発言している側）が「都合のいい人」になりかけているサイン（例：断れない、自己犠牲的な言い回し、過剰な譲歩、相手の要求を無条件に受け入れる、罪悪感の利用に応じてしまう等）を分析してください。
+
+会話ログ：
+"""
+${text}
+"""`;
+
+    const phrasesInstruction = useImages
+      ? `画像から読み取れる、本人の発言の中から気になるフレーズを文字起こしして引用してください`
+      : `会話ログ内から一字一句そのまま抜き出した気になるフレーズ（本人の発言のみ）を引用してください（要約や言い換えは禁止）`;
+
+    const prompt = `${basePrompt}
+
+次のJSON形式のみで出力してください。前後に文章や説明を一切つけないでください。
+
+{
+  "score": 0から100の整数（都合のいい人傾向が強いほど高い）,
+  "type": "会話の傾向を表す一言タイプ名（例：尽くしすぎちゃんタイプ、断れない優等生タイプ、罪悪感ホイホイタイプ　など。10文字以内、来場者が思わずくすっとするような、キツすぎない優しいネーミングにする）",
+  "insight": "120〜180文字程度。心理学・コミュニケーション理論の専門用語を1〜2個使いながら、この会話の傾向を学術的に説明する。専門用語には必ずその場で簡単な意味の補足をつける（例：『返報性の原理（人から何かしてもらうとお返しをしなければと感じる心理）が働き〜』のように）。断定口調ではなく『〜と考えられます』『〜の傾向が読み取れます』といった解説調にする。",
+  "advice": "80〜130文字程度の、責めるのではなく気づきを与える優しい実践的アドバイス。次にできる小さな一歩を具体的に示す。学術用語は使わず平易な言葉で。",
+  "phrases": [
+    {"quote": "${phrasesInstruction}（5〜25文字程度）", "note": "なぜそのフレーズが気になるかの短い解説（30文字以内）"}
+  ]
+}
+
+phrasesは最大4つまで。該当がなければ空配列で構いません。`;
+
+    try {
+      const callOptions = {
+        modelTier: "default",
+        signal: ctl.signal,
+        cache: false
+      };
+      if (useImages) callOptions.images = selectedFiles;
+
+      const { text: raw } = await sampleFn(prompt, callOptions);
+
+      let data;
+      try {
+        const jsonMatch = raw.match(/\{[\s\S]*\}/);
+        data = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
+      } catch (parseErr) {
+        showError("empty_completion");
+        setBusy(false);
+        return;
+      }
+
+      renderResult(useImages ? null : text, data);
+      inputSection.style.opacity = "0";
+      inputSection.style.pointerEvents = "none";
+      inputSection.style.maxHeight = "0";
+      inputSection.style.overflow = "hidden";
+      inputSection.style.transition = "opacity .3s ease";
+
+    } catch (e) {
+      if (e && e.code === "cancelled") {
+        // ユーザーが止めた
+      } else {
+        showError(e && e.code);
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function renderResult(originalText, data) {
+    const score = Math.max(0, Math.min(100, Math.round(Number(data.score) || 0)));
+    $("scoreNum").textContent = score;
+    $("typeTag").textContent = data.type || "診断中タイプ";
+    $("insightText").textContent = data.insight || "";
+    $("adviceText").textContent = data.advice || "";
+
+    const highlightBlock = document.querySelector(".highlight-block");
+    if (originalText === null) {
+      // 画像モード：本文がないのでフレーズ一覧だけ引用形式で出す
+      $("transcriptView").style.display = "none";
+      const notesWrap = $("phraseNotes");
+      notesWrap.innerHTML = "";
+      (data.phrases || []).slice(0, 4).forEach(p => {
+        if (!p || !p.quote) return;
+        const div = document.createElement("div");
+        div.className = "phrase-note";
+        div.innerHTML = `<b>「${escapeHtml(p.quote)}」</b> ー ${escapeHtml(p.note || "")}`;
+        notesWrap.appendChild(div);
+      });
+      if (!notesWrap.children.length) {
+        highlightBlock.style.display = "none";
+      } else {
+        highlightBlock.style.display = "block";
+      }
+    } else {
+      $("transcriptView").style.display = "block";
+      highlightBlock.style.display = "block";
+      const { html, used } = renderTranscriptWithHighlights(originalText, data.phrases);
+      $("transcriptView").innerHTML = html;
+
+      const notesWrap = $("phraseNotes");
+      notesWrap.innerHTML = "";
+      used.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "phrase-note";
+        div.innerHTML = `<b>「${escapeHtml(p.quote)}」</b> ー ${escapeHtml(p.note || "")}`;
+        notesWrap.appendChild(div);
+      });
+    }
+
+    resultEl.style.display = "block";
+    requestAnimationFrame(() => {
+      resultEl.classList.add("show");
+      requestAnimationFrame(() => {
+        $("meterFill").style.width = score + "%";
+      });
+    });
+
+    resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  diagBtn.addEventListener("click", runDiagnosis);
+  stopBtn.addEventListener("click", () => ctl?.abort());
+
+  $("retryBtn").addEventListener("click", () => {
+    resultEl.classList.remove("show");
+    resultEl.style.display = "none";
+    errArea.innerHTML = "";
+    chatlog.value = "";
+    selectedFiles = [];
+    renderThumbs();
+    inputSection.style.opacity = "1";
+    inputSection.style.pointerEvents = "auto";
+    inputSection.style.maxHeight = "none";
+    inputSection.style.overflow = "visible";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    chatlog.focus();
+  });
+})();
+</script>
+</body>
+</html>

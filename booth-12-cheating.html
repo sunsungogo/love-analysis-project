@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>浮気された、あなたへ。— ブース12</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:     #F5F1E4;
+      --ink:    #2A2823;
+      --accent: #B8860B;
+      --sub:    #7A7060;
+      --line:   #D9D2BC;
+      --warn-bg: #F7E8E8;
+      --warn-ink: #7A2020;
+      --warn-line: #E0B0B0;
+      --step-bg: #EAE5D2;
+      --serif: 'Noto Serif JP', 'Hiragino Mincho ProN', Georgia, serif;
+      --sans:  'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+      --mono:  'Space Grotesk', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #DDD8C5;
+      font-family: var(--sans);
+      color: var(--ink);
+      padding: 16px;
+    }
+
+    .page {
+      background: var(--bg);
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 13mm 14mm 12mm;
+      position: relative;
+    }
+
+    /* ─── マストヘッド（雑誌の頭）─── */
+    .masthead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 3px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding: 4px 0;
+      margin-bottom: 14px;
+    }
+
+    .masthead-left {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sub);
+    }
+
+    .masthead-right {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* ─── キッカー（見出し上の小ラベル）─── */
+    .kicker {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .kicker::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    /* ─── メイン見出し ─── */
+    .headline {
+      font-family: var(--serif);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+    }
+
+    /* ─── デッキ（導入コピー）─── */
+    .deck {
+      font-family: var(--sans);
+      font-size: 12px;
+      line-height: 1.75;
+      color: var(--sub);
+      border-left: 3px solid var(--accent);
+      padding-left: 10px;
+      margin-bottom: 14px;
+    }
+
+    /* ─── バイライン ─── */
+    .byline {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: var(--sub);
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--ink);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    /* ─── 2段組本文エリア ─── */
+    .body-columns {
+      column-count: 2;
+      column-gap: 22px;
+      column-rule: 1px solid var(--line);
+    }
+
+    /* ドロップキャップ */
+    .body-columns p.drop-cap::first-letter {
+      font-family: var(--serif);
+      font-size: 3.8em;
+      font-weight: 700;
+      float: left;
+      line-height: 0.75;
+      margin-right: 6px;
+      margin-top: 4px;
+      color: var(--accent);
+    }
+
+    .body-columns p {
+      font-size: 10.5px;
+      line-height: 1.75;
+      margin-bottom: 8px;
+    }
+
+    .body-columns h3 {
+      font-family: var(--serif);
+      font-size: 13px;
+      font-weight: 700;
+      margin: 12px 0 5px;
+      padding-bottom: 3px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    /* 段をまたぐ要素 */
+    .span-all {
+      column-span: all;
+      break-inside: avoid;
+    }
+
+    /* ─── プルクォート（抜き出し引用）─── */
+    .pull-quote {
+      column-span: all;
+      border-top: 2px solid var(--ink);
+      border-bottom: 2px solid var(--ink);
+      padding: 10px 0;
+      margin: 14px 0;
+      text-align: center;
+      break-inside: avoid;
+    }
+
+    .pull-quote p {
+      font-family: var(--serif);
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      margin: 0 !important;
+    }
+
+    .pull-quote cite {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--sub);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 5px;
+    }
+
+    /* ─── ステップボックス ─── */
+    .steps-box {
+      background: var(--step-bg);
+      border-radius: 4px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      break-inside: avoid;
+    }
+
+    .steps-box-title {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 7px;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .step-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      width: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-text strong {
+      display: block;
+      font-size: 10.5px;
+      margin-bottom: 2px;
+    }
+
+    .step-text span {
+      color: var(--sub);
+      font-size: 9.5px;
+    }
+
+    /* ─── 警告ボックス（全幅）─── */
+    .warning-box {
+      column-span: all;
+      background: var(--warn-bg);
+      border: 1.5px solid var(--warn-line);
+      border-radius: 4px;
+      padding: 10px 14px;
+      margin: 14px 0;
+      break-inside: avoid;
+    }
+
+    .warning-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--warn-ink);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .warning-title::before {
+      content: '⚠';
+      font-size: 12px;
+    }
+
+    .warning-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+    }
+
+    .warning-item {
+      font-size: 9.5px;
+      line-height: 1.55;
+      color: var(--warn-ink);
+      padding-left: 10px;
+      position: relative;
+    }
+
+    .warning-item::before {
+      content: '×';
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+      font-family: var(--mono);
+    }
+
+    /* ─── 判断チェック ─── */
+    .judge-cols {
+      column-span: all;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 4px 0 12px;
+      break-inside: avoid;
+    }
+
+    .judge-card {
+      border: 1.5px solid var(--line);
+      border-radius: 4px;
+      padding: 9px 11px;
+    }
+
+    .judge-card-title {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .judge-card.continue .judge-card-title { color: #2A6A3A; }
+    .judge-card.separate .judge-card-title { color: #7A2020; }
+
+    .judge-item {
+      font-size: 9.5px;
+      line-height: 1.6;
+      padding-left: 10px;
+      position: relative;
+      margin-bottom: 3px;
+      color: var(--ink);
+    }
+
+    .judge-card.continue .judge-item::before { content: '◯'; position: absolute; left: 0; font-size: 8px; color: #2A6A3A; }
+    .judge-card.separate .judge-item::before { content: '✕'; position: absolute; left: 0; font-size: 8px; color: #7A2020; }
+
+    /* ─── 専門家セクション ─── */
+    .expert-cols {
+      column-span: all;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+      break-inside: avoid;
+    }
+
+    .expert-card {
+      border-left: 3px solid var(--accent);
+      padding: 6px 0 6px 10px;
+    }
+
+    .expert-card-title {
+      font-family: var(--serif);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .expert-card p {
+      font-size: 9.5px;
+      line-height: 1.65;
+      color: var(--sub);
+      margin-bottom: 0 !important;
+    }
+
+    /* ─── 将来像フッター ─── */
+    .future-strip {
+      background: var(--ink);
+      color: var(--bg);
+      border-radius: 4px;
+      padding: 8px 12px;
+      margin-top: 4px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      break-inside: avoid;
+    }
+
+    .future-strip-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #B8E0D4;
+      white-space: nowrap;
+      margin-top: 1px;
+    }
+
+    .future-strip p {
+      font-size: 9.5px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ─── ページフッター ─── */
+    .page-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding-top: 6px;
+      border-top: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 8.5px;
+      color: var(--sub);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── 印刷 ─── */
+    @media print {
+      body { background: none; padding: 0; }
+      .page { width: 210mm; min-height: 297mm; margin: 0; }
+      .print-btn { display: none; }
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      z-index: 100;
+    }
+    .print-btn:hover { opacity: 0.8; }
+
+    /* 証拠リスト（インライン） */
+    .evidence-list {
+      font-size: 9.5px;
+      line-height: 1.7;
+      padding-left: 0;
+      list-style: none;
+      margin: 5px 0 8px;
+    }
+    .evidence-list li {
+      padding-left: 12px;
+      position: relative;
+      color: var(--sub);
+    }
+    .evidence-list li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 8px;
+      top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">印刷する</button>
+
+  <div class="page">
+
+    <!-- マストヘッド -->
+    <div class="masthead">
+      <span class="masthead-left">恋愛未来設計展 · Love Analysis Project · 100BANCH採択</span>
+      <span class="masthead-right">BOOTH 12 · ケア・回復</span>
+    </div>
+
+    <!-- キッカー -->
+    <div class="kicker">Care & Recovery</div>
+
+    <!-- 見出し -->
+    <h1 class="headline">浮気された、あなたへ。</h1>
+
+    <!-- デッキ -->
+    <p class="deck">
+      怒り、悲しみ、混乱——それは全部、正しい感情だ。でも今夜は何も決めなくていい。<br>
+      あなたが次の一週間でやることを、順番に整理した。
+    </p>
+
+    <!-- バイライン -->
+    <div class="byline">by Love Analysis Project &nbsp;·&nbsp; 恋愛未来設計展 特別配布号</div>
+
+    <!-- 本文（2段組）-->
+    <div class="body-columns">
+
+      <!-- 第1段落：ドロップキャップ -->
+      <p class="drop-cap">
+        浮気が発覚した瞬間、頭の中が真っ白になる。それは異常でも弱さでもない。人が裏切られたとき、脳は本当にフリーズする。だから最初の数日は「何も決めない」が正解だ。衝動的に動くほど、のちに後悔する確率が上がる。
+      </p>
+
+      <p>
+        怒鳴る、泣き崩れる、すぐに問い詰める——気持ちはわかる。でもその行動が、後の選択肢を狭める。相手を追い詰めすぎると話し合いの場が消え、自分を守るための時間も失う。まず72時間、深呼吸する。
+      </p>
+
+      <!-- ステップボックス -->
+      <div class="steps-box" style="break-inside:avoid;">
+        <div class="steps-box-title">4 Steps — この順番で動く</div>
+
+        <div class="step-item">
+          <div class="step-num">01</div>
+          <div class="step-text">
+            <strong>感情を落ち着かせる（数日〜1週間）</strong>
+            <span>信頼できる友人か、専門のカウンセラーに話す。一人で抱え込まない。</span>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">02</div>
+          <div class="step-text">
+            <strong>証拠を静かに確保する</strong>
+            <span>感情より先に動く。あとで「あの時残しておけば」とならないために。</span>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">03</div>
+          <div class="step-text">
+            <strong>相手の意思と本音を確認する</strong>
+            <span>冷静になってから話し合いの場を設ける。感情的な局面では相手の言葉の信頼度が下がる。</span>
+          </div>
+        </div>
+
+        <div class="step-item" style="margin-bottom:0;">
+          <div class="step-num">04</div>
+          <div class="step-text">
+            <strong>専門家（弁護士 or カウンセラー）に相談する</strong>
+            <span>慰謝料・離婚を考えるなら証拠収集の前に弁護士へ。合法的な手段を確認してから動く。</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 証拠の話 -->
+      <h3>証拠は「肉体関係の立証」が基本</h3>
+      <p>食事やデートの写真だけでは法的に不十分。有効な証拠はこれだ。</p>
+      <ul class="evidence-list">
+        <li>ラブホテルへの出入りが分かる写真・動画</li>
+        <li>肉体関係を示すLINE・メッセージのスクリーンショット</li>
+        <li>相手が認めた音声録音（日時が分かるものが有効）</li>
+        <li>ホテルの領収書・クレジットカード明細</li>
+      </ul>
+      <p>スクリーンショットは<strong>日付・送受信者が映る状態</strong>で保存する。複数の証拠を組み合わせることで「推認」が強まる。</p>
+
+      <!-- プルクォート（全幅） -->
+      <div class="pull-quote">
+        <p>「証拠もないまま相手に突撃してはいけない。<br>それはあなたが持つ最大の切り札を、最初に捨てることになる。」</p>
+        <cite>浮気・不貞対応の原則</cite>
+      </div>
+
+      <!-- 警告ボックス（全幅） -->
+      <div class="warning-box">
+        <div class="warning-title">絶対にやってはいけない6つのこと</div>
+        <div class="warning-grid">
+          <div class="warning-item">感情のまま怒鳴り続ける<br><span style="font-size:8.5px;color:#9A5050;">話し合いの場が消える</span></div>
+          <div class="warning-item">証拠なしに相手方へ接触<br><span style="font-size:8.5px;color:#9A5050;">逆に訴えられるリスク</span></div>
+          <div class="warning-item">スマホを無断で操作・閲覧<br><span style="font-size:8.5px;color:#9A5050;">プライバシー侵害・違法</span></div>
+          <div class="warning-item">盗聴器・無断GPS追跡<br><span style="font-size:8.5px;color:#9A5050;">違法。証拠として無効に</span></div>
+          <div class="warning-item">SNSへの暴露・嫌がらせ<br><span style="font-size:8.5px;color:#9A5050;">名誉毀損で逆訴訟のリスク</span></div>
+          <div class="warning-item">脅しで誓約書を書かせる<br><span style="font-size:8.5px;color:#9A5050;">「強要された」と無効化される</span></div>
+        </div>
+      </div>
+
+      <!-- 継続・別れの判断基準（全幅） -->
+      <h3 class="span-all" style="font-family:var(--serif);font-size:14px;font-weight:700;margin:4px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px;">継続か、別れか。判断のための視点</h3>
+
+      <div class="judge-cols">
+        <div class="judge-card continue">
+          <div class="judge-card-title">継続・修復に向くケース</div>
+          <div class="judge-item">相手が事実を認め、深く反省している</div>
+          <div class="judge-item">具体的な行動（連絡遮断・誓約書など）がある</div>
+          <div class="judge-item">自分の中にまだ信頼回復の意欲がある</div>
+          <div class="judge-item">子どもや生活設計も含め継続の意思がある</div>
+        </div>
+        <div class="judge-card separate">
+          <div class="judge-card-title">別れを検討すべきケース</div>
+          <div class="judge-item">相手が否定し続けるか、開き直っている</div>
+          <div class="judge-item">2度目・3度目の発覚、または常習が疑われる</div>
+          <div class="judge-item">怒り・嫌悪感しか残らず修復がイメージできない</div>
+          <div class="judge-item">経済的に独立できる見通しがある</div>
+        </div>
+      </div>
+
+      <p class="span-all" style="font-size:9.5px;color:var(--sub);margin-bottom:12px;">
+        ※「許せるか」だけでなく「今後もこの人を信頼して生活できるか」を軸に考える。感情が激しいうちは大きな決断を避け、数週間後に冷静な状態で再評価する。
+      </p>
+
+      <!-- 専門家 -->
+      <div class="expert-cols">
+        <div class="expert-card">
+          <div class="expert-card-title">カウンセラー・心理士</div>
+          <p>発覚直後、日常生活に支障が出ている段階から相談できる。継続か別れか迷っている段階での第三者視点、夫婦カウンセリングも選択肢。</p>
+        </div>
+        <div class="expert-card">
+          <div class="expert-card-title">弁護士</div>
+          <p>慰謝料・離婚を考え始めたら早めに。証拠収集の前に「合法的な手段か」を確認するために相談する。発覚後3年（不法行為の時効）を目安に早期相談を。費用が不安な場合は法テラスも。</p>
+        </div>
+      </div>
+
+    </div><!-- /body-columns -->
+
+    <!-- 将来像 -->
+    <div class="future-strip">
+      <span class="future-strip-label">Future Vision</span>
+      <p>セラピー要素を組み込んだ恋愛相談AIが常設化されれば——感情が激しい発覚直後でも、24時間いつでも冷静なガイダンスを受けられる時代がくる。「何もできなかった夜」がなくなるかもしれない。</p>
+    </div>
+
+    <!-- ページフッター -->
+    <div class="page-footer">
+      <span>恋愛未来設計展 · Love Analysis Project（100BANCH採択プロジェクト）</span>
+      <span>BOOTH 12 · 浮気された</span>
+    </div>
+
+  </div><!-- /page -->
+</body>
+</html>

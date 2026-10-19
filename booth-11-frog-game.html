@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>蛙化指数チェッカー — ブース11</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=Space+Grotesk:wght@400;600;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #FFFEF5;
+      --ink:       #1A1A10;
+      --frog:      #4DBB62;
+      --frog-dark: #2D8C42;
+      --frog-pale: #D4F7DC;
+      --frog-mid:  #A8E6B4;
+      --red:       #E03030;
+      --red-pale:  #FFE8E8;
+      --yellow:    #F5CC00;
+      --line:      #DDDDC0;
+      --sub:       #7A7A50;
+      --paper:     #FDFDF5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      background: #C8E6C9;
+      color: var(--ink);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      overflow: hidden;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 480px;
+      height: 100dvh;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+      border-left: 3px solid var(--ink);
+      border-right: 3px solid var(--ink);
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ══════════════════════════
+       START SCREEN
+    ══════════════════════════ */
+    #s-start {
+      background: var(--frog);
+      justify-content: flex-start;
+      overflow-y: auto;
+    }
+
+    .start-deco-top {
+      width: 100%;
+      height: 6px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--ink) 0px, var(--ink) 20px,
+        var(--frog-dark) 20px, var(--frog-dark) 40px
+      );
+      flex-shrink: 0;
+    }
+
+    .start-body {
+      width: 100%;
+      padding: 36px 28px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .start-kicker {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(26,26,16,0.55);
+      margin-bottom: 16px;
+    }
+
+    .start-frog-big {
+      font-size: 88px;
+      line-height: 1;
+      margin-bottom: 16px;
+      display: block;
+      animation: frogBounce 1.8s ease-in-out infinite;
+      transform-origin: center bottom;
+    }
+
+    @keyframes frogBounce {
+      0%, 100% { transform: translateY(0) scaleY(1); }
+      45%  { transform: translateY(-18px) scaleY(1.06); }
+      55%  { transform: translateY(-18px) scaleY(1.06); }
+      70%  { transform: translateY(0) scaleY(0.92); }
+      80%  { transform: translateY(0) scaleY(1); }
+    }
+
+    .start-h1 {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+      border-bottom: 3px solid var(--ink);
+      padding-bottom: 10px;
+    }
+
+    .start-sub {
+      font-size: 14px;
+      color: rgba(26,26,16,0.75);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .start-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: auto;
+    }
+
+    .start-badge {
+      background: var(--ink);
+      color: var(--frog);
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 4px 12px;
+      border-radius: 3px;
+    }
+
+    .start-footer {
+      width: 100%;
+      padding: 24px 28px 32px;
+      border-top: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--frog);
+      flex-shrink: 0;
+    }
+
+    .start-meta {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      color: rgba(26,26,16,0.5);
+      line-height: 1.8;
+    }
+
+    .btn-start {
+      white-space: nowrap;
+      padding: 0 28px;
+      height: 60px;
+      background: var(--ink);
+      color: var(--frog);
+      border: none;
+      border-radius: 6px;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      flex-shrink: 0;
+      letter-spacing: 0.04em;
+      transition: transform 0.1s, opacity 0.1s;
+      box-shadow: 4px 4px 0 var(--frog-dark);
+    }
+
+    .btn-start:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--frog-dark);
+    }
+
+    /* ══════════════════════════
+       QUESTION SCREEN
+    ══════════════════════════ */
+    #s-question {
+      background: var(--bg);
+      padding: 0;
+    }
+
+    /* Top stripe */
+    .q-stripe {
+      width: 100%;
+      height: 5px;
+      background: var(--ink);
+      flex-shrink: 0;
+    }
+
+    /* Progress row */
+    .q-status-row {
+      width: 100%;
+      padding: 12px 20px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .q-progress-text {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--sub);
+      letter-spacing: 0.06em;
+    }
+
+    .q-frog-count {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--frog-dark);
+    }
+
+    /* Frog meter */
+    .frog-meter-wrap {
+      width: 100%;
+      padding: 0 20px 10px;
+      flex-shrink: 0;
+    }
+
+    .frog-meter-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 4px;
+    }
+
+    .frog-meter-track {
+      width: 100%;
+      height: 16px;
+      background: var(--frog-pale);
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .frog-meter-fill {
+      height: 100%;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--frog-mid), var(--frog));
+      transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      width: 0%;
+      position: relative;
+    }
+
+    .frog-meter-fill::after {
+      content: '🐸';
+      position: absolute;
+      right: -2px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      line-height: 1;
+      transition: opacity 0.3s;
+    }
+
+    /* Scenario card */
+    .q-area {
+      flex: 1;
+      width: 100%;
+      padding: 4px 16px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .q-card {
+      background: var(--paper);
+      border: 2.5px solid var(--ink);
+      border-radius: 16px;
+      padding: 24px 22px 20px;
+      box-shadow: 5px 5px 0 var(--ink);
+      animation: cardHop 0.35s cubic-bezier(0.22, 1.4, 0.5, 1);
+    }
+
+    @keyframes cardHop {
+      0%   { transform: translateY(28px) scaleY(0.9); opacity: 0; }
+      60%  { transform: translateY(-6px) scaleY(1.02); opacity: 1; }
+      100% { transform: translateY(0) scaleY(1); opacity: 1; }
+    }
+
+    .q-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px dashed var(--line);
+    }
+
+    .q-card-booth {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sub);
+    }
+
+    .q-card-num {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--ink);
+      color: var(--frog);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .q-scene-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--frog-dark);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .q-text {
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.65;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+
+    .q-divider {
+      width: 32px;
+      height: 2px;
+      background: var(--ink);
+      margin-bottom: 12px;
+      border-radius: 1px;
+    }
+
+    .q-question {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 13px;
+      color: var(--sub);
+      line-height: 1.7;
+    }
+
+    /* Answer buttons */
+    .ans-row {
+      width: 100%;
+      padding: 14px 16px 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .btn-ans {
+      height: 68px;
+      border-radius: 12px;
+      border: 2.5px solid var(--ink);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.08s, box-shadow 0.08s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      letter-spacing: 0.02em;
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .btn-ans:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .btn-frog {
+      background: var(--frog-pale);
+      color: var(--frog-dark);
+    }
+
+    .btn-frog.flash {
+      background: var(--frog);
+      color: var(--ink);
+    }
+
+    .btn-ok {
+      background: var(--paper);
+      color: var(--sub);
+    }
+
+    .btn-ok.flash {
+      background: var(--line);
+      color: var(--ink);
+    }
+
+    /* ══════════════════════════
+       RESULT SCREEN
+    ══════════════════════════ */
+    #s-result {
+      justify-content: flex-start;
+      overflow-y: auto;
+      background: var(--bg);
+    }
+
+    .result-header {
+      width: 100%;
+      padding: 0;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .result-header-inner {
+      padding: 44px 24px 28px;
+      border-bottom: 3px solid var(--ink);
+      transition: background 0.5s;
+    }
+
+    .r-kicker {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 14px;
+    }
+
+    .r-frog-display {
+      font-size: 56px;
+      line-height: 1;
+      margin-bottom: 10px;
+      display: block;
+      animation: resultFrog 0.6s 0.2s both cubic-bezier(0.22, 1.4, 0.5, 1);
+    }
+
+    @keyframes resultFrog {
+      from { transform: scale(0.4) rotate(-10deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    .r-level-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      opacity: 0.65;
+    }
+
+    .r-level-name {
+      font-size: 44px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+      animation: nameReveal 0.6s 0.4s both cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes nameReveal {
+      from { transform: translateY(10px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .r-score {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      opacity: 0.7;
+    }
+
+    .r-desc {
+      font-size: 14px;
+      line-height: 1.85;
+      animation: nameReveal 0.6s 0.6s both ease-out;
+    }
+
+    /* Big pct gauge */
+    .r-gauge-section {
+      width: 100%;
+      padding: 20px 24px 16px;
+      border-bottom: 1.5px solid var(--line);
+      flex-shrink: 0;
+      animation: nameReveal 0.6s 0.7s both ease-out;
+    }
+
+    .r-gauge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .r-gauge-title {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sub);
+    }
+
+    .r-gauge-pct {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .r-gauge-track {
+      width: 100%;
+      height: 20px;
+      background: var(--frog-pale);
+      border: 2px solid var(--ink);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .r-gauge-fill {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+      width: 0%;
+    }
+
+    /* Frog parade */
+    .r-frog-parade {
+      width: 100%;
+      padding: 12px 24px 16px;
+      border-bottom: 1.5px solid var(--line);
+      flex-shrink: 0;
+      animation: nameReveal 0.6s 0.8s both ease-out;
+    }
+
+    .r-parade-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 8px;
+    }
+
+    .r-parade-frogs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    /* Bias reveal card */
+    .r-bias-card {
+      width: calc(100% - 32px);
+      margin: 16px 16px 0;
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 4px 4px 0 var(--ink);
+      animation: nameReveal 0.6s 0.9s both ease-out;
+    }
+
+    .r-bias-head {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px dashed var(--line);
+    }
+
+    .r-bias-item {
+      margin-bottom: 12px;
+    }
+
+    .r-bias-item:last-child { margin-bottom: 0; }
+
+    .r-bias-term {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: var(--ink);
+    }
+
+    .r-bias-body {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 11.5px;
+      color: var(--sub);
+      line-height: 1.75;
+    }
+
+    /* Triggered list */
+    .r-triggered {
+      width: calc(100% - 32px);
+      margin: 16px 16px 0;
+      animation: nameReveal 0.6s 1s both ease-out;
+    }
+
+    .r-triggered-head {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--frog-dark);
+      margin-bottom: 10px;
+    }
+
+    .r-triggered-item {
+      background: var(--frog-pale);
+      border: 1.5px solid var(--frog-mid);
+      border-left: 4px solid var(--frog);
+      border-radius: 0 8px 8px 0;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    .r-triggered-item .bias-tag {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--frog-dark);
+      display: block;
+      margin-top: 2px;
+      letter-spacing: 0.06em;
+    }
+
+    .btn-retry {
+      width: calc(100% - 32px);
+      margin: 20px 16px 32px;
+      height: 60px;
+      border: 2.5px solid var(--ink);
+      border-radius: 12px;
+      background: var(--ink);
+      color: var(--frog);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--frog-dark);
+      transition: transform 0.08s, box-shadow 0.08s;
+      animation: nameReveal 0.6s 1.1s both ease-out;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-retry:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--frog-dark);
+    }
+
+    .r-ref {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      color: rgba(26,26,16,0.25);
+      text-align: center;
+      line-height: 1.6;
+      padding: 0 16px 32px;
+      animation: nameReveal 0.6s 1.2s both ease-out;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ═══ START ═══ -->
+  <div class="screen" id="s-start">
+    <div class="start-deco-top"></div>
+    <div class="start-body">
+      <div class="start-kicker">BOOTH 11 · Love Analysis Project · 100BANCH</div>
+      <span class="start-frog-big">🐸</span>
+      <div class="start-h1">あなたの<br>蛙化指数<br>チェッカー</div>
+      <div class="start-sub">
+        好きな人のちょっとした行動で<br>
+        急に気持ちが冷める「蛙化現象」。<br>
+        あなたはどれくらい蛙化する？<br>
+        15のシナリオで今すぐ測定。
+      </div>
+      <div class="start-badges">
+        <div class="start-badge">🐸 蛙化フリー</div>
+        <div class="start-badge">🐸🐸 軽度蛙化</div>
+        <div class="start-badge">🐸🐸🐸 蛙化注意</div>
+        <div class="start-badge">🐸🐸🐸🐸 蛙化MAX</div>
+      </div>
+    </div>
+    <div class="start-footer">
+      <div class="start-meta">
+        15 シナリオ<br>
+        約3分
+      </div>
+      <button class="btn-start" onclick="startGame()">測定スタート →</button>
+    </div>
+  </div>
+
+  <!-- ═══ QUESTION ═══ -->
+  <div class="screen" id="s-question">
+    <div class="q-stripe"></div>
+    <div class="q-status-row">
+      <div class="q-progress-text" id="q-progress">SCENE 1 / 15</div>
+      <div class="q-frog-count" id="q-frog-count">🐸 × 0</div>
+    </div>
+    <div class="frog-meter-wrap">
+      <div class="frog-meter-label">蛙化メーター</div>
+      <div class="frog-meter-track">
+        <div class="frog-meter-fill" id="frog-meter"></div>
+      </div>
+    </div>
+
+    <div class="q-area">
+      <div class="q-card" id="q-card">
+        <div class="q-card-head">
+          <span class="q-card-booth">B-11 · SCENE</span>
+          <span class="q-card-num" id="q-num">01</span>
+        </div>
+        <span class="q-scene-label">SCENARIO</span>
+        <div class="q-text" id="q-text"></div>
+        <div class="q-divider"></div>
+        <div class="q-question">あなたはこれで気持ちが冷める？</div>
+      </div>
+    </div>
+
+    <div class="ans-row">
+      <button class="btn-ans btn-frog" id="btn-frog" onclick="answer(true)">🐸 蛙化する</button>
+      <button class="btn-ans btn-ok"   id="btn-ok"   onclick="answer(false)">💪 大丈夫</button>
+    </div>
+  </div>
+
+  <!-- ═══ RESULT ═══ -->
+  <div class="screen" id="s-result">
+    <div class="result-header">
+      <div class="result-header-inner" id="result-header-inner">
+        <div class="r-kicker">BOOTH 11 · 蛙化指数チェック · Love Analysis Project</div>
+        <span class="r-frog-display" id="r-frog-display">🐸</span>
+        <div class="r-level-label" id="r-level-label"></div>
+        <div class="r-level-name" id="r-level-name"></div>
+        <div class="r-score" id="r-score"></div>
+        <div class="r-desc" id="r-desc"></div>
+      </div>
+    </div>
+
+    <div class="r-gauge-section">
+      <div class="r-gauge-row">
+        <div class="r-gauge-title">蛙化指数</div>
+        <div class="r-gauge-pct" id="r-pct">0%</div>
+      </div>
+      <div class="r-gauge-track">
+        <div class="r-gauge-fill" id="r-gauge-fill"></div>
+      </div>
+    </div>
+
+    <div class="r-frog-parade">
+      <div class="r-parade-label">蛙化した回数</div>
+      <div class="r-parade-frogs" id="r-parade-frogs"></div>
+    </div>
+
+    <div class="r-bias-card">
+      <div class="r-bias-head">🔍 蛙化の背景にある無意識のバイアス</div>
+      <div class="r-bias-item">
+        <div class="r-bias-term">理想化バイアス</div>
+        <div class="r-bias-body">片思い中に作り上げた「完璧な相手像」が現実の人間らしさと衝突したとき、幻滅が強く起きる。</div>
+      </div>
+      <div class="r-bias-item">
+        <div class="r-bias-term">希少性バイアス</div>
+        <div class="r-bias-body">「好かれすぎると価値が下がる」感覚。手に入らないものほど魅力的に見えるというバイアス。</div>
+      </div>
+      <div class="r-bias-item">
+        <div class="r-bias-term">ジェンダー役割バイアス</div>
+        <div class="r-bias-body">「男性はリードすべき」「女性はしとやかであるべき」などの無意識の規範が、些細な行動への嫌悪を生む。</div>
+      </div>
+      <div class="r-bias-item">
+        <div class="r-bias-term">完璧主義バイアス</div>
+        <div class="r-bias-body">食事マナー・言動・外見など、恋人にだけ異常な完璧さを求める傾向。親しくなるほど細部が気になる。</div>
+      </div>
+    </div>
+
+    <div class="r-triggered" id="r-triggered-section">
+      <div class="r-triggered-head">あなたが蛙化したシナリオ</div>
+      <div id="r-triggered-list"></div>
+    </div>
+
+    <button class="btn-retry" onclick="resetGame()">🐸 もう一度チェック</button>
+    <div class="r-ref">
+      藤澤伸介（2004）蛙化現象の命名 · Kernis &amp; Reis (1994) · 恋愛未来設計展 BOOTH 11
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ════ DATA ════ */
+  const SCENARIOS = [
+    {
+      text: 'デート中、相手が会計でスマホのクーポンを出して使った。',
+      bias: '「デートはスマートにこなすべき」'
+    },
+    {
+      text: 'Suicaの残高が足りなくて改札で止まり、相手が少し慌てていた。',
+      bias: '「デートで失敗してはいけない」'
+    },
+    {
+      text: 'フードコートで席をどこにするか決められず、相手がうろうろしていた。',
+      bias: '「男性はデートをリードすべき」'
+    },
+    {
+      text: '付き合う前は嬉しかった長文のLINEが、両思いになった途端に重く感じた。',
+      bias: '「好かれすぎると価値が下がる」'
+    },
+    {
+      text: 'デートの会計で相手が「今日は割り勘でいい？」と言ってきた。',
+      bias: '「デート代は男性が払うもの」'
+    },
+    {
+      text: 'ずっと片思いしていた相手から突然「好き」と告白された途端に気持ちが冷めた。',
+      bias: '「追いかける側の方が燃える」'
+    },
+    {
+      text: '付き合ってから、相手の年収が自分より低いことを知った。',
+      bias: '「男性は女性より稼ぐべき」'
+    },
+    {
+      text: '一緒に映画を観ていたら、相手（男性）が泣いていた。',
+      bias: '「男性は感情を出すべきでない」'
+    },
+    {
+      text: '一緒に食事をしたら、相手の箸の持ち方が少し変だった。',
+      bias: '「恋人は食事マナーが完璧であるべき」'
+    },
+    {
+      text: '「できる人」と思っていた相手が、仕事で思わぬ失敗をするところを見てしまった。',
+      bias: '「好きな人は完璧であるべき」'
+    },
+    {
+      text: '自分には優しい相手が、飲食店の店員にやや横柄な態度をとっていた。',
+      bias: '「好きな人は誰にでも優しいはず」'
+    },
+    {
+      text: '夜にLINEを送ったら既読がついたのに、3時間以上返信がなかった。',
+      bias: '「既読がついたら即返すのが誠実」'
+    },
+    {
+      text: '告白されたとき「なんで自分を好きなんだろう？」と不思議に感じ、相手が信用できなくなった。',
+      bias: '「自分は愛される価値がない」'
+    },
+    {
+      text: '付き合い始めてすぐ、相手が「大好き」と何度も言ってきた。嬉しいはずなのにゾワっとした。',
+      bias: '「好意は少しずつ示されるべき」'
+    },
+    {
+      text: '交際してから、自分の方が収入・学歴が「上」だと気づいた。なんとなく気持ちが引いた。',
+      bias: '「恋人は自分より優れているべき」'
+    },
+  ];
+
+  const LEVELS = [
+    {
+      min: 0, max: 3,
+      emoji: '🐸',
+      label: 'LEVEL 0 — FROG FREE',
+      name: '蛙化フリー',
+      headerBg: '#E8F8EB',
+      headerInk: '#1A5C2A',
+      gaugeColor: '#4DBB62',
+      desc: 'あなたの心は比較的自由！相手の人間らしさを自然に受け入れられています。多少のズレも「そういう人なんだな」とゆったり構えられるタイプ。',
+    },
+    {
+      min: 4, max: 7,
+      emoji: '🐸🐸',
+      label: 'LEVEL 1 — MILD',
+      name: '軽度蛙化',
+      headerBg: '#F0F8D8',
+      headerInk: '#4A6010',
+      gaugeColor: '#A0C830',
+      desc: '少し警戒心があるようです。特定のシナリオでは幻滅を感じやすい傾向あり。でも多くの状況ではフラットに対応できています。',
+    },
+    {
+      min: 8, max: 11,
+      emoji: '🐸🐸🐸',
+      label: 'LEVEL 2 — CAUTION',
+      name: '蛙化注意',
+      headerBg: '#FFF0CC',
+      headerInk: '#7A4A00',
+      gaugeColor: '#E0A800',
+      desc: '蛙化しやすい傾向があります。「こうあるべき」という無意識の基準が多く、相手の普通の行動に引っかかることも。少し意識してみましょう。',
+    },
+    {
+      min: 12, max: 15,
+      emoji: '🐸🐸🐸🐸',
+      label: 'LEVEL 3 — MAX',
+      name: '蛙化MAX',
+      headerBg: '#FDEAEA',
+      headerInk: '#7A1F1F',
+      gaugeColor: '#E03030',
+      desc: 'かなり蛙化しやすい状態です。多くのシナリオで幻滅を感じています。その「冷める感覚」の奥には、相手へのどんな期待や思い込みが隠れているでしょうか？',
+    },
+  ];
+
+  /* ════ STATE ════ */
+  let qIdx      = 0;
+  let frogged   = 0;       // 蛙化した回数
+  let triggered = [];      // 蛙化したシナリオindex配列
+  let busy      = false;
+
+  /* ════ INIT ════ */
+  show('s-start');
+
+  /* ════ UTILS ════ */
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function getLevel(n) {
+    for (const lv of LEVELS) {
+      if (n >= lv.min && n <= lv.max) return lv;
+    }
+    return LEVELS[LEVELS.length - 1];
+  }
+
+  function updateMeter(frogged, total) {
+    const pct = total === 0 ? 0 : Math.round((frogged / total) * 100);
+    const fill = document.getElementById('frog-meter');
+    fill.style.width = pct + '%';
+    // Change color as meter fills
+    if (pct < 27) fill.style.background = 'linear-gradient(90deg, #A8E6B4, #4DBB62)';
+    else if (pct < 54) fill.style.background = 'linear-gradient(90deg, #C8DC60, #A0C830)';
+    else if (pct < 80) fill.style.background = 'linear-gradient(90deg, #F0CC60, #E0A800)';
+    else fill.style.background = 'linear-gradient(90deg, #F09090, #E03030)';
+  }
+
+  /* ════ GAME ════ */
+  function startGame() {
+    qIdx = 0; frogged = 0; triggered = []; busy = false;
+    updateMeter(0, 15);
+    document.getElementById('frog-meter').style.width = '0%';
+    showQuestion(0);
+  }
+
+  function showQuestion(idx) {
+    busy = false;
+    qIdx = idx;
+    const s = SCENARIOS[idx];
+
+    // Re-trigger hop animation
+    const card = document.getElementById('q-card');
+    card.style.animation = 'none';
+    void card.offsetWidth;
+    card.style.animation = '';
+
+    document.getElementById('q-num').textContent = String(idx + 1).padStart(2, '0');
+    document.getElementById('q-text').textContent = s.text;
+    document.getElementById('q-progress').textContent = `SCENE ${idx + 1} / 15`;
+    document.getElementById('q-frog-count').textContent = `🐸 × ${frogged}`;
+
+    show('s-question');
+  }
+
+  function answer(didFrog) {
+    if (busy) return;
+    busy = true;
+
+    const btnId = didFrog ? 'btn-frog' : 'btn-ok';
+    const btn = document.getElementById(btnId);
+    btn.classList.add('flash');
+    setTimeout(() => btn.classList.remove('flash'), 280);
+
+    if (didFrog) {
+      frogged++;
+      triggered.push(qIdx);
+      updateMeter(frogged, 15);
+      document.getElementById('q-frog-count').textContent = `🐸 × ${frogged}`;
+    }
+
+    const next = qIdx + 1;
+    setTimeout(() => {
+      if (next >= SCENARIOS.length) {
+        showResults();
+      } else {
+        showQuestion(next);
+      }
+    }, 340);
+  }
+
+  function showResults() {
+    const lv  = getLevel(frogged);
+    const pct = Math.round((frogged / 15) * 100);
+
+    // Header
+    const inner = document.getElementById('result-header-inner');
+    inner.style.background = lv.headerBg;
+    inner.style.color      = lv.headerInk;
+
+    document.getElementById('r-frog-display').textContent = lv.emoji;
+    document.getElementById('r-level-label').textContent  = lv.label;
+    document.getElementById('r-level-name').textContent   = lv.name;
+    document.getElementById('r-score').textContent        = `蛙化 ${frogged} / 15 シナリオ`;
+    document.getElementById('r-desc').textContent         = lv.desc;
+
+    // Gauge
+    document.getElementById('r-pct').textContent          = pct + '%';
+    document.getElementById('r-pct').style.color          = lv.gaugeColor;
+    const gfill = document.getElementById('r-gauge-fill');
+    gfill.style.background = lv.gaugeColor;
+    // animate after a tick
+    setTimeout(() => { gfill.style.width = pct + '%'; }, 100);
+
+    // Frog parade
+    const parade = document.getElementById('r-parade-frogs');
+    parade.innerHTML = '';
+    for (let i = 0; i < 15; i++) {
+      const span = document.createElement('span');
+      span.style.fontSize = '24px';
+      if (triggered.includes(i)) {
+        span.textContent = '🐸';
+        span.style.opacity = '1';
+      } else {
+        span.textContent = '⚪';
+        span.style.opacity = '0.35';
+        span.style.fontSize = '18px';
+      }
+      parade.appendChild(span);
+    }
+
+    // Triggered list
+    const list = document.getElementById('r-triggered-list');
+    list.innerHTML = '';
+    if (triggered.length === 0) {
+      const p = document.createElement('p');
+      p.style.cssText = 'font-size:13px;color:var(--sub);font-family:"Noto Serif JP",serif;line-height:1.7;';
+      p.textContent = '蛙化したシナリオはありませんでした。すごい！';
+      list.appendChild(p);
+    } else {
+      triggered.forEach(i => {
+        const s = SCENARIOS[i];
+        const div = document.createElement('div');
+        div.className = 'r-triggered-item';
+        div.innerHTML = `${s.text}<span class="bias-tag">潜むバイアス：${s.bias}</span>`;
+        list.appendChild(div);
+      });
+    }
+
+    // Hide triggered section if empty but still show message
+    const section = document.getElementById('r-triggered-section');
+    section.style.display = 'block';
+
+    show('s-result');
+    document.getElementById('s-result').scrollTop = 0;
+  }
+
+  function resetGame() {
+    frogged = 0; qIdx = 0; triggered = []; busy = false;
+    // Reset gauge
+    document.getElementById('r-gauge-fill').style.width = '0%';
+    show('s-start');
+  }
+</script>
+</body>
+</html>

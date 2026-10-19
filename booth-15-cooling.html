@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>冷め症状診断シート — ブース15</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Space+Grotesk:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #F5F1E4;
+      --ink:     #2A2823;
+      --accent:  #B8860B;
+      --sub:     #7A7060;
+      --line:    #D9D2BC;
+      --white:   #FDFAF3;
+      --sans:    'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+      --mono:    'Space Grotesk', monospace;
+      --serif:   'Noto Serif JP', serif;
+
+      --temp-bg:  #E8F0E8; --temp-ink: #1A4A1A; --temp-line: #A8C8A8;
+      --perm-bg:  #EEE8E8; --perm-ink: #4A1A1A; --perm-line: #C8A8A8;
+      --rx-bg:    #FDFAF3; --rx-border: #D9D2BC;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #DDD8C5;
+      font-family: var(--sans);
+      color: var(--ink);
+      padding: 16px;
+    }
+
+    .page {
+      background: var(--bg);
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 0 0 12mm;
+    }
+
+    /* ─── カルテヘッダー ─── */
+    .karte-header {
+      border-bottom: 2px solid var(--ink);
+      padding: 10px 14mm 0;
+    }
+
+    .karte-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 8px;
+    }
+
+    .karte-institution {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: var(--sub);
+      text-transform: uppercase;
+    }
+
+    .karte-title-block {
+      text-align: right;
+    }
+
+    .karte-doc-type {
+      font-family: var(--mono);
+      font-size: 8px;
+      color: var(--sub);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .karte-main-title {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .karte-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0 16px;
+      padding-bottom: 8px;
+    }
+
+    .karte-field {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 9px;
+      color: var(--sub);
+    }
+
+    .karte-field-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      color: var(--sub);
+    }
+
+    .karte-field-line {
+      flex: 1;
+      border-bottom: 1px solid var(--ink);
+      min-width: 40px;
+    }
+
+    /* ─── 本文 ─── */
+    .content {
+      padding: 10px 14mm 0;
+    }
+
+    /* ─── セクションヘッダー ─── */
+    .sec {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 12px 0 7px;
+    }
+
+    .sec-code {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--white);
+      background: var(--ink);
+      padding: 2px 6px;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+
+    .sec-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--ink);
+    }
+
+    .sec-line {
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    /* ─── 症状チェック ─── */
+    .symptom-intro {
+      font-size: 9.5px;
+      color: var(--sub);
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+
+    .symptom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+    }
+
+    .symptom-item {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 5px 8px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      font-size: 9.5px;
+      line-height: 1.5;
+    }
+
+    .sym-circle {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1.5px solid var(--sub);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ─── 診断分岐 ─── */
+    .diag-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .diag-card {
+      border-radius: 4px;
+      padding: 9px 10px;
+    }
+
+    .diag-card.temp {
+      background: var(--temp-bg);
+      border: 1.5px solid var(--temp-line);
+    }
+
+    .diag-card.perm {
+      background: var(--perm-bg);
+      border: 1.5px solid var(--perm-line);
+    }
+
+    .diag-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .diag-card.temp .diag-label { color: var(--temp-ink); }
+    .diag-card.perm .diag-label { color: var(--perm-ink); }
+
+    .diag-name {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .diag-card.temp .diag-name { color: var(--temp-ink); }
+    .diag-card.perm .diag-name { color: var(--perm-ink); }
+
+    .diag-signs {
+      font-size: 9px;
+      line-height: 1.65;
+    }
+
+    .diag-card.temp .diag-signs { color: var(--temp-ink); }
+    .diag-card.perm .diag-signs { color: var(--perm-ink); }
+
+    .diag-sign {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 2px;
+    }
+
+    .diag-bullet {
+      font-family: var(--mono);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ─── 処方箋 ─── */
+    .rx-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .rx-card {
+      background: var(--rx-bg);
+      border: 1.5px solid var(--rx-border);
+      border-radius: 4px;
+      padding: 9px 10px;
+      position: relative;
+    }
+
+    .rx-header {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      border-bottom: 1px dashed var(--line);
+      padding-bottom: 6px;
+      margin-bottom: 6px;
+    }
+
+    .rx-symbol {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .rx-for {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--sub);
+      letter-spacing: 0.08em;
+    }
+
+    .rx-item {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 5px;
+      font-size: 9.5px;
+      line-height: 1.5;
+    }
+
+    .rx-num {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .rx-text b {
+      display: block;
+      font-size: 9.5px;
+      color: var(--ink);
+    }
+
+    .rx-text small {
+      font-size: 8.5px;
+      color: var(--sub);
+    }
+
+    .rx-stamp {
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+      font-family: var(--mono);
+      font-size: 8px;
+      color: var(--line);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── 禁忌 ─── */
+    .contraindication {
+      border: 1.5px solid var(--perm-line);
+      background: var(--perm-bg);
+      border-radius: 4px;
+      padding: 9px 11px;
+    }
+
+    .ci-title {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--perm-ink);
+      margin-bottom: 7px;
+    }
+
+    .ci-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .ci-item {
+      font-size: 9px;
+      line-height: 1.55;
+      color: var(--perm-ink);
+      padding: 4px 7px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 2px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .ci-mark {
+      font-family: var(--mono);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ─── 経過観察基準 ─── */
+    .observe-box {
+      border: 1.5px solid var(--line);
+      border-radius: 4px;
+      padding: 9px 11px;
+    }
+
+    .ob-intro {
+      font-size: 9.5px;
+      color: var(--sub);
+      margin-bottom: 7px;
+      line-height: 1.6;
+    }
+
+    .ob-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .ob-item {
+      font-size: 9.5px;
+      line-height: 1.55;
+      display: flex;
+      gap: 5px;
+      align-items: flex-start;
+      padding: 4px 6px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: var(--white);
+    }
+
+    .ob-check {
+      font-family: var(--mono);
+      color: var(--sub);
+      flex-shrink: 0;
+    }
+
+    /* ─── 蛙化現象メモ ─── */
+    .frog-note {
+      border-left: 3px solid var(--accent);
+      padding: 7px 10px;
+      margin-top: 8px;
+      background: rgba(184,134,11,0.06);
+      font-size: 9px;
+      line-height: 1.7;
+      color: var(--ink);
+    }
+
+    .frog-note strong {
+      display: block;
+      font-family: var(--mono);
+      font-size: 8.5px;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ─── 将来像 ─── */
+    .future-strip {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 8px 12px;
+      margin-top: 12px;
+      border-radius: 4px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 9.5px;
+      line-height: 1.6;
+    }
+
+    .future-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      color: #B8E0D4;
+      white-space: nowrap;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    /* ─── フッター ─── */
+    .page-footer {
+      margin: 10px 14mm 0;
+      padding-top: 5px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 8px;
+      color: var(--sub);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── 印刷 ─── */
+    @media print {
+      body { background: none; padding: 0; }
+      .page { width: 210mm; min-height: 297mm; margin: 0; }
+      .print-btn { display: none; }
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+    }
+    .print-btn:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">印刷する</button>
+
+  <div class="page">
+
+    <!-- カルテヘッダー -->
+    <div class="karte-header">
+      <div class="karte-top">
+        <div>
+          <div class="karte-institution">恋愛未来設計展 · Love Analysis Project — Booth 15</div>
+        </div>
+        <div class="karte-title-block">
+          <div class="karte-doc-type">Clinical Guide Series · Diagnosis &amp; Prescription</div>
+          <div class="karte-main-title">冷め症状 診断シート</div>
+        </div>
+      </div>
+      <div class="karte-fields">
+        <div class="karte-field">
+          <span class="karte-field-label">症状発症</span>
+          <span class="karte-field-line"></span>
+          <span style="font-size:8px;color:var(--sub);">頃〜</span>
+        </div>
+        <div class="karte-field">
+          <span class="karte-field-label">相手との関係</span>
+          <span class="karte-field-line"></span>
+        </div>
+        <div class="karte-field">
+          <span class="karte-field-label">交際期間</span>
+          <span class="karte-field-line"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- 症状チェック -->
+      <div class="sec">
+        <span class="sec-code">S</span>
+        <span class="sec-title">症状チェック — 当てはまるものに○をつける</span>
+        <span class="sec-line"></span>
+      </div>
+      <p class="symptom-intro">現在の自分の状態として当てはまると感じる症状に丸をつけてください。</p>
+      <div class="symptom-grid">
+        <div class="symptom-item"><div class="sym-circle"></div><span>一緒にいると以前より疲れるようになった</span></div>
+        <div class="symptom-item"><div class="sym-circle"></div><span>相手のことを考える時間が減った</span></div>
+        <div class="symptom-item"><div class="sym-circle"></div><span>「好き」という感情を思い出しにくくなった</span></div>
+        <div class="symptom-item"><div class="sym-circle"></div><span>相手の言動にイライラすることが増えた</span></div>
+        <div class="symptom-item"><div class="sym-circle"></div><span>連絡が来ても億劫に感じる</span></div>
+        <div class="symptom-item"><div class="sym-circle"></div><span>デートの約束をするのが気が重い</span></div>
+        <div class="symptom-item"><div class="sym-circle"></div><span>相手の「好き」という言葉が重く感じる</span></div>
+        <div class="symptom-item"><div class="sym-circle"></div><span>他の人が気になることが増えた</span></div>
+      </div>
+
+      <!-- 診断 -->
+      <div class="sec">
+        <span class="sec-code">Dx</span>
+        <span class="sec-title">診断 — 一時的な冷め か 恒久的な冷め か</span>
+        <span class="sec-line"></span>
+      </div>
+      <div class="diag-grid">
+        <div class="diag-card temp">
+          <div class="diag-label">Type A · Temporary</div>
+          <div class="diag-name">一時的な冷め</div>
+          <div class="diag-signs">
+            <div class="diag-sign"><span class="diag-bullet">▷</span><span>外部ストレス（仕事・疲労など）が重なっている</span></div>
+            <div class="diag-sign"><span class="diag-bullet">▷</span><span>特定のできごとがきっかけで冷めた（単発）</span></div>
+            <div class="diag-sign"><span class="diag-bullet">▷</span><span>相手と距離が縮まりすぎた緊張感の低下</span></div>
+            <div class="diag-sign"><span class="diag-bullet">▷</span><span>蛙化現象（普通の行動が急に冷める）</span></div>
+            <div class="diag-sign"><span class="diag-bullet">▷</span><span>「好きかどうか」という問いを繰り返しているが答えは出ていない</span></div>
+          </div>
+        </div>
+        <div class="diag-card perm">
+          <div class="diag-label">Type B · Persistent</div>
+          <div class="diag-name">恒久的な冷め</div>
+          <div class="diag-signs">
+            <div class="diag-sign"><span class="diag-bullet">▷</span><span>価値観・倫理観の根本的な違いが明確になった</span></div>
+            <div class="diag-sign"><span class="diag-bullet">▷</span><span>相手のマナーや言動への嫌悪感が慢性化している</span></div>
+            <div class="diag-sign"><span class="diag-bullet">▷</span><span>距離を置いても気持ちが戻ってこない（複数回確認済み）</span></div>
+            <div class="diag-sign"><span class="diag-bullet">▷</span><span>相手といる未来を想像できなくなっている</span></div>
+            <div class="diag-sign"><span class="diag-bullet">▷</span><span>「冷めてる」という結論がすでに出ている</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 蛙化メモ -->
+      <div class="frog-note">
+        <strong>⚠ 蛙化現象について（諸説あり・原因は未特定）</strong>
+        相手が自分を好きだとわかった瞬間や、日常的な行動（食べ方・歩き方など）に急に冷める現象。2004年に日本の研究者が用語化したが、現在も学術的な研究基盤は薄く、原因・定義は確立されていない。回避型アタッチメントや「期待とのギャップ」との関連が仮説として挙げられる程度。治療プロトコルは存在せず、恒久的な冷めと安易に結びつけず、まず様子を見ることが推奨される。
+      </div>
+
+      <!-- 処方箋 -->
+      <div class="sec">
+        <span class="sec-code">Rp.</span>
+        <span class="sec-title">処方 — 診断タイプ別の推奨アクション</span>
+        <span class="sec-line"></span>
+      </div>
+      <div class="rx-wrap">
+        <div class="rx-card">
+          <div class="rx-header">
+            <span class="rx-symbol">Rp.</span>
+            <span class="rx-for">Type A（一時的）向け処方</span>
+          </div>
+          <div class="rx-item">
+            <span class="rx-num">①</span>
+            <span class="rx-text">
+              <b>認知的再評価</b>
+              <small>「何に好意を持ったか」を紙に書き出す。感情の言語化が気持ちを整理する。</small>
+            </span>
+          </div>
+          <div class="rx-item">
+            <span class="rx-num">②</span>
+            <span class="rx-text">
+              <b>非日常体験の注入</b>
+              <small>日常パターンを崩す体験（旅行・新しい場所）を一緒に試みる。</small>
+            </span>
+          </div>
+          <div class="rx-item">
+            <span class="rx-num">③</span>
+            <span class="rx-text">
+              <b>一時的な距離を置く</b>
+              <small>1〜2週間ほど意図的に接触頻度を下げて気持ちを確認する。</small>
+            </span>
+          </div>
+          <div class="rx-item">
+            <span class="rx-num">④</span>
+            <span class="rx-text">
+              <b>自分の充実を優先する</b>
+              <small>趣味・友人・身体を整えることで精神的余裕を回復させる。</small>
+            </span>
+          </div>
+          <span class="rx-stamp">Type A · Rp.</span>
+        </div>
+        <div class="rx-card">
+          <div class="rx-header">
+            <span class="rx-symbol">Rp.</span>
+            <span class="rx-for">Type B（恒久的）向け処方</span>
+          </div>
+          <div class="rx-item">
+            <span class="rx-num">①</span>
+            <span class="rx-text">
+              <b>気持ちの整理を丁寧に行う</b>
+              <small>「好きではない」と「嫌いではない」は別物。自分の気持ちを解像度高く確認する。</small>
+            </span>
+          </div>
+          <div class="rx-item">
+            <span class="rx-num">②</span>
+            <span class="rx-text">
+              <b>関係の再定義を検討する</b>
+              <small>恋人 → 友人として続けることが双方にとって良い場合もある。</small>
+            </span>
+          </div>
+          <div class="rx-item">
+            <span class="rx-num">③</span>
+            <span class="rx-text">
+              <b>別れ話は落ち着いた状況で</b>
+              <small>感情的なタイミングではなく、冷静に・直接・短く伝える。</small>
+            </span>
+          </div>
+          <div class="rx-item">
+            <span class="rx-num">④</span>
+            <span class="rx-text">
+              <b>終わらせることも優しさ</b>
+              <small>惰性で続けることが相手を傷つける場合もある。</small>
+            </span>
+          </div>
+          <span class="rx-stamp">Type B · Rp.</span>
+        </div>
+      </div>
+
+      <!-- 禁忌 -->
+      <div class="sec">
+        <span class="sec-code">CI</span>
+        <span class="sec-title">禁忌 — やってはいけないこと</span>
+        <span class="sec-line"></span>
+      </div>
+      <div class="contraindication">
+        <div class="ci-title">⚠ 以下は症状を悪化させる可能性があります</div>
+        <div class="ci-grid">
+          <div class="ci-item"><span class="ci-mark">×</span><span>感情が不安定なまま別れを切り出す</span></div>
+          <div class="ci-item"><span class="ci-mark">×</span><span>相手を変えようとする（価値観の強制）</span></div>
+          <div class="ci-item"><span class="ci-mark">×</span><span>冷めているのに「好き」と伝え続ける</span></div>
+          <div class="ci-item"><span class="ci-mark">×</span><span>答えを出さないまま時間だけ経過させる</span></div>
+          <div class="ci-item"><span class="ci-mark">×</span><span>性急に結論を出して後悔する決断をする</span></div>
+          <div class="ci-item"><span class="ci-mark">×</span><span>SNSで相手との比較・他者を探しはじめる</span></div>
+        </div>
+      </div>
+
+      <!-- 経過観察 -->
+      <div class="sec">
+        <span class="sec-code">Obs</span>
+        <span class="sec-title">経過観察 — 別れを考えるタイミングの基準</span>
+        <span class="sec-line"></span>
+      </div>
+      <div class="observe-box">
+        <p class="ob-intro">以下の項目のうち3つ以上当てはまる場合、関係の終了を具体的に検討する段階です。</p>
+        <div class="ob-grid">
+          <div class="ob-item"><span class="ob-check">□</span><span>一緒にいても孤独を感じることが多い</span></div>
+          <div class="ob-item"><span class="ob-check">□</span><span>今後一緒に成長する未来が見えない</span></div>
+          <div class="ob-item"><span class="ob-check">□</span><span>距離を置いても気持ちが回復しない（2回以上確認）</span></div>
+          <div class="ob-item"><span class="ob-check">□</span><span>相手の幸福に無関心または負の感情がある</span></div>
+          <div class="ob-item"><span class="ob-check">□</span><span>続ける理由が「情」「もったいない」だけ</span></div>
+          <div class="ob-item"><span class="ob-check">□</span><span>自分らしくいられないことが多い</span></div>
+        </div>
+      </div>
+
+      <!-- 将来像 -->
+      <div class="future-strip">
+        <span class="future-label">Future Vision</span>
+        <span>恋テストと連携し、関係の「温度変化」を継続的に可視化——「最近また気持ちが戻ってきた」「徐々に冷めている」といった感情の変動が時系列で見えることで、あなたの判断をデータでサポートする未来。</span>
+      </div>
+
+    </div><!-- /content -->
+
+    <div class="page-footer">
+      <span>恋愛未来設計展 · Love Analysis Project（100BANCH採択プロジェクト）</span>
+      <span>BOOTH 15 · 冷める瞬間がある</span>
+    </div>
+
+  </div><!-- /page -->
+</body>
+</html>

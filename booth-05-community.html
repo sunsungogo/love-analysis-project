@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>コミュニティ恋愛ケーススタディ — ブース05</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Space+Grotesk:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #F5F1E4;
+      --ink:     #2A2823;
+      --accent:  #B8860B;
+      --sub:     #7A7060;
+      --line:    #D9D2BC;
+      --stripe:  rgba(0,0,0,0.035);
+      --white:   #FDFAF3;
+      --sans:    'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+      --mono:    'Space Grotesk', monospace;
+      --serif:   'Noto Serif JP', serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #DDD8C5;
+      font-family: var(--sans);
+      color: var(--ink);
+      padding: 16px;
+    }
+
+    .page {
+      background: var(--bg);
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 0 0 12mm;
+    }
+
+    /* ─── レジュメヘッダー ─── */
+    .resume-header {
+      border-bottom: 3px double var(--ink);
+      padding: 10px 14mm 10px;
+    }
+
+    .resume-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .resume-course {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      color: var(--sub);
+      text-transform: uppercase;
+      line-height: 1.8;
+    }
+
+    .resume-booth {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-align: right;
+    }
+
+    .resume-title {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .resume-subtitle {
+      font-size: 10px;
+      color: var(--sub);
+      line-height: 1.6;
+    }
+
+    /* ─── 本文 ─── */
+    .content {
+      padding: 8px 14mm 0;
+    }
+
+    /* ─── セクション ─── */
+    .section {
+      margin-top: 12px;
+    }
+
+    .sec-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1.5px solid var(--ink);
+    }
+
+    .sec-num {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--white);
+      background: var(--ink);
+      padding: 2px 5px;
+      letter-spacing: 0.1em;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .sec-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+    }
+
+    .sec-note {
+      font-size: 8.5px;
+      color: var(--sub);
+      margin-left: auto;
+      font-family: var(--mono);
+    }
+
+    /* ─── コミュニティタイプ4枠 ─── */
+    .community-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .community-card {
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 7px 9px;
+      background: var(--white);
+    }
+
+    .community-type {
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .community-name {
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .community-body {
+      font-size: 9px;
+      line-height: 1.65;
+      color: var(--sub);
+    }
+
+    .community-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 8px;
+      background: rgba(184,134,11,0.12);
+      color: var(--accent);
+      padding: 1px 5px;
+      border-radius: 2px;
+      margin-top: 4px;
+    }
+
+    /* ─── ケーススタディ（テーブル形式）─── */
+    .case-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5px;
+    }
+
+    .case-table thead tr {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    .case-table thead th {
+      padding: 4px 8px;
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-align: left;
+    }
+
+    .case-table tbody tr:nth-child(even) { background: var(--stripe); }
+
+    .case-table tbody td {
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--line);
+      line-height: 1.55;
+      vertical-align: top;
+    }
+
+    .case-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .case-what {
+      color: var(--ink);
+    }
+
+    .case-why {
+      color: var(--sub);
+      font-size: 9px;
+    }
+
+    /* ─── チェックリスト ─── */
+    .checklist-intro {
+      font-size: 9.5px;
+      color: var(--sub);
+      margin-bottom: 8px;
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    .checklist-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+    }
+
+    .cl-item {
+      display: flex;
+      gap: 7px;
+      align-items: flex-start;
+      font-size: 9.5px;
+      line-height: 1.55;
+      padding: 4px 6px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: var(--white);
+    }
+
+    .cl-box {
+      width: 13px;
+      height: 13px;
+      border: 1.5px solid var(--sub);
+      border-radius: 2px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .cl-text { color: var(--ink); }
+
+    /* ─── Do's / Don'ts ─── */
+    .principle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .principle-col {
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .principle-head {
+      padding: 4px 8px;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .principle-col.do .principle-head {
+      background: #D6EDD4;
+      color: #1E5C1A;
+    }
+
+    .principle-col.dont .principle-head {
+      background: #F0D4D4;
+      color: #7A2020;
+    }
+
+    .principle-list {
+      padding: 6px 8px;
+    }
+
+    .principle-item {
+      display: flex;
+      gap: 5px;
+      font-size: 9.5px;
+      line-height: 1.6;
+      margin-bottom: 3px;
+    }
+
+    .p-mark {
+      font-family: var(--mono);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .principle-col.do .p-mark { color: #1E5C1A; }
+    .principle-col.dont .p-mark { color: #7A2020; }
+
+    /* ─── 失恋後の対処 ─── */
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .post-card {
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 7px 8px;
+      background: var(--white);
+    }
+
+    .post-step {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 3px;
+      letter-spacing: 0.08em;
+    }
+
+    .post-title {
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .post-body {
+      font-size: 9px;
+      line-height: 1.65;
+      color: var(--sub);
+    }
+
+    /* ─── 将来像 ─── */
+    .future-strip {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 8px 12px;
+      margin-top: 12px;
+      border-radius: 4px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 9.5px;
+      line-height: 1.6;
+    }
+
+    .future-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      color: #B8E0D4;
+      white-space: nowrap;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    /* ─── 補記ライン ─── */
+    .footnote {
+      margin-top: 6px;
+      font-size: 8.5px;
+      color: var(--sub);
+      line-height: 1.6;
+      border-top: 1px dashed var(--line);
+      padding-top: 4px;
+    }
+
+    /* ─── フッター ─── */
+    .page-footer {
+      margin: 10px 14mm 0;
+      padding-top: 5px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 8px;
+      color: var(--sub);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── 印刷 ─── */
+    @media print {
+      body { background: none; padding: 0; }
+      .page { width: 210mm; min-height: 297mm; margin: 0; }
+      .print-btn { display: none; }
+      .page-break { page-break-before: always; }
+    }
+
+    /* ─── PAGE 2 専用スタイル ─── */
+    .p2-header {
+      border-bottom: 3px solid var(--accent);
+      padding-bottom: 9px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .p2-header-left .p2-tag {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 4px;
+    }
+
+    .p2-header-left h2 {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .p2-header-left .p2-sub {
+      font-size: 9.5px;
+      color: var(--sub);
+      margin-top: 4px;
+      line-height: 1.6;
+    }
+
+    .p2-header-right {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+
+    /* 統計バー */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .stat-tile {
+      background: var(--ink);
+      color: var(--bg);
+      border-radius: 4px;
+      padding: 7px 10px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: #C8A828;
+      line-height: 1.1;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 8.5px;
+      line-height: 1.5;
+      opacity: 0.85;
+    }
+
+    .stat-source {
+      font-family: var(--mono);
+      font-size: 7px;
+      opacity: 0.5;
+      margin-top: 2px;
+      display: block;
+    }
+
+    /* ステージ */
+    .stage-flow {
+      display: grid;
+      grid-template-columns: 1fr 16px 1fr 16px 1fr;
+      gap: 0;
+      margin-bottom: 12px;
+      align-items: start;
+    }
+
+    .stage-arrow {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 20px;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .stage-card {
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .stage-head {
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .stage-card.s1 .stage-head { background: #D6EDD4; }
+    .stage-card.s2 .stage-head { background: #F5EBC0; }
+    .stage-card.s3 .stage-head { background: #EDD6D6; }
+
+    .stage-num {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+
+    .stage-card.s1 .stage-num { color: #1E5C1A; }
+    .stage-card.s2 .stage-num { color: #7A5C00; }
+    .stage-card.s3 .stage-num { color: #7A2020; }
+
+    .stage-name {
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .stage-card.s1 .stage-name { color: #1E5C1A; }
+    .stage-card.s2 .stage-name { color: #7A5C00; }
+    .stage-card.s3 .stage-name { color: #7A2020; }
+
+    .stage-body {
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-top: none;
+      border-radius: 0 0 5px 5px;
+      background: var(--white);
+    }
+
+    .stage-action {
+      display: flex;
+      gap: 5px;
+      font-size: 9px;
+      line-height: 1.6;
+      margin-bottom: 4px;
+    }
+
+    .stage-bullet {
+      font-family: var(--mono);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .stage-card.s1 .stage-bullet { color: #1E5C1A; }
+    .stage-card.s2 .stage-bullet { color: #7A5C00; }
+    .stage-card.s3 .stage-bullet { color: #7A2020; }
+
+    .stage-tip {
+      font-size: 8px;
+      color: var(--sub);
+      margin-top: 5px;
+      padding-top: 4px;
+      border-top: 1px dashed var(--line);
+      line-height: 1.5;
+    }
+
+    /* チェック未達ガイド */
+    .guide-head {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-bottom: 1.5px solid var(--ink);
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .guide-item {
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .guide-cond {
+      background: rgba(0,0,0,0.04);
+      padding: 4px 8px;
+      font-size: 8.5px;
+      color: var(--sub);
+      border-bottom: 1px solid var(--line);
+      line-height: 1.5;
+    }
+
+    .guide-cond::before {
+      content: '□ まだ ';
+      font-family: var(--mono);
+      font-size: 8px;
+      color: var(--sub);
+    }
+
+    .guide-action {
+      padding: 5px 8px;
+      font-size: 9.5px;
+      line-height: 1.6;
+      color: var(--ink);
+      display: flex;
+      gap: 5px;
+    }
+
+    .guide-action::before {
+      content: '→';
+      font-family: var(--mono);
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+    }
+    .print-btn:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">印刷する</button>
+
+  <div class="page">
+
+    <!-- レジュメヘッダー -->
+    <div class="resume-header">
+      <div class="resume-meta">
+        <div class="resume-course">
+          恋愛未来設計展 · Love Analysis Project（100BANCH採択）<br>
+          テーマ：関係性把握 · Community Romance
+        </div>
+        <div class="resume-booth">BOOTH 05</div>
+      </div>
+      <div class="resume-title">コミュニティ恋愛ケーススタディ</div>
+      <div class="resume-subtitle">同じ職場・学校・サークルなど「共同体の中での恋愛」は、成功でも失敗でもコミュニティ全体に影響する。<br>このシートで自分の状況を整理して、動く前に一度立ち止まってみよう。</div>
+    </div>
+
+    <div class="content">
+
+      <!-- §01 コミュニティ別の特徴 -->
+      <div class="section">
+        <div class="sec-head">
+          <span class="sec-num">§ 01</span>
+          <span class="sec-title">コミュニティのタイプ — あなたはどこに属している？</span>
+        </div>
+        <div class="community-grid">
+          <div class="community-card">
+            <div class="community-type">Type A</div>
+            <div class="community-name">職場・仕事仲間</div>
+            <div class="community-body">毎日顔を合わせる密度の高さが特徴。成功すれば心強いパートナー、失敗すれば毎朝緊張する場所に変わる。上下関係・評価が絡む分リスクが複雑。</div>
+            <span class="community-tag">高密度 · 高リスク</span>
+          </div>
+          <div class="community-card">
+            <div class="community-type">Type B</div>
+            <div class="community-name">学校・ゼミ・クラス</div>
+            <div class="community-body">プロジェクトやグループワークで近づきやすい。ただし同期・先輩後輩の噂が広がりやすく、関係が壊れると卒業まで続く気まずさが残る。</div>
+            <span class="community-tag">噂・長期性 注意</span>
+          </div>
+          <div class="community-card">
+            <div class="community-type">Type C</div>
+            <div class="community-name">趣味サークル・クラブ</div>
+            <div class="community-body">共通の熱量が結びつきを生む。週1〜数回の活動頻度が「特別感」を保ちやすく、告白しやすい環境でもある。失恋後も活動を続けるかどうかで全員の雰囲気が変わる。</div>
+            <span class="community-tag">共通熱量 · 関係しやすい</span>
+          </div>
+          <div class="community-card">
+            <div class="community-type">Type D</div>
+            <div class="community-name">SNS・オンラインコミュニティ</div>
+            <div class="community-body">テキストベースで距離感が曖昧になりやすい。「リプ・DM」の回数を脈サインと過大解釈しがち。コミュニティ内でのブロック・フォロー外しが第三者の目に見える。</div>
+            <span class="community-tag">距離感の錯覚 注意</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footnote">※ 同じ場所に繰り返し顔を合わせるほど好意が生まれやすい（<strong>近接性の原理 / 単純接触効果</strong>）。ただし、この親近感は恋愛感情とは別物。「コミュニティがなければ会いたいか？」が判断の基準になる。</div>
+
+      <!-- §02 ケーススタディ -->
+      <div class="section">
+        <div class="sec-head">
+          <span class="sec-num">§ 02</span>
+          <span class="sec-title">ケーススタディ — よくある失敗パターン</span>
+          <span class="sec-note">実際の相談・事例をもとに構成</span>
+        </div>
+        <table class="case-table">
+          <thead>
+            <tr>
+              <th style="width:13%">CASE</th>
+              <th style="width:40%">何が起きたか</th>
+              <th style="width:47%">なぜうまくいかなかったか</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="case-label">Case 01<br>職場・上司</span></td>
+              <td class="case-what">好きな先輩に仕事でよく相談していた。二人での飲みも数回あり告白したが、翌週から業務の返答が事務的になった。</td>
+              <td class="case-why">評価と感情が混在する関係で告白したことで、相手が「公私どう扱うべきか」迷い、距離を置いた。職位差があると相手が断りにくく結果も読みにくい。</td>
+            </tr>
+            <tr>
+              <td><span class="case-label">Case 02<br>サークル内</span></td>
+              <td class="case-what">同じバンドサークルで仲の良いメンバーに告白。断られた後も活動は続けたが、共通の友人が「気を使わなきゃいけない」と言い始め、グループLINEが静かになった。</td>
+              <td class="case-why">二者間の問題がコミュニティ全体に伝播した。「告白した / された」情報は想像以上に早く広がり、周囲が「チーム」より「関係観察」にエネルギーを割き始める。</td>
+            </tr>
+            <tr>
+              <td><span class="case-label">Case 03<br>SNS</span></td>
+              <td class="case-what">ゲームの攻略コミュニティで毎日返信をくれる人を好きになり、DMで告白。既読のまま返信がなく、共通スペースでの会話も途絶えた。</td>
+              <td class="case-why">テキストの頻度・速度を「好意のサイン」と解釈したが、相手は「楽しい話相手」として接していた。オンラインの距離感はリアルより大きくずれやすい。</td>
+            </tr>
+            <tr>
+              <td><span class="case-label">Case 04<br>学校・ゼミ</span></td>
+              <td class="case-what">ゼミで半年近く一緒に論文を進め、強い絆を感じて告白。断られた後も同じゼミ。発表資料を共同で作る場面が週1で続いた。</td>
+              <td class="case-why">「一緒に作業する」ことが生む親密感（認知的接触効果）を恋愛感情と誤認した可能性。断られた後の共同作業は双方に高い精神的コストを課す。</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="footnote">※ 共通の傾向：「距離が近いから好き」と「コミュニティの中でも相手に特別視されている」は別物。判断の前に §03 のチェックを。</div>
+      </div>
+
+      <!-- §03 告白前チェック -->
+      <div class="section">
+        <div class="sec-head">
+          <span class="sec-num">§ 03</span>
+          <span class="sec-title">告白前セルフチェック — 全部YESなら一歩進んでみる</span>
+        </div>
+        <p class="checklist-intro">コミュニティ内での告白は「断られても関係が続く」前提で動く必要がある。以下の問いに正直に答えてみよう。</p>
+        <div class="checklist-two-col">
+          <div class="cl-item"><div class="cl-box"></div><span class="cl-text">コミュニティ外でも二人きりで会ったことがある</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span class="cl-text">相手から連絡を始めてくることが複数回ある</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span class="cl-text">グループ内で自分に対して特別な反応をすることがある</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span class="cl-text">コミュニティの活動がなくなっても会いたいと思える</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span class="cl-text">断られても同じコミュニティに居続けられると思える</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span class="cl-text">失恋後に周囲に配慮できる自信がある</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span class="cl-text">相手の気持ちを確認しないまま「両想い」と決めていない</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span class="cl-text">告白のタイミングを相手の状況を見て考えている</span></div>
+        </div>
+      </div>
+
+      <!-- §04 基本原則 -->
+      <div class="section">
+        <div class="sec-head">
+          <span class="sec-num">§ 04</span>
+          <span class="sec-title">アプローチの基本原則</span>
+        </div>
+        <div class="principle-grid">
+          <div class="principle-col do">
+            <div class="principle-head">✓ Do — やること</div>
+            <div class="principle-list">
+              <div class="principle-item"><span class="p-mark">→</span><span>グループ活動を通じて自然な接点を増やす</span></div>
+              <div class="principle-item"><span class="p-mark">→</span><span>コミュニティ外の場（カフェ・散歩など）に誘う</span></div>
+              <div class="principle-item"><span class="p-mark">→</span><span>断られた後も「普通」を意識して接する</span></div>
+              <div class="principle-item"><span class="p-mark">→</span><span>相手の返答をゆっくり待つ余裕を持つ</span></div>
+              <div class="principle-item"><span class="p-mark">→</span><span>告白は一対一・短く・プレッシャーのない状況で</span></div>
+            </div>
+          </div>
+          <div class="principle-col dont">
+            <div class="principle-head">✕ Don't — やらないこと</div>
+            <div class="principle-list">
+              <div class="principle-item"><span class="p-mark">×</span><span>コミュニティの集まりの場で告白する</span></div>
+              <div class="principle-item"><span class="p-mark">×</span><span>共通の友人に「探りを入れる」よう頼む</span></div>
+              <div class="principle-item"><span class="p-mark">×</span><span>断られた直後に感情的な行動をとる</span></div>
+              <div class="principle-item"><span class="p-mark">×</span><span>「コミュニティを辞める」を交渉カードにする</span></div>
+              <div class="principle-item"><span class="p-mark">×</span><span>返事を急かす・感情移入を強要する</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- §05 失恋後 -->
+      <div class="section">
+        <div class="sec-head">
+          <span class="sec-num">§ 05</span>
+          <span class="sec-title">断られた後 — コミュニティを守る3ステップ</span>
+        </div>
+        <div class="post-grid">
+          <div class="post-card">
+            <div class="post-step">STEP 01</div>
+            <div class="post-title">感情の処理は外でやる</div>
+            <div class="post-body">気持ちの整理は共通の友人ではなく、コミュニティ外の人や日記に委ねる。グループ内で感情を処理しようとすると周囲を巻き込む。</div>
+          </div>
+          <div class="post-card">
+            <div class="post-step">STEP 02</div>
+            <div class="post-title">最初の2〜3回は普通に振る舞う</div>
+            <div class="post-body">告白後の最初の数回の顔合わせで「普通に話せる」ことを示せると、雰囲気の回復が早い。無理なら「体調不良」等で一度休む。</div>
+          </div>
+          <div class="post-card">
+            <div class="post-step">STEP 03</div>
+            <div class="post-title">相手との関係を再定義する</div>
+            <div class="post-body">「恋人候補」から「信頼できる仲間」への再定義は時間がかかる。焦らず自分の中で切り替えた後、自然に接し直す。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 将来像 -->
+      <div class="future-strip">
+        <span class="future-label">Future Vision</span>
+        <span>コミュニティ管理者向け「恋愛俯瞰アドバイザー」ツール——集団内の関係性変化を可視化し、「今このチームの中でどんな変動が起きているか」を管理者が把握できる。グループの雰囲気を保ちながら、一人ひとりの状況を支援する未来。</span>
+      </div>
+
+    </div><!-- /content -->
+
+    <div class="page-footer">
+      <span>恋愛未来設計展 · Love Analysis Project（100BANCH採択プロジェクト）</span>
+      <span>BOOTH 05 · 同じコミュニティの人を好きになる</span>
+    </div>
+
+  </div><!-- /page 1 -->
+
+  <!-- ===== PAGE 2：ポジティブ成功ガイド ===== -->
+  <div class="page page-break">
+
+    <!-- ヘッダー -->
+    <div class="p2-header">
+      <div class="p2-header-left">
+        <div class="p2-tag">恋愛未来設計展 · BOOTH 05 · Success Guide</div>
+        <h2>コミュニティ恋愛 — 成功のロードマップ</h2>
+        <div class="p2-sub">データと心理学が示す「これをやれば成功率が上がる」段階別ガイドライン。前ページのチェックがまだ満たせていない項目は、このページの対応アクションを参考に。</div>
+      </div>
+      <div class="p2-header-right">BOOTH 05 · P.2</div>
+    </div>
+
+    <!-- 統計バー -->
+    <div class="stats-bar">
+      <div class="stat-tile">
+        <span class="stat-num">28.2%</span>
+        <span class="stat-label">夫婦の出会いの場で「職場・仕事」が1位</span>
+        <span class="stat-source">国立社会保障・人口問題研究所 第16回出生動向基本調査（2021）</span>
+      </div>
+      <div class="stat-tile">
+        <span class="stat-num">24.7%</span>
+        <span class="stat-label">コミュニティ内恋愛から結婚に至ったカップルの割合</span>
+        <span class="stat-source">日本法規情報 社内恋愛実態調査（n=657）</span>
+      </div>
+      <div class="stat-tile">
+        <span class="stat-num">85%</span>
+        <span class="stat-label">交際中カップルが「仕事のムードが向上した」と回答</span>
+        <span class="stat-source">SHRM Workplace Romance Report 2024（米国）</span>
+      </div>
+    </div>
+
+    <!-- 3ステージフロー -->
+    <div class="sec-head" style="margin-bottom:8px;">
+      <span class="sec-num">Step</span>
+      <span class="sec-title">段階別 — 成功率を上げる推奨アクション</span>
+    </div>
+
+    <div class="stage-flow">
+
+      <div class="stage-card s1">
+        <div class="stage-head">
+          <span class="stage-num">STAGE 1</span>
+          <span class="stage-name">存在感づくり期</span>
+        </div>
+        <div class="stage-body">
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>活動に継続して参加し、顔を合わせる回数を積み上げる（単純接触効果）</span></div>
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>全員に平等に接し、グループへの貢献を見せる</span></div>
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>笑顔と挨拶を徹底。好印象の日常蓄積が土台になる</span></div>
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>相手の活動ぶりを観察し、具体的に褒める機会を作る</span></div>
+          <div class="stage-tip">目標：特定の相手だけでなく、グループ全体から「感じがいい人」と思われる状態を作る</div>
+        </div>
+      </div>
+
+      <div class="stage-arrow">▶</div>
+
+      <div class="stage-card s2">
+        <div class="stage-head">
+          <span class="stage-num">STAGE 2</span>
+          <span class="stage-name">個別接点づくり期</span>
+        </div>
+        <div class="stage-body">
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>活動の「用件」を口実に個別会話を作る（資料共有・イベント情報など）</span></div>
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>グループLINEの話題を個別でフォローアップする（「今日の話、面白かった」）</span></div>
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>浅い話（趣味・活動）から徐々に個人的な話へ深める（社会的浸透理論）</span></div>
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>グループ→小グループ→二人の順で自然に移行する</span></div>
+          <div class="stage-tip">目標：「コミュニティ外でも話せる/連絡できる」関係を作る</div>
+        </div>
+      </div>
+
+      <div class="stage-arrow">▶</div>
+
+      <div class="stage-card s3">
+        <div class="stage-head">
+          <span class="stage-num">STAGE 3</span>
+          <span class="stage-name">関係開始期</span>
+        </div>
+        <div class="stage-body">
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>「デート」より「ランチ」「仕事帰りに軽く」など心理的ハードルを下げて誘う</span></div>
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>「いつか」ではなく「来週水曜の昼」など具体的な日時・場所で提案する</span></div>
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>前の会話で出た話題を口実に使う（「この前言ってた○○、一緒に行きませんか」）</span></div>
+          <div class="stage-action"><span class="stage-bullet">▶</span><span>二人の時間を複数回積み重ねてから気持ちを伝える</span></div>
+          <div class="stage-tip">目標：仕事/活動と私生活を自然に分けられていることを示しながら関係を深める</div>
+        </div>
+      </div>
+
+    </div><!-- /stage-flow -->
+
+    <!-- チェック未達ガイド -->
+    <div class="guide-head">チェックリスト連携 — まだ満たせていない場合のアクション（前ページ §03 参照）</div>
+
+    <div class="guide-grid">
+      <div class="guide-item">
+        <div class="guide-cond">コミュニティ外で二人きりになったことがない</div>
+        <div class="guide-action">Stage 2の「グループ→小グループ→二人」を段階的に踏む。いきなり二人に誘わない。</div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-cond">相手から連絡を始めてきたことがほとんどない</div>
+        <div class="guide-action">まずStage 1の土台（グループ全体への貢献・好印象）を積み上げ直す。相手が自然に話しかけたくなる状態を作る。</div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-cond">グループ内で特別な反応をされていると感じない</div>
+        <div class="guide-action">Stage 2「用件を口実にした個別会話」を1〜2回試す。反応の変化で相手の関心度を確認する。</div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-cond">コミュニティがなくても会いたいか確信が持てない</div>
+        <div class="guide-action">今は動くタイミングではない。自分の気持ちを整理する時間を作り、「コミュニティ外で会いたいか」を問い直す。</div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-cond">断られてもコミュニティに居続けられる自信がない</div>
+        <div class="guide-action">行動前に「断られた後の自分」をシミュレーションする。コミュニティへの愛着を高めることが先決。</div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-cond">告白のタイミングをまだ考えられていない</div>
+        <div class="guide-action">Stage 3の基準を参考に。「二人での時間を複数回経験してから」が目安。焦らず積み上げる。</div>
+      </div>
+    </div>
+
+    <!-- フッター -->
+    <div class="page-footer">
+      <span>恋愛未来設計展 · Love Analysis Project（100BANCH採択プロジェクト）</span>
+      <span>BOOTH 05 · 同じコミュニティの人を好きになる — P.2</span>
+    </div>
+
+  </div><!-- /page 2 -->
+</body>
+</html>

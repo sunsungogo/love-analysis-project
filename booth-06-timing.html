@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>関係性温度チェック — ブース06</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=Space+Grotesk:wght@400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:     #F5F1E4;
+      --ink:    #2A2823;
+      --accent: #B8860B;
+      --sub:    #7A7060;
+      --line:   #D9D2BC;
+
+      /* Temperature zone palette (muted, within now-world) */
+      --t-ice:      #C6D8E6;
+      --t-ice-ink:  #1E3850;
+      --t-cold:     #C8DDD0;
+      --t-cold-ink: #1A3828;
+      --t-warm:     #EED8A4;
+      --t-warm-ink: #5A3C08;
+      --t-hot:      #E0B888;
+      --t-hot-ink:  #6A2A04;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      font-size: 9pt;
+      line-height: 1.5;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 13mm 13mm 10mm;
+      margin: 0 auto;
+      background: var(--bg);
+    }
+
+    @media print {
+      body { background: white; }
+      .page {
+        width: 210mm;
+        min-height: 297mm;
+        page-break-after: always;
+        margin: 0;
+        padding: 13mm 13mm 10mm;
+      }
+    }
+
+    /* ────────── Header ────────── */
+    .header {
+      border-top: 3px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding: 4mm 0 3mm;
+      margin-bottom: 4mm;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .header-left { flex: 1; }
+
+    .station-id {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 6.5pt;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      color: var(--sub);
+      text-transform: uppercase;
+      margin-bottom: 1mm;
+    }
+
+    .report-title {
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 21pt;
+      font-weight: 900;
+      line-height: 1.05;
+      color: var(--ink);
+    }
+
+    .report-en {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 7.5pt;
+      color: var(--sub);
+      margin-top: 1mm;
+    }
+
+    .header-right {
+      text-align: right;
+    }
+
+    .booth-num {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 44pt;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--line);
+    }
+
+    .obs-date {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 6.5pt;
+      color: var(--sub);
+      margin-top: 0.5mm;
+    }
+
+    /* ────────── Intro Bar ────────── */
+    .intro-bar {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 2.5mm 4mm;
+      font-size: 7.5pt;
+      line-height: 1.65;
+      margin-bottom: 4mm;
+    }
+
+    .intro-bar em {
+      color: #E4C96A;
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    /* ────────── Main Area ────────── */
+    .main-area {
+      display: flex;
+      gap: 4mm;
+      align-items: flex-start;
+    }
+
+    .checklist-col { flex: 1; }
+
+    .meter-col {
+      width: 22mm;
+      flex-shrink: 0;
+    }
+
+    /* ────────── Sections ────────── */
+    .section {
+      margin-bottom: 3.5mm;
+    }
+
+    .section-head {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 1.5mm 3mm;
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+      margin-bottom: 0;
+    }
+
+    .s-num {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 6.5pt;
+      font-weight: 700;
+      opacity: 0.45;
+    }
+
+    .s-title {
+      font-size: 9pt;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .s-pts {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 7pt;
+      opacity: 0.6;
+      white-space: nowrap;
+    }
+
+    .check-list {
+      list-style: none;
+      border: 1px solid var(--line);
+      border-top: none;
+    }
+
+    .ci {
+      display: flex;
+      align-items: flex-start;
+      gap: 2.5mm;
+      padding: 2mm 3mm;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .ci:last-child { border-bottom: none; }
+
+    .cb {
+      width: 4.5mm;
+      height: 4.5mm;
+      border: 1.5px solid var(--ink);
+      flex-shrink: 0;
+      margin-top: 1mm;
+    }
+
+    .ct {
+      font-size: 8pt;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .cn {
+      display: block;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 6pt;
+      color: var(--sub);
+      margin-top: 0.5mm;
+      line-height: 1.4;
+    }
+
+    /* ────────── Meter Column ────────── */
+    .meter-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 6pt;
+      color: var(--sub);
+      text-align: center;
+      letter-spacing: 0.05em;
+      margin-bottom: 2mm;
+      line-height: 1.4;
+    }
+
+    .meter-zones {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5mm;
+    }
+
+    .mz {
+      padding: 2mm 2.5mm;
+      border-radius: 1mm;
+      text-align: center;
+    }
+
+    .mz-hot  { background: var(--t-hot);  color: var(--t-hot-ink); }
+    .mz-warm { background: var(--t-warm); color: var(--t-warm-ink); }
+    .mz-cold { background: var(--t-cold); color: var(--t-cold-ink); }
+    .mz-ice  { background: var(--t-ice);  color: var(--t-ice-ink); }
+
+    .mz-icon {
+      font-size: 11pt;
+      display: block;
+      margin-bottom: 0.5mm;
+    }
+
+    .mz-pts {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 7pt;
+      font-weight: 700;
+      display: block;
+    }
+
+    .mz-name {
+      font-size: 7.5pt;
+      font-weight: 900;
+      display: block;
+    }
+
+    /* ────────── Score Row ────────── */
+    .score-row {
+      border: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      padding: 2mm 3mm;
+      gap: 4mm;
+      margin-top: 3mm;
+    }
+
+    .score-lbl {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 6.5pt;
+      font-weight: 700;
+      color: var(--sub);
+      letter-spacing: 0.1em;
+    }
+
+    .score-field {
+      width: 24mm;
+      border-bottom: 2px solid var(--ink);
+      height: 7mm;
+    }
+
+    .score-denom {
+      font-size: 8pt;
+      color: var(--sub);
+    }
+
+    .score-hint {
+      flex: 1;
+      font-size: 7pt;
+      color: var(--sub);
+      line-height: 1.5;
+    }
+
+    /* ────────── Results Strip ────────── */
+    .results {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2mm;
+      margin-top: 3mm;
+    }
+
+    .rc {
+      padding: 2.5mm 2.5mm;
+      border-radius: 1mm;
+    }
+
+    .rc-hot  { background: var(--t-hot);  color: var(--t-hot-ink); }
+    .rc-warm { background: var(--t-warm); color: var(--t-warm-ink); }
+    .rc-cold { background: var(--t-cold); color: var(--t-cold-ink); }
+    .rc-ice  { background: var(--t-ice);  color: var(--t-ice-ink); }
+
+    .rc-pts {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 7.5pt;
+      font-weight: 700;
+    }
+
+    .rc-name {
+      font-size: 10pt;
+      font-weight: 900;
+      margin: 0.5mm 0 1mm;
+    }
+
+    .rc-desc {
+      font-size: 6.5pt;
+      line-height: 1.45;
+    }
+
+    .rc-action {
+      font-size: 6pt;
+      font-weight: 700;
+      margin-top: 1.5mm;
+      padding-top: 1.5mm;
+      border-top: 1px solid rgba(0,0,0,0.12);
+      line-height: 1.4;
+    }
+
+    /* ────────── Future Strip ────────── */
+    .future-strip {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 3mm 4mm;
+      display: flex;
+      align-items: flex-start;
+      gap: 4mm;
+      margin-top: 3mm;
+    }
+
+    .future-lbl {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 6pt;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #E4C96A;
+      text-transform: uppercase;
+      white-space: nowrap;
+      padding-top: 0.5mm;
+    }
+
+    .future-txt {
+      font-size: 7.5pt;
+      line-height: 1.6;
+    }
+
+    /* ────────── Footer ────────── */
+    .footer {
+      border-top: 1px solid var(--line);
+      padding-top: 2mm;
+      margin-top: 3mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .footer-org {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 6pt;
+      color: var(--sub);
+    }
+
+    .footer-ref {
+      font-size: 5.5pt;
+      color: var(--sub);
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ─── Header ─── -->
+  <div class="header">
+    <div class="header-left">
+      <div class="station-id">Love Analysis Project · Booth 06 · 関係性把握</div>
+      <div class="report-title">関係性温度チェック</div>
+      <div class="report-en">Relationship Readiness Observation Sheet</div>
+    </div>
+    <div class="header-right">
+      <div class="booth-num">06</div>
+      <div class="obs-date">観測日：______月______日</div>
+    </div>
+  </div>
+
+  <!-- ─── Intro Bar ─── -->
+  <div class="intro-bar">
+    「タイミングが合わない」は感覚的な言葉だが、心理学的には<em>4つの要素</em>で測れる。チェックを入れた合計点が今の「関係性温度」。<em>80%以上</em>の人が「恋愛にはタイミングが重要」と答える（よろず〜ニュース2023）一方、「タイミング」が言い訳として使われている場合も多い。自分の温度を確認してみよう。
+  </div>
+
+  <!-- ─── Main Area ─── -->
+  <div class="main-area">
+    <div class="checklist-col">
+
+      <!-- §01 -->
+      <div class="section">
+        <div class="section-head">
+          <span class="s-num">§01</span>
+          <span class="s-title">自分の心の開き具合</span>
+          <span class="s-pts">____／4点</span>
+        </div>
+        <ul class="check-list">
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">最近の大きな別れや喪失体験から、十分に立ち直っている
+              <span class="cn">悲嘆が未完了のまま始まった関係は、過去の感情が干渉しやすい</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">仕事や生活のストレスが激しすぎず、感情的な余裕がある
+              <span class="cn">燃え尽き状態では関係を育てるエネルギー自体が枯渇している</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">誰かを好きになることへの恐れや身構えが、前より少なくなっている
+              <span class="cn">回避型の愛着スタイルは「タイミング」を理由に関係を遠ざける傾向がある（Bowlby）</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">「焦りや孤独感からではなく」純粋にこの人とつながりたいと感じている
+              <span class="cn">動機の質が関係の質を左右する。コミットメント・レディネス尺度の核心（Hadden et al., 2018）</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- §02 -->
+      <div class="section">
+        <div class="section-head">
+          <span class="s-num">§02</span>
+          <span class="s-title">生活環境の整い具合</span>
+          <span class="s-pts">____／4点</span>
+        </div>
+        <ul class="check-list">
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">引越し・転職・深刻な家族問題など、人生の大変動の真っ最中ではない
+              <span class="cn">ライフステージが不安定な時期に始まった関係は外圧に負けやすい</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">週に数回、相手と向き合う時間的・体力的な余裕がある
+              <span class="cn">接触機会が確保できないと、関係の深まりは物理的に止まる</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">キャリアや経済的な不安が、恋愛のエネルギーを大幅に奪っていない
+              <span class="cn">経済的不安定さは交際・コミット決断に負の影響を与える（Zimmermann, 2021）</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">今の自分の生活に「もう一人」を迎えられる心のスペースがある
+              <span class="cn">スペースがない状態でも気持ちは本物——ただタイミングがズレているだけ</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- §03 -->
+      <div class="section">
+        <div class="section-head">
+          <span class="s-num">§03</span>
+          <span class="s-title">相手との「温まりサイン」</span>
+          <span class="s-pts">____／4点</span>
+        </div>
+        <ul class="check-list">
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">相手から自発的に夢・価値観・過去など「深い話」が出るようになった
+              <span class="cn">自己開示の深まりは関係進展の指標（社会的浸透理論 Altman & Taylor, 1973）</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">感情的な内容でもやりとりができ、相手の反応がある程度読める
+              <span class="cn">「感情交換段階」に達した関係は安定して次に進みやすい</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">連絡や接触の頻度・質が、一方的でなく双方向に高まっている
+              <span class="cn">相互性（reciprocity）のない開示は関係進展を止める</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">「楽しい」だけでなく「安心する」という感覚が生まれてきた
+              <span class="cn">情熱から親密性への移行——Sternberg三角理論における関係成熟のサイン</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- §04 -->
+      <div class="section">
+        <div class="section-head">
+          <span class="s-num">§04</span>
+          <span class="s-title">人生の方向性の合い具合</span>
+          <span class="s-pts">____／4点</span>
+        </div>
+        <ul class="check-list">
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">今のライフステージの優先事項（安定・キャリア・自由・家族）が近い
+              <span class="cn">優先事項が大きくズレていると、どれだけ好きでも日常が衝突する</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">将来に対する価値観の方向性（どう生きたいか）が、感覚的に近い
+              <span class="cn">コミットメントは「この人と歩む未来」が想像できるときに生まれる（Sternberg, 1986）</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">相手が「今、誰かとのつながりを深めたい時期」にいると感じる
+              <span class="cn">片方だけが準備できている状態が典型的なタイミングのミスマッチ（Hadden & Agnew, 2019）</span>
+            </div>
+          </li>
+          <li class="ci">
+            <div class="cb"></div>
+            <div class="ct">関係を一歩進めることへの意欲が、お互いに感じられる
+              <span class="cn">両者のコミットメント・レディネスが近いほど関係は安定して進みやすい</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+    </div><!-- /checklist-col -->
+
+    <!-- ─── Meter Column ─── -->
+    <div class="meter-col">
+      <div class="meter-label">合計点を<br>下から読む</div>
+      <div class="meter-zones">
+        <div class="mz mz-hot">
+          <span class="mz-icon">🔥</span>
+          <span class="mz-pts">14〜16</span>
+          <span class="mz-name">熱温</span>
+        </div>
+        <div class="mz mz-warm">
+          <span class="mz-icon">🌡️</span>
+          <span class="mz-pts">10〜13</span>
+          <span class="mz-name">適温</span>
+        </div>
+        <div class="mz mz-cold">
+          <span class="mz-icon">🌬️</span>
+          <span class="mz-pts">6〜9</span>
+          <span class="mz-name">冷温</span>
+        </div>
+        <div class="mz mz-ice">
+          <span class="mz-icon">❄️</span>
+          <span class="mz-pts">0〜5</span>
+          <span class="mz-name">氷点</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-area -->
+
+  <!-- ─── Score Row ─── -->
+  <div class="score-row">
+    <div class="score-lbl">TOTAL<br>SCORE</div>
+    <div class="score-field"></div>
+    <div class="score-denom">点 ／ 16点</div>
+    <div class="score-hint">§01〜§04 の合計を記入<br>（チェックを入れた数 ＝ 点数）</div>
+  </div>
+
+  <!-- ─── Results Strip ─── -->
+  <div class="results">
+    <div class="rc rc-ice">
+      <div class="rc-pts">❄️ 0〜5点</div>
+      <div class="rc-name">氷点</div>
+      <div class="rc-desc">心のどこかが閉じている。感情的な余裕か環境のどちらかが不足している状態。</div>
+      <div class="rc-action">→ まず自分の回復を優先。今は「仕込み期」と捉えて</div>
+    </div>
+    <div class="rc rc-cold">
+      <div class="rc-pts">🌬️ 6〜9点</div>
+      <div class="rc-name">冷温</div>
+      <div class="rc-desc">動けそうだが何かが引っかかる。受け身になりやすいタイミング。</div>
+      <div class="rc-action">→ 深い話を一つ増やすことから始めると関係が温まりやすい</div>
+    </div>
+    <div class="rc rc-warm">
+      <div class="rc-pts">🌡️ 10〜13点</div>
+      <div class="rc-name">適温</div>
+      <div class="rc-desc">多くの条件が整いつつある。あと一歩の行動で大きく変わりやすい状態。</div>
+      <div class="rc-action">→「一緒に○○したい」という具体的な提案が効果的</div>
+    </div>
+    <div class="rc rc-hot">
+      <div class="rc-pts">🔥 14〜16点</div>
+      <div class="rc-name">熱温</div>
+      <div class="rc-desc">タイミングは整っている。動けないとすればタイミングより勇気の問題かもしれない。</div>
+      <div class="rc-action">→ 今日がそのタイミング。小さくても動いてみよう</div>
+    </div>
+  </div>
+
+  <!-- ─── Future Strip ─── -->
+  <div class="future-strip">
+    <div class="future-lbl">FUTURE</div>
+    <div class="future-txt">
+      将来像：お互いの体調・精神状態・忙しさをセンシングして、友達感覚で自然に共有し合えるサービス。「今週ちょっと余裕ないんだよね」が言葉にしなくても伝わる世界へ。
+    </div>
+  </div>
+
+  <!-- ─── Footer ─── -->
+  <div class="footer">
+    <div class="footer-org">Love Analysis Project（100BANCH採択） · ブース06</div>
+    <div class="footer-ref">参考：Hadden et al. (2018) PSPB · Sternberg (1986) · Altman & Taylor (1973) · Hadden & Agnew (2019) · 国立社会保障・人口問題研究所 (2015)</div>
+  </div>
+
+</div>
+</body>
+</html>

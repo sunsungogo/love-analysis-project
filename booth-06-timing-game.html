@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>関係性温度チェック — ブース06</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --c-ice:  #7EC8E3;
+      --c-cold: #52C49A;
+      --c-warm: #F5C542;
+      --c-hot:  #F57C4A;
+      --bg:     #0C0E1A;
+      --ink:    #E8ECF5;
+      --sub:    rgba(232,236,245,0.45);
+      --line:   rgba(232,236,245,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      overflow: hidden;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 480px;
+      height: 100dvh;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Screen system ── */
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ════════════════════════════
+       START SCREEN
+    ════════════════════════════ */
+    #s-start {
+      justify-content: center;
+      gap: 0;
+      background: radial-gradient(ellipse at 50% 30%, #1A1040 0%, var(--bg) 70%);
+    }
+
+    .start-glow {
+      font-size: 72px;
+      line-height: 1;
+      margin-bottom: 28px;
+      filter: drop-shadow(0 0 24px rgba(245,197,66,0.5));
+      animation: breathe 3s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(245,197,66,0.4)); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 0 36px rgba(245,197,66,0.7)); }
+    }
+
+    .start-booth {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--c-warm);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .start-title {
+      font-size: 26px;
+      font-weight: 900;
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .start-desc {
+      font-size: 14px;
+      color: var(--sub);
+      text-align: center;
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+
+    .start-time {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 12px;
+      color: var(--sub);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 5px 14px;
+      margin-bottom: 32px;
+    }
+
+    .btn-start {
+      width: 100%;
+      max-width: 280px;
+      height: 60px;
+      border: none;
+      border-radius: 30px;
+      background: linear-gradient(135deg, var(--c-warm), var(--c-hot));
+      color: #fff;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 8px 32px rgba(245,124,74,0.35);
+      letter-spacing: 0.05em;
+    }
+
+    .btn-start:active { transform: scale(0.96); }
+
+    .start-note {
+      margin-top: 20px;
+      font-size: 11px;
+      color: rgba(232,236,245,0.25);
+      text-align: center;
+    }
+
+    /* ════════════════════════════
+       SECTION INTRO SCREEN
+    ════════════════════════════ */
+    #s-section {
+      justify-content: center;
+      transition: opacity 0.3s ease, background-color 0.4s ease;
+    }
+
+    .si-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: rgba(255,255,255,0.3);
+      transition: width 1.8s linear;
+      width: 0;
+      border-radius: 0 3px 3px 0;
+    }
+
+    .si-kicker {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .si-icon {
+      font-size: 64px;
+      line-height: 1;
+      margin-bottom: 16px;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.4); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .si-title {
+      font-size: 22px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .si-desc {
+      font-size: 13px;
+      color: var(--sub);
+      text-align: center;
+      line-height: 1.7;
+      max-width: 260px;
+      margin-bottom: 36px;
+    }
+
+    .si-range {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      color: var(--sub);
+      letter-spacing: 0.1em;
+    }
+
+    /* ════════════════════════════
+       QUESTION SCREEN
+    ════════════════════════════ */
+    #s-question {
+      padding-top: 0;
+      padding-bottom: 0;
+      justify-content: flex-start;
+    }
+
+    /* Top bar area */
+    .q-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 14px 20px 10px;
+    }
+
+    .q-progress-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .q-counter {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 12px;
+      color: var(--sub);
+      white-space: nowrap;
+      width: 44px;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 4px;
+      background: var(--line);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    /* Temperature strip */
+    .temp-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .temp-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      color: var(--sub);
+      letter-spacing: 0.08em;
+      width: 44px;
+    }
+
+    .temp-track {
+      flex: 1;
+      height: 8px;
+      background: var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .temp-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right,
+        var(--c-ice)  0%   31%,
+        var(--c-cold) 31%  56%,
+        var(--c-warm) 56%  81%,
+        var(--c-hot)  81% 100%
+      );
+    }
+
+    .temp-mask {
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+      transition: left 0.5s ease;
+      left: 0%;  /* controlled by JS: left = score/16 * 100% */
+    }
+
+    .temp-score {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      width: 32px;
+      text-align: right;
+      transition: color 0.5s;
+    }
+
+    /* Section badge */
+    .q-section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: 'Space Grotesk', monospace;
+      padding: 4px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.06em;
+      border: 1px solid transparent;
+      margin-top: 78px;
+      margin-bottom: 10px;
+      align-self: flex-start;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    /* Question card */
+    .q-card {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px 24px 24px;
+      margin-bottom: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      animation: cardIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      transform-origin: center;
+    }
+
+    @keyframes cardIn {
+      from { transform: translateX(40px) scale(0.96); opacity: 0; }
+      to   { transform: translateX(0) scale(1);      opacity: 1; }
+    }
+
+    .q-text {
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.65;
+      color: var(--ink);
+      margin-bottom: 14px;
+      white-space: pre-line;
+    }
+
+    .q-divider {
+      width: 32px;
+      height: 2px;
+      background: var(--line);
+      border-radius: 1px;
+      margin: 0 auto 14px;
+    }
+
+    .q-hint {
+      font-size: 11.5px;
+      color: var(--sub);
+      line-height: 1.65;
+    }
+
+    /* Answer buttons */
+    .answer-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      padding: 16px 0 24px;
+      flex-shrink: 0;
+    }
+
+    .btn-ans {
+      height: 62px;
+      border-radius: 16px;
+      border: 2px solid transparent;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.1s, background 0.15s;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+    }
+
+    .btn-ans:active { transform: scale(0.94); }
+
+    .btn-no {
+      background: rgba(126,200,227,0.08);
+      border-color: rgba(126,200,227,0.35);
+      color: var(--c-ice);
+    }
+
+    .btn-no.flash {
+      background: var(--c-ice);
+      color: #0C0E1A;
+    }
+
+    .btn-yes {
+      background: rgba(245,124,74,0.10);
+      border-color: rgba(245,124,74,0.35);
+      color: var(--c-hot);
+    }
+
+    .btn-yes.flash {
+      background: var(--c-hot);
+      color: #fff;
+    }
+
+    /* ════════════════════════════
+       RESULTS SCREEN
+    ════════════════════════════ */
+    #s-result {
+      justify-content: flex-start;
+      padding-top: 40px;
+      padding-bottom: 32px;
+      overflow-y: auto;
+      transition: opacity 0.4s, background 1s ease;
+    }
+
+    .r-booth {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 24px;
+      align-self: flex-start;
+    }
+
+    /* Thermo assembly */
+    .thermo-assembly {
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .thermo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .thermo-tube {
+      width: 28px;
+      height: 180px;
+      border: 2.5px solid rgba(255,255,255,0.2);
+      border-bottom: none;
+      border-radius: 14px 14px 0 0;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      position: relative;
+    }
+
+    .thermo-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top,
+        var(--c-ice)  0%   31%,
+        var(--c-cold) 31%  56%,
+        var(--c-warm) 56%  81%,
+        var(--c-hot)  81% 100%
+      );
+    }
+
+    .thermo-cover {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      background: rgba(12,14,26,0.92);
+      transition: height 2.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .thermo-bulb {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(255,255,255,0.2);
+      margin-top: -2px;
+      transition: background-color 2.2s ease, box-shadow 2.2s ease;
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* Zone markers beside thermometer */
+    .thermo-markers {
+      height: 226px; /* tube 180 + bulb 46 */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2px 0 23px;
+    }
+
+    .tm-zone {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 600;
+      opacity: 0.4;
+      transition: opacity 0.5s, color 0.5s;
+      cursor: default;
+    }
+
+    .tm-zone.active { opacity: 1; }
+
+    .tm-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Result text block */
+    .r-main {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .r-icon {
+      font-size: 52px;
+      line-height: 1;
+      margin-bottom: 8px;
+      animation: popIn 0.6s 0.5s both cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .r-score {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 13px;
+      color: var(--sub);
+      margin-bottom: 6px;
+    }
+
+    .r-name {
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 8px;
+      animation: fadeUp 0.6s 0.7s both ease-out;
+    }
+
+    @keyframes fadeUp {
+      from { transform: translateY(14px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .r-desc {
+      font-size: 15px;
+      color: var(--sub);
+      line-height: 1.7;
+      animation: fadeUp 0.6s 0.9s both ease-out;
+    }
+
+    .r-advice-card {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s 1.1s both ease-out;
+    }
+
+    .r-advice-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 8px;
+    }
+
+    .r-advice-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--ink);
+    }
+
+    .btn-retry {
+      width: 100%;
+      max-width: 280px;
+      height: 54px;
+      border: 1.5px solid var(--line);
+      border-radius: 28px;
+      background: rgba(255,255,255,0.04);
+      color: var(--sub);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      margin-bottom: 16px;
+      animation: fadeUp 0.6s 1.3s both ease-out;
+    }
+
+    .btn-retry:hover, .btn-retry:active {
+      border-color: var(--c-warm);
+      color: var(--c-warm);
+      background: rgba(245,197,66,0.05);
+    }
+
+    .r-ref {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      color: rgba(232,236,245,0.2);
+      text-align: center;
+      line-height: 1.6;
+      animation: fadeUp 0.6s 1.5s both ease-out;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ═══ START ═══ -->
+  <div class="screen" id="s-start">
+    <div class="start-glow">🌡️</div>
+    <div class="start-booth">BOOTH 06 · LOVE ANALYSIS PROJECT</div>
+    <div class="start-title">関係性<br>温度チェック</div>
+    <div class="start-desc">16の質問で、あなたと相手の関係の<br>「いまの温度」を測ります。</div>
+    <div class="start-time">⏱ 約3分</div>
+    <button class="btn-start" onclick="startGame()">診断スタート</button>
+    <div class="start-note">❄️ 氷点 → 🌬 冷温 → 🌡 適温 → 🔥 熱温 の4段階</div>
+  </div>
+
+  <!-- ═══ SECTION INTRO ═══ -->
+  <div class="screen" id="s-section">
+    <div class="si-kicker" id="si-kicker"></div>
+    <div class="si-icon" id="si-icon"></div>
+    <div class="si-title" id="si-title"></div>
+    <div class="si-desc" id="si-desc"></div>
+    <div class="si-range" id="si-range"></div>
+    <div class="si-progress" id="si-progress"></div>
+  </div>
+
+  <!-- ═══ QUESTION ═══ -->
+  <div class="screen" id="s-question">
+    <div class="q-top">
+      <div class="q-progress-row">
+        <div class="q-counter" id="q-counter">Q1 / 16</div>
+        <div class="progress-track">
+          <div class="progress-fill" id="q-prog" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="temp-strip">
+        <div class="temp-label">温度</div>
+        <div class="temp-track">
+          <div class="temp-gradient"></div>
+          <div class="temp-mask" id="temp-mask" style="left:0%"></div>
+        </div>
+        <div class="temp-score" id="temp-score">0pt</div>
+      </div>
+    </div>
+
+    <div class="q-section-badge" id="q-badge"></div>
+    <div class="q-card" id="q-card">
+      <div class="q-text" id="q-text"></div>
+      <div class="q-divider"></div>
+      <div class="q-hint" id="q-hint"></div>
+    </div>
+    <div class="answer-row">
+      <button class="btn-ans btn-no" id="btn-no" onclick="answer(false)">✗ いいえ</button>
+      <button class="btn-ans btn-yes" id="btn-yes" onclick="answer(true)">✓ はい</button>
+    </div>
+  </div>
+
+  <!-- ═══ RESULTS ═══ -->
+  <div class="screen" id="s-result">
+    <div class="r-booth">BOOTH 06 · 関係性診断</div>
+    <div class="thermo-assembly">
+      <div class="thermo-wrap">
+        <div class="thermo-tube">
+          <div class="thermo-gradient"></div>
+          <div class="thermo-cover" id="thermo-cover" style="height:100%"></div>
+        </div>
+        <div class="thermo-bulb" id="thermo-bulb"></div>
+      </div>
+      <div class="thermo-markers" id="thermo-markers">
+        <div class="tm-zone" id="tm-hot"  data-zone="hot">
+          <div class="tm-dot" style="background:var(--c-hot)"></div>🔥 熱温
+        </div>
+        <div class="tm-zone" id="tm-warm" data-zone="warm">
+          <div class="tm-dot" style="background:var(--c-warm)"></div>🌡 適温
+        </div>
+        <div class="tm-zone" id="tm-cold" data-zone="cold">
+          <div class="tm-dot" style="background:var(--c-cold)"></div>🌬 冷温
+        </div>
+        <div class="tm-zone" id="tm-ice"  data-zone="ice">
+          <div class="tm-dot" style="background:var(--c-ice)"></div>❄️ 氷点
+        </div>
+      </div>
+      <div class="r-main">
+        <div class="r-icon" id="r-icon"></div>
+        <div class="r-score" id="r-score"></div>
+        <div class="r-name" id="r-name"></div>
+        <div class="r-desc" id="r-desc"></div>
+      </div>
+    </div>
+    <div class="r-advice-card">
+      <div class="r-advice-label">次のアクション</div>
+      <div class="r-advice-text" id="r-advice"></div>
+    </div>
+    <button class="btn-retry" onclick="resetGame()">🔄 もう一度測る</button>
+    <div class="r-ref">
+      Hadden et al. (2018) · Sternberg (1986) · Altman & Taylor (1973)
+    </div>
+  </div>
+
+</div>
+<script>
+  /* ════ DATA ════ */
+
+  const SECTIONS = [
+    { num:'§01', title:'自分の心の開き具合', icon:'🫀', color:'#A78BFA',
+      bg:'linear-gradient(160deg,#1A0840 0%,#0C0E1A 70%)',
+      desc:'恋愛への感情的な準備度を確認します', range:'Q1 〜 Q4' },
+    { num:'§02', title:'生活環境の整い具合', icon:'🏡', color:'#60A5FA',
+      bg:'linear-gradient(160deg,#081830 0%,#0C0E1A 70%)',
+      desc:'関係を育てる環境が整っているか確認します', range:'Q5 〜 Q8' },
+    { num:'§03', title:'相手との温まりサイン', icon:'💬', color:'#34D399',
+      bg:'linear-gradient(160deg,#071F18 0%,#0C0E1A 70%)',
+      desc:'関係が温まっているサインを確認します', range:'Q9 〜 Q12' },
+    { num:'§04', title:'方向性の合い具合', icon:'🧭', color:'#FBBF24',
+      bg:'linear-gradient(160deg,#1A1408 0%,#0C0E1A 70%)',
+      desc:'お互いのベクトルが合っているか確認します', range:'Q13 〜 Q16' },
+  ];
+
+  const QUESTIONS = [
+    // §01
+    { s:0, text:'過去の別れや喪失体験から\n十分に立ち直っている', hint:'悲嘆が未完了のまま始まった関係は、過去の感情が干渉しやすい' },
+    { s:0, text:'仕事・生活のストレスが激しすぎず\n感情的な余裕がある', hint:'燃え尽き状態では関係を育てるエネルギー自体が枯渇している' },
+    { s:0, text:'誰かを好きになることへの恐れが\n以前より少なくなっている', hint:'過去の傷が深いと、好意を感じた瞬間に心が閉じるクセがつく' },
+    { s:0, text:'焦りや孤独感からではなく\n純粋につながりたい気持ちがある', hint:'動機の質が、関係の質に直結する（Hadden et al., 2018）' },
+    // §02
+    { s:1, text:'引越し・転職など\n人生の大変動の真っ最中ではない', hint:'ライフステージが不安定な時期に始まった関係は外圧に負けやすい' },
+    { s:1, text:'週に数回、相手と向き合う\n時間的・体力的な余裕がある', hint:'接触機会が確保できないと、関係の深まりは物理的に止まる' },
+    { s:1, text:'経済的な不安が恋愛のエネルギーを\n大幅に奪っていない', hint:'経済的不安定さは交際・コミット決断に負の影響を与える' },
+    { s:1, text:'今の生活に「もう一人」を\n迎えられる心のスペースがある', hint:'スペースがなくても気持ちは本物——ただタイミングがズレているだけ' },
+    // §03
+    { s:2, text:'相手から自発的に深い話\n（夢・価値観・過去）が出るようになった', hint:'自己開示の深まりは関係進展の指標（社会的浸透理論）' },
+    { s:2, text:'感情的な内容でも話せ\n相手の反応がある程度読める', hint:'「感情交換段階」に達した関係は次に進みやすい' },
+    { s:2, text:'連絡・接触の頻度と質が\n双方向に高まっている', hint:'一方的な開示では関係は進展しない（相互性の原則）' },
+    { s:2, text:'「楽しい」だけでなく\n「安心する」感覚が生まれてきた', hint:'情熱から親密性への移行——関係成熟のサイン（Sternberg, 1986）' },
+    // §04
+    { s:3, text:'今のライフステージの優先事項が\nお互いに近い', hint:'優先事項が大きくズレていると日常で衝突しやすい' },
+    { s:3, text:'将来の価値観の方向性が\n感覚的に近い', hint:'コミットメントは「この人と歩む未来」が想像できるときに生まれる' },
+    { s:3, text:'相手も「誰かとのつながりを\n深めたい時期」にいると感じる', hint:'片方だけが準備できている状態が典型的なタイミングのミスマッチ' },
+    { s:3, text:'関係を一歩進めることへの意欲が\nお互いに感じられる', hint:'両者のコミットメント・レディネスが近いほど関係は安定して進む' },
+  ];
+
+  const ZONES = {
+    ice:  { name:'氷点', icon:'❄️', color:'#7EC8E3', bg:'linear-gradient(160deg,#071830 0%,#0C0E1A 70%)',
+            desc:'心のどこかが閉じている状態です。',
+            advice:'まず自分の回復を優先しましょう。今は「仕込み期」と捉えて。準備が整ったとき、気持ちは自然と動き出します。焦る必要はありません。' },
+    cold: { name:'冷温', icon:'🌬️', color:'#52C49A', bg:'linear-gradient(160deg,#071A14 0%,#0C0E1A 70%)',
+            desc:'動けそうだが何かが引っかかっています。',
+            advice:'深い話を一つ増やすことから始めてみましょう。受け身をやめて小さく一歩だけ踏み出すと、関係が温まりやすいタイミングです。' },
+    warm: { name:'適温', icon:'🌡️', color:'#F5C542', bg:'linear-gradient(160deg,#1A1408 0%,#0C0E1A 70%)',
+            desc:'多くの条件が整いつつあります。',
+            advice:'「一緒に○○したい」という具体的な提案が効果的です。あと一歩の行動で大きく変わりやすい、良いタイミングに来ています。' },
+    hot:  { name:'熱温', icon:'🔥', color:'#F57C4A', bg:'linear-gradient(160deg,#200A04 0%,#0C0E1A 70%)',
+            desc:'タイミングは整っています。',
+            advice:'動けないとすれば、それはタイミングより勇気の問題かもしれません。今日がそのタイミングです。小さくても動いてみましょう。' },
+  };
+
+  /* ════ STATE ════ */
+  let qIdx = 0;
+  let score = 0;
+  let busy = false;
+  let pendingSectionIdx = 0;
+  let siTimer = null;
+
+  /* ════ INIT ════ */
+  show('s-start');
+
+  /* ════ SCREEN MGMT ════ */
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  /* ════ START ════ */
+  function startGame() {
+    qIdx = 0; score = 0; busy = false;
+    showSectionIntro(0);
+  }
+
+  /* ════ SECTION INTRO ════ */
+  function showSectionIntro(si) {
+    pendingSectionIdx = si;
+    const s = SECTIONS[si];
+    document.getElementById('si-kicker').textContent = `${s.num} of 4`;
+    document.getElementById('si-icon').textContent = s.icon;
+    document.getElementById('si-title').textContent = s.title;
+    document.getElementById('si-desc').textContent = s.desc;
+    document.getElementById('si-range').textContent = s.range;
+
+    const el = document.getElementById('s-section');
+    el.style.background = s.bg;
+
+    // Section text color tint
+    document.getElementById('si-kicker').style.color = s.color;
+    document.getElementById('si-title').style.color = s.color;
+
+    // Re-trigger icon animation
+    const icon = document.getElementById('si-icon');
+    icon.style.animation = 'none';
+    void icon.offsetWidth;
+    icon.style.animation = '';
+
+    show('s-section');
+
+    // Progress bar auto-advance (1.8s)
+    const bar = document.getElementById('si-progress');
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    void bar.offsetWidth;
+    bar.style.transition = 'width 1.8s linear';
+    bar.style.width = '100%';
+    bar.style.background = s.color;
+
+    clearTimeout(siTimer);
+    siTimer = setTimeout(() => proceedFromSection(), 1900);
+
+    // Tap to advance early
+    el.onclick = () => { clearTimeout(siTimer); proceedFromSection(); el.onclick = null; };
+  }
+
+  function proceedFromSection() {
+    document.getElementById('s-section').onclick = null;
+    showQuestion(pendingSectionIdx * 4);
+  }
+
+  /* ════ QUESTION ════ */
+  function showQuestion(idx) {
+    busy = false;
+    qIdx = idx;
+    const q = QUESTIONS[idx];
+    const s = SECTIONS[q.s];
+
+    // Re-trigger card animation
+    const card = document.getElementById('q-card');
+    card.style.animation = 'none';
+    void card.offsetWidth;
+    card.style.animation = '';
+
+    document.getElementById('q-text').textContent = q.text;
+    document.getElementById('q-hint').textContent = q.hint;
+    document.getElementById('q-counter').textContent = `Q${idx+1} / 16`;
+
+    // Section badge
+    const badge = document.getElementById('q-badge');
+    badge.textContent = `${s.num} ${s.title}`;
+    badge.style.background = s.color + '1A';
+    badge.style.color = s.color;
+    badge.style.borderColor = s.color + '55';
+
+    // Progress bar
+    const pct = (idx / 16) * 100;
+    document.getElementById('q-prog').style.width = pct + '%';
+
+    // Temperature bar
+    updateTempBar();
+
+    // Background tint by section
+    document.getElementById('s-question').style.background =
+      `radial-gradient(ellipse at 50% 20%, ${s.color}18 0%, var(--bg) 60%)`;
+
+    show('s-question');
+  }
+
+  function updateTempBar() {
+    const pct = (score / 16) * 100;
+    document.getElementById('temp-mask').style.left = pct + '%';
+    document.getElementById('temp-score').textContent = `${score}pt`;
+
+    // Color the score number by current zone
+    const zone = getZone(score);
+    const colors = { ice:'var(--c-ice)', cold:'var(--c-cold)', warm:'var(--c-warm)', hot:'var(--c-hot)' };
+    document.getElementById('temp-score').style.color = score === 0 ? 'var(--sub)' : colors[zone];
+  }
+
+  /* ════ ANSWER ════ */
+  function answer(isYes) {
+    if (busy) return;
+    busy = true;
+
+    // Flash button
+    const btnId = isYes ? 'btn-yes' : 'btn-no';
+    const btn = document.getElementById(btnId);
+    btn.classList.add('flash');
+    setTimeout(() => btn.classList.remove('flash'), 280);
+
+    if (isYes) score++;
+    updateTempBar();
+
+    const nextIdx = qIdx + 1;
+
+    setTimeout(() => {
+      if (nextIdx >= 16) {
+        showResults();
+      } else if (nextIdx % 4 === 0) {
+        showSectionIntro(QUESTIONS[nextIdx].s);
+      } else {
+        showQuestion(nextIdx);
+      }
+    }, 320);
+  }
+
+  /* ════ RESULTS ════ */
+  function showResults() {
+    const zone = getZone(score);
+    const z = ZONES[zone];
+
+    document.getElementById('r-icon').textContent = z.icon;
+    document.getElementById('r-name').textContent = z.name;
+    document.getElementById('r-desc').textContent = z.desc;
+    document.getElementById('r-advice').textContent = z.advice;
+
+    // Score count-up
+    const scoreEl = document.getElementById('r-score');
+    scoreEl.textContent = '0 / 16点';
+    let displayScore = 0;
+    const countUp = setInterval(() => {
+      displayScore++;
+      scoreEl.textContent = `${displayScore} / 16点`;
+      if (displayScore >= score) clearInterval(countUp);
+    }, 120);
+
+    // Background
+    document.getElementById('s-result').style.background = z.bg;
+
+    // Zone markers — highlight active
+    document.querySelectorAll('.tm-zone').forEach(el => {
+      el.classList.toggle('active', el.dataset.zone === zone);
+      const colors = { ice:'var(--c-ice)', cold:'var(--c-cold)', warm:'var(--c-warm)', hot:'var(--c-hot)' };
+      if (el.dataset.zone === zone) el.style.color = colors[zone];
+    });
+
+    show('s-result');
+
+    // Animate thermometer after brief delay
+    setTimeout(() => {
+      const fillPct = (score / 16) * 100;
+      const coverH = 100 - fillPct;
+      document.getElementById('thermo-cover').style.height = coverH + '%';
+      document.getElementById('thermo-bulb').style.backgroundColor = z.color;
+      document.getElementById('thermo-bulb').style.boxShadow = `0 0 18px ${z.color}88`;
+    }, 400);
+  }
+
+  /* ════ UTILS ════ */
+  function getZone(s) {
+    if (s <= 5)  return 'ice';
+    if (s <= 9)  return 'cold';
+    if (s <= 13) return 'warm';
+    return 'hot';
+  }
+
+  function resetGame() {
+    score = 0; qIdx = 0; busy = false;
+    // Reset thermometer
+    document.getElementById('thermo-cover').style.transition = 'none';
+    document.getElementById('thermo-cover').style.height = '100%';
+    document.getElementById('thermo-bulb').style.backgroundColor = '';
+    document.getElementById('thermo-bulb').style.boxShadow = '';
+    document.getElementById('thermo-cover').style.transition = '';
+    show('s-start');
+  }
+</script>
+</body>
+</html>

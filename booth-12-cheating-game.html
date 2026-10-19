@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>浮気された、あなたへ。— ブース12</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #F0EBF8;
+      --paper:   #FAF7FD;
+      --ink:     #4A3060;
+      --sub:     #7A6890;
+      --line:    #D8CEE8;
+      --gold:    #C9A84C;
+      --gold-bg: #FBF5E6;
+
+      /* Phase colors */
+      --shock-bg:    #E8EEF8;
+      --shock-ink:   #1E3A6E;
+      --shock-accent:#4472C4;
+      --shock-line:  #B0C4E8;
+
+      --anger-bg:    #F8E8E8;
+      --anger-ink:   #6E1E1E;
+      --anger-accent:#C44444;
+      --anger-line:  #E8B0B0;
+
+      --wave-bg:     #EEE8F6;
+      --wave-ink:    #3A2254;
+      --wave-accent: #8B5CF6;
+      --wave-line:   #C8B8E8;
+
+      --fwd-bg:      #E8F4F0;
+      --fwd-ink:     #1E5E4A;
+      --fwd-accent:  #34A880;
+      --fwd-line:    #B0D8CC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      background: #D8D0E8;
+      color: var(--ink);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      overflow: hidden;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 480px;
+      height: 100dvh;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ════════════════════════════
+       START SCREEN
+    ════════════════════════════ */
+    #s-start {
+      background: linear-gradient(155deg, #1E0A30 0%, #3A1A54 45%, #5C2878 100%);
+      justify-content: flex-start;
+    }
+
+    .start-top {
+      width: 100%;
+      padding: 60px 28px 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .start-kicker {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(240,235,248,0.38);
+      margin-bottom: 28px;
+    }
+
+    .start-h1 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 34px;
+      font-weight: 700;
+      color: #F0EBF8;
+      line-height: 1.35;
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .start-h1 .accent-dot {
+      color: var(--gold);
+    }
+
+    .start-sub {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 14px;
+      color: rgba(240,235,248,0.6);
+      line-height: 2.0;
+      margin-bottom: 32px;
+    }
+
+    .start-phases {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: auto;
+    }
+
+    .phase-chip {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(240,235,248,0.22);
+      color: rgba(240,235,248,0.65);
+    }
+
+    .start-bottom {
+      width: 100%;
+      padding: 22px 28px 38px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .start-meta {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      color: rgba(240,235,248,0.28);
+      line-height: 1.8;
+    }
+
+    .btn-start {
+      white-space: nowrap;
+      padding: 0 30px;
+      height: 60px;
+      background: var(--gold);
+      color: #1E0A30;
+      border: none;
+      border-radius: 30px;
+      font-family: 'Noto Serif JP', serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      letter-spacing: 0.06em;
+      transition: transform 0.1s, opacity 0.1s;
+    }
+
+    .btn-start:active { transform: scale(0.96); opacity: 0.85; }
+
+    /* ════════════════════════════
+       QUESTION SCREEN
+    ════════════════════════════ */
+    #s-question {
+      background: var(--bg);
+      padding: 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--line);
+      flex-shrink: 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 0 2px 2px 0;
+      transition: width 0.5s ease;
+    }
+
+    .status-row {
+      width: 100%;
+      padding: 16px 22px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .status-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--sub);
+    }
+
+    .status-progress {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      color: var(--sub);
+    }
+
+    .q-area {
+      flex: 1;
+      width: 100%;
+      padding: 4px 16px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .q-card {
+      background: var(--paper);
+      border: 1.5px solid var(--line);
+      border-radius: 20px;
+      padding: 30px 24px 22px;
+      box-shadow: 0 4px 24px rgba(74,48,96,0.09);
+      animation: slideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(22px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .q-num {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    .q-text {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.75;
+      color: var(--ink);
+      margin-bottom: 18px;
+      white-space: pre-line;
+    }
+
+    .q-divider {
+      width: 28px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 1px;
+      margin-bottom: 14px;
+      opacity: 0.45;
+    }
+
+    .q-hint {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 12px;
+      color: var(--sub);
+      line-height: 1.8;
+      font-style: italic;
+    }
+
+    .ans-area {
+      width: 100%;
+      padding: 14px 16px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .btn-ans {
+      width: 100%;
+      min-height: 62px;
+      padding: 13px 18px;
+      border-radius: 14px;
+      border: 1.5px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Noto Serif JP', serif;
+      font-size: 16px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: transform 0.08s, background 0.15s, border-color 0.15s;
+      display: flex;
+      align-items: center;
+      text-align: left;
+      line-height: 1.5;
+      gap: 14px;
+    }
+
+    .btn-ans:active { transform: scale(0.97); }
+
+    .btn-ans.flash {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    .btn-ans-emoji {
+      font-size: 20px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    /* ════════════════════════════
+       RESULT SCREEN
+    ════════════════════════════ */
+    #s-result {
+      justify-content: flex-start;
+      padding-bottom: 40px;
+      overflow-y: auto;
+      background: var(--bg);
+    }
+
+    .result-header {
+      width: 100%;
+      padding: 52px 26px 36px;
+      flex-shrink: 0;
+      transition: background 0.5s ease;
+    }
+
+    .r-kicker {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0.45;
+    }
+
+    .r-phase-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .r-phase-name {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 18px;
+      letter-spacing: 0.01em;
+      animation: nameReveal 0.6s 0.3s both cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes nameReveal {
+      from { transform: translateY(12px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .r-affirmation {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.9;
+      margin-bottom: 14px;
+      animation: nameReveal 0.6s 0.5s both ease-out;
+    }
+
+    .r-desc {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 13px;
+      line-height: 2.0;
+      opacity: 0.78;
+      animation: nameReveal 0.6s 0.65s both ease-out;
+    }
+
+    .r-section {
+      width: calc(100% - 32px);
+      margin: 0 16px 16px;
+      background: var(--paper);
+      border: 1.5px solid var(--line);
+      border-radius: 16px;
+      padding: 22px 20px;
+      animation: nameReveal 0.6s 0.8s both ease-out;
+    }
+
+    .r-section-head {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .r-action-item {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+
+    .r-action-item:last-child { margin-bottom: 0; }
+
+    .r-action-num {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #fff;
+    }
+
+    .r-action-text {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--ink);
+      padding-top: 2px;
+    }
+
+    /* NG section */
+    .r-ng-section {
+      width: calc(100% - 32px);
+      margin: 0 16px 16px;
+      animation: nameReveal 0.6s 1.0s both ease-out;
+    }
+
+    .r-ng-head {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--anger-ink);
+      margin-bottom: 12px;
+    }
+
+    .r-ng-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .r-ng-item {
+      background: var(--anger-bg);
+      border: 1px solid var(--anger-line);
+      border-radius: 10px;
+      padding: 12px 12px 12px 30px;
+      font-family: 'Noto Serif JP', serif;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--anger-ink);
+      position: relative;
+    }
+
+    .r-ng-item::before {
+      content: '×';
+      position: absolute;
+      left: 11px;
+      top: 12px;
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--anger-accent);
+    }
+
+    /* Professional help note */
+    .r-help-note {
+      width: calc(100% - 32px);
+      margin: 0 16px 16px;
+      background: var(--gold-bg);
+      border: 1px solid rgba(201,168,76,0.32);
+      border-left: 4px solid var(--gold);
+      border-radius: 0 12px 12px 0;
+      padding: 18px 18px 18px 20px;
+      animation: nameReveal 0.6s 1.1s both ease-out;
+    }
+
+    .r-help-note-title {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #8B6914;
+      margin-bottom: 8px;
+    }
+
+    .r-help-note-text {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 13px;
+      line-height: 1.9;
+      color: #5C4510;
+    }
+
+    /* Closing */
+    .r-closing {
+      width: calc(100% - 32px);
+      margin: 0 16px 24px;
+      text-align: center;
+      padding: 20px 4px;
+      animation: nameReveal 0.6s 1.2s both ease-out;
+    }
+
+    .r-closing-text {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 2.0;
+      white-space: pre-line;
+    }
+
+    .btn-retry {
+      width: calc(100% - 32px);
+      margin: 0 16px 8px;
+      height: 56px;
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      background: transparent;
+      color: var(--sub);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      animation: nameReveal 0.6s 1.3s both ease-out;
+    }
+
+    .btn-retry:hover, .btn-retry:active {
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+
+    .r-footer {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      color: rgba(74,48,96,0.22);
+      text-align: center;
+      line-height: 1.7;
+      padding: 8px 16px 0;
+      animation: nameReveal 0.6s 1.4s both ease-out;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ═══ START ═══ -->
+  <div class="screen" id="s-start">
+    <div class="start-top">
+      <div class="start-kicker">BOOTH 12 · ケア・回復 · Love Analysis Project</div>
+      <div class="start-h1">浮気された、<br>あなたへ<span class="accent-dot">。</span></div>
+      <div class="start-sub">
+        今の自分の状態を、一緒に確認しましょう。<br>
+        正しい答えはありません。<br>
+        あなたの今の気持ちを、そのまま選んでください。
+      </div>
+      <div class="start-phases">
+        <div class="phase-chip">ショック期</div>
+        <div class="phase-chip">怒り期</div>
+        <div class="phase-chip">揺れ期</div>
+        <div class="phase-chip">前進期</div>
+      </div>
+    </div>
+    <div class="start-bottom">
+      <div class="start-meta">
+        9 つの質問<br>
+        約 3 分
+      </div>
+      <button class="btn-start" onclick="startGame()">始める →</button>
+    </div>
+  </div>
+
+  <!-- ═══ QUESTION ═══ -->
+  <div class="screen" id="s-question">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="status-row">
+      <div class="status-label">感情フェーズ診断</div>
+      <div class="status-progress" id="status-progress">1 / 9</div>
+    </div>
+
+    <div class="q-area">
+      <div class="q-card" id="q-card">
+        <div class="q-num" id="q-num">Question 01</div>
+        <div class="q-text" id="q-text"></div>
+        <div class="q-divider"></div>
+        <div class="q-hint" id="q-hint"></div>
+      </div>
+    </div>
+
+    <div class="ans-area" id="ans-area">
+      <!-- ボタンはJSで注入 -->
+    </div>
+  </div>
+
+  <!-- ═══ RESULT ═══ -->
+  <div class="screen" id="s-result">
+    <div class="result-header" id="result-header">
+      <div class="r-kicker">BOOTH 12 · 感情フェーズ診断</div>
+      <div class="r-phase-label" id="r-phase-label"></div>
+      <div class="r-phase-name" id="r-phase-name"></div>
+      <div class="r-affirmation" id="r-affirmation"></div>
+      <div class="r-desc" id="r-desc"></div>
+    </div>
+
+    <div class="r-section" id="r-action-section">
+      <div class="r-section-head">今できること</div>
+      <div id="r-actions"></div>
+    </div>
+
+    <div class="r-ng-section">
+      <div class="r-ng-head">今はやめておきたいこと</div>
+      <div class="r-ng-grid" id="r-ng-grid"></div>
+    </div>
+
+    <div class="r-help-note">
+      <div class="r-help-note-title">専門家へのサポート</div>
+      <div class="r-help-note-text">
+        辛さが続くときは、カウンセラーや心理士への相談も一つの選択肢です。
+        あなたが感じていることを、安心して話せる場所があります。
+      </div>
+    </div>
+
+    <div class="r-closing">
+      <div class="r-closing-text" id="r-closing-text"></div>
+    </div>
+
+    <button class="btn-retry" onclick="resetGame()">もう一度試してみる</button>
+    <div class="r-footer">
+      恋愛未来設計展 · Love Analysis Project（100BANCH採択）· BOOTH 12
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ════ QUESTIONS ════ */
+
+  const QUESTIONS = [
+    {
+      text: 'あなたは今、\n頭の中はどんな状態ですか？',
+      hint: 'どれが今の自分に一番近いか、直感で選んでみてください。',
+      choices: [
+        { emoji: '😶', text: '真っ白で、何も考えられない', phase: 'S' },
+        { emoji: '😤', text: '怒りで頭がいっぱいで止まらない', phase: 'A' },
+        { emoji: '🌀', text: 'ぐるぐると考えが止まらない', phase: 'W' },
+        { emoji: '😔', text: '少し落ち着いてきたが、まだ辛い', phase: 'F' }
+      ]
+    },
+    {
+      text: 'あなたは今、\n相手のことを思うと？',
+      hint: '今この瞬間の感情を正直に選んでください。',
+      choices: [
+        { emoji: '❓', text: '現実感がない、信じられない', phase: 'S' },
+        { emoji: '🔥', text: '裏切られた怒りしか感じない', phase: 'A' },
+        { emoji: '💔', text: 'まだ好きな気持ちもある、でも怒ってもいる', phase: 'W' },
+        { emoji: '🌿', text: 'だんだん気持ちの整理がついてきた', phase: 'F' }
+      ]
+    },
+    {
+      text: 'あなたは今、\n食欲や睡眠はどうですか？',
+      hint: '体の状態も、心のサインです。',
+      choices: [
+        { emoji: '😶', text: '全くない / 眠れない夜が続いている', phase: 'S' },
+        { emoji: '😣', text: '乱れているが何とか生活できている', phase: 'A' },
+        { emoji: '😔', text: '少しずつ戻ってきている', phase: 'W' },
+        { emoji: '🌱', text: 'だいぶ落ち着いてきた', phase: 'F' }
+      ]
+    },
+    {
+      text: 'あなたは今、\n誰かに話しましたか？',
+      hint: '一人で抱えているか、共有できているかを教えてください。',
+      choices: [
+        { emoji: '🤐', text: 'まだ誰にも話せていない', phase: 'S' },
+        { emoji: '😤', text: '話したが、怒りを抑えられなかった', phase: 'A' },
+        { emoji: '💬', text: '少し話して、少しだけ楽になった', phase: 'W' },
+        { emoji: '🤝', text: '話して、支えてもらっている', phase: 'F' }
+      ]
+    },
+    {
+      text: 'あなたは今、\n「続けるか別れるか」を考えると？',
+      hint: '今の率直な気持ちを選んでください。',
+      choices: [
+        { emoji: '😶', text: 'そんなことまで考える余裕がない', phase: 'S' },
+        { emoji: '💢', text: 'もう終わりだと思っている', phase: 'A' },
+        { emoji: '🌊', text: 'わからない、揺れている', phase: 'W' },
+        { emoji: '🧭', text: '少しずつ方向性が見えてきた', phase: 'F' }
+      ]
+    },
+    {
+      text: 'あなたは今、\n自分自身についてどう感じていますか？',
+      hint: '自分への気持ちも大切なサインです。',
+      choices: [
+        { emoji: '😶', text: '何が起きたかまだ実感がない', phase: 'S' },
+        { emoji: '😤', text: '自分を責めたくない、怒りを感じる', phase: 'A' },
+        { emoji: '🫂', text: '自分もひどく傷ついていると気づいた', phase: 'W' },
+        { emoji: '🌷', text: '少しずつ自分を取り戻している', phase: 'F' }
+      ]
+    },
+    {
+      text: 'あなたは今、\nパートナーに対してしたいことは？',
+      hint: '今の衝動に一番近いものを選んでください。',
+      choices: [
+        { emoji: '😶', text: '何も言えない / 会いたくない', phase: 'S' },
+        { emoji: '😤', text: '問い詰めたい / 怒りをぶつけたい', phase: 'A' },
+        { emoji: '💬', text: '冷静に話し合いたい、でも怖い', phase: 'W' },
+        { emoji: '🌿', text: '落ち着いて向き合う準備ができてきた', phase: 'F' }
+      ]
+    },
+    {
+      text: 'あなたは今、\n一番欲しいものは何ですか？',
+      hint: '今の自分が求めていることに正直になってみてください。',
+      choices: [
+        { emoji: '🛋️', text: 'ただそっとしておいてほしい', phase: 'S' },
+        { emoji: '⚖️', text: '謝罪 / 相手に責任を取ってほしい', phase: 'A' },
+        { emoji: '👂', text: '誰かにそのまま話を聞いてほしい', phase: 'W' },
+        { emoji: '🗺️', text: '前に進むためのヒント', phase: 'F' }
+      ]
+    },
+    {
+      text: 'あなたは今、\n未来を想像できますか？',
+      hint: '「未来」はすごく先じゃなくていい。来週でもOKです。',
+      choices: [
+        { emoji: '🌑', text: '全く想像できない / したくない', phase: 'S' },
+        { emoji: '⛅', text: '少しだけ、でも怒りが邪魔をする', phase: 'A' },
+        { emoji: '🌤️', text: 'なんとなく見えてきているが、不安', phase: 'W' },
+        { emoji: '☀️', text: '少しずつ見えてきた気がする', phase: 'F' }
+      ]
+    }
+  ];
+
+  /* ════ PHASES ════ */
+
+  const PHASES = {
+    S: {
+      label: 'SHOCK PHASE',
+      name: 'あなたは今、ショック期にいます。',
+      headerBg: 'var(--shock-bg)',
+      headerInk: 'var(--shock-ink)',
+      accent: '#4472C4',
+      affirmation: 'あなたが今感じている麻痺感は、自然なことです。',
+      desc: '心が大きな衝撃を受けたとき、思考が止まることがあります。これはあなたの弱さではなく、心が自分を守ろうとしているサインです。今夜は何も決めなくていい。',
+      actions: [
+        '今夜は何も決めない。衝動的な行動は後悔になりやすい。',
+        '水を飲む、横になる。体を休めることが今できる一番のこと。',
+        '信頼できる人の近くにいる。一人でいなくていい。',
+        '「明日の自分」に判断を任せる。今は休むことが仕事。'
+      ],
+      ng: [
+        '今すぐ大きな決断をする',
+        '感情のまま相手に連絡する',
+        '一人で全てを抱え込む',
+        '自分を責め続ける'
+      ],
+      closing: 'あなたは今、とても辛い場所にいます。\nでも、あなたは一人じゃありません。'
+    },
+    A: {
+      label: 'ANGER PHASE',
+      name: 'あなたは今、怒り期にいます。',
+      headerBg: 'var(--anger-bg)',
+      headerInk: 'var(--anger-ink)',
+      accent: '#C44444',
+      affirmation: 'あなたの怒りは正当です。裏切られた痛みが形になっています。',
+      desc: '怒りは、あなたが大切にしていた何かを守ろうとしているサインです。ただ、その怒りをどこへ向けるか——それだけを今は意識してみてください。',
+      actions: [
+        '怒りを紙に書き出す。頭の外に出すことで少し落ち着ける。',
+        '体を動かす——走る、歩く、何でもいい。怒りは身体で消費できる。',
+        '信頼できる友人に吐き出す。それが次のステップへつながる。',
+        '証拠が必要なら、感情より先に冷静に保存する。'
+      ],
+      ng: [
+        '感情のまま怒鳴り続ける',
+        'SNSに怒りを投稿する',
+        '証拠なしに相手方へ接触する',
+        '今すぐ全てを決断しようとする'
+      ],
+      closing: 'あなたの怒りは嘘じゃない。\nその感情を、あなた自身のために使いましょう。'
+    },
+    W: {
+      label: 'WAVERING PHASE',
+      name: 'あなたは今、揺れ期にいます。',
+      headerBg: 'var(--wave-bg)',
+      headerInk: 'var(--wave-ink)',
+      accent: '#8B5CF6',
+      affirmation: '揺れていることは、あなたが真剣に向き合っている証です。',
+      desc: '「続けるか別れるか」の間で揺れるのは、あなたの感情が複雑だから——それは正しいことです。大きな決断には時間が必要で、それは弱さではありません。',
+      actions: [
+        '「今すぐ決めなくていい」と自分に声をかける。',
+        '冷静な時間に、自分の気持ちをメモに書き出す。',
+        '信頼できる第三者（友人、カウンセラー）に話してみる。',
+        '「感情が激しい今」と「落ち着いた後」を分けて考える。'
+      ],
+      ng: [
+        '感情が激しいときに大きな決断をする',
+        '相手の言葉だけを信じて判断する',
+        '何週間も一人で全てを抱える',
+        '感情を無理に抑えて「大丈夫」と言い聞かせる'
+      ],
+      closing: '揺れていいんです。\nその揺れの中に、あなたの本当の答えがあります。'
+    },
+    F: {
+      label: 'MOVING FORWARD',
+      name: 'あなたは今、前進期にいます。',
+      headerBg: 'var(--fwd-bg)',
+      headerInk: 'var(--fwd-ink)',
+      accent: '#34A880',
+      affirmation: 'あなたは少しずつ、確実に自分を取り戻しています。',
+      desc: '傷はまだあるかもしれない。でもあなたは今、前を向き始めています。その一歩一歩を、どうか大切にしてください。',
+      actions: [
+        '小さな喜びを日常に意識的に戻す。好きな食べ物、音楽、散歩。',
+        '自分の未来を少しだけ想像してみる——1ヶ月後の自分は何をしているか。',
+        '自分をねぎらう時間を作る。あなたはよくここまで来た。',
+        '必要なら専門家（カウンセラー・弁護士）に相談する。'
+      ],
+      ng: [
+        '感情を「もう大丈夫」と無理に抑える',
+        '孤独になりすぎる',
+        '相手の様子が気になり自分を見失う',
+        '焦って次の一歩を踏み出しすぎる'
+      ],
+      closing: 'あなたは今、前に向かっています。\nそのままのペースで、大丈夫です。'
+    }
+  };
+
+  /* ════ STATE ════ */
+  let qIdx = 0;
+  let scores = { S: 0, A: 0, W: 0, F: 0 };
+  let busy = false;
+
+  /* ════ INIT ════ */
+  show('s-start');
+
+  /* ════ UTILS ════ */
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function getPhase() {
+    // 同点の場合は「より早い段階」を優先（より保守的な判定）
+    const order = ['S', 'A', 'W', 'F'];
+    let max = -1;
+    let winner = 'W';
+    for (const p of order) {
+      if (scores[p] > max) {
+        max = scores[p];
+        winner = p;
+      }
+    }
+    return winner;
+  }
+
+  /* ════ GAME ════ */
+  function startGame() {
+    qIdx = 0;
+    scores = { S: 0, A: 0, W: 0, F: 0 };
+    busy = false;
+    showQuestion(0);
+  }
+
+  function showQuestion(idx) {
+    busy = false;
+    qIdx = idx;
+    const q = QUESTIONS[idx];
+    const total = QUESTIONS.length;
+
+    // プログレスバー更新
+    document.getElementById('progress-fill').style.width = ((idx / total) * 100) + '%';
+    document.getElementById('status-progress').textContent = (idx + 1) + ' / ' + total;
+
+    // カードのアニメーションをリセット
+    const card = document.getElementById('q-card');
+    card.style.animation = 'none';
+    void card.offsetWidth;
+    card.style.animation = '';
+
+    document.getElementById('q-num').textContent = 'Question ' + String(idx + 1).padStart(2, '0');
+    document.getElementById('q-text').textContent = q.text;
+    document.getElementById('q-hint').textContent = q.hint;
+
+    // 選択肢ボタンを生成
+    const ansArea = document.getElementById('ans-area');
+    ansArea.innerHTML = '';
+    q.choices.forEach((choice, ci) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-ans';
+      btn.innerHTML = `<span class="btn-ans-emoji">${choice.emoji}</span><span>${choice.text}</span>`;
+      btn.addEventListener('click', () => answer(choice.phase, ci));
+      ansArea.appendChild(btn);
+    });
+
+    show('s-question');
+  }
+
+  function answer(phase, choiceIdx) {
+    if (busy) return;
+    busy = true;
+
+    const btns = document.querySelectorAll('.btn-ans');
+    btns[choiceIdx].classList.add('flash');
+    setTimeout(() => btns[choiceIdx].classList.remove('flash'), 260);
+
+    scores[phase]++;
+
+    const next = qIdx + 1;
+    setTimeout(() => {
+      if (next >= QUESTIONS.length) {
+        showResults();
+      } else {
+        showQuestion(next);
+      }
+    }, 350);
+  }
+
+  function showResults() {
+    const phaseKey = getPhase();
+    const phase = PHASES[phaseKey];
+
+    // ヘッダーの色
+    const header = document.getElementById('result-header');
+    header.style.background = phase.headerBg;
+    header.style.color = phase.headerInk;
+
+    document.getElementById('r-phase-label').textContent = phase.label;
+    document.getElementById('r-phase-name').textContent = phase.name;
+    document.getElementById('r-affirmation').textContent = phase.affirmation;
+    document.getElementById('r-desc').textContent = phase.desc;
+
+    // 今できること
+    const actionsEl = document.getElementById('r-actions');
+    actionsEl.innerHTML = '';
+    phase.actions.forEach((action, i) => {
+      const div = document.createElement('div');
+      div.className = 'r-action-item';
+      div.innerHTML = `
+        <div class="r-action-num" style="background:${phase.accent}">${i + 1}</div>
+        <div class="r-action-text">${action}</div>
+      `;
+      actionsEl.appendChild(div);
+    });
+
+    // アクションセクションの左ボーダー
+    const actionSection = document.getElementById('r-action-section');
+    actionSection.style.borderLeftColor = phase.accent;
+    actionSection.style.borderLeftWidth = '4px';
+
+    // NGリスト
+    const ngGrid = document.getElementById('r-ng-grid');
+    ngGrid.innerHTML = '';
+    phase.ng.forEach(ng => {
+      const div = document.createElement('div');
+      div.className = 'r-ng-item';
+      div.textContent = ng;
+      ngGrid.appendChild(div);
+    });
+
+    // 締めのメッセージ
+    document.getElementById('r-closing-text').textContent = phase.closing;
+
+    show('s-result');
+    document.getElementById('s-result').scrollTop = 0;
+  }
+
+  function resetGame() {
+    scores = { S: 0, A: 0, W: 0, F: 0 };
+    qIdx = 0;
+    busy = false;
+    show('s-start');
+  }
+</script>
+</body>
+</html>

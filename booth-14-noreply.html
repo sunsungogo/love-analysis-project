@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>脈なし判定シート — ブース14</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Space+Grotesk:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #F5F1E4;
+      --ink:     #2A2823;
+      --accent:  #B8860B;
+      --sub:     #7A7060;
+      --line:    #D9D2BC;
+      --sans:    'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+      --mono:    'Space Grotesk', monospace;
+      --serif:   'Noto Serif JP', serif;
+
+      /* ゾーン色 */
+      --g-bg:   #D6EDD4; --g-ink: #1E5C1A; --g-line: #A8CEAC;
+      --y-bg:   #F5EBC0; --y-ink: #7A5C00; --y-line: #D9C97A;
+      --r-bg:   #F0D4D4; --r-ink: #7A2020; --r-line: #D9A0A0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #DDD8C5;
+      font-family: var(--sans);
+      color: var(--ink);
+      padding: 16px;
+    }
+
+    .page {
+      background: var(--bg);
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 0 0 10mm;
+      position: relative;
+    }
+
+    /* ─── トップバー（フィールドガイドの背表紙風）─── */
+    .top-bar {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 8px 14mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-bar-left {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .top-bar-right {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: #C8A828;
+      font-weight: 700;
+    }
+
+    /* ─── アクセントバー ─── */
+    .accent-bar {
+      height: 5px;
+      background: var(--accent);
+    }
+
+    /* ─── コンテンツエリア ─── */
+    .content {
+      padding: 12mm 14mm 0;
+    }
+
+    /* ─── ガイドタイトル ─── */
+    .guide-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .guide-num {
+      font-family: var(--mono);
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--accent);
+      opacity: 0.35;
+      flex-shrink: 0;
+      margin-top: -4px;
+    }
+
+    .guide-title-block h1 {
+      font-family: var(--mono);
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .guide-title-block .subtitle {
+      font-size: 11px;
+      color: var(--sub);
+      line-height: 1.6;
+    }
+
+    /* ─── セクションヘッダー ─── */
+    .section-head {
+      background: var(--ink);
+      color: var(--bg);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      margin: 14px -14mm 8px;
+      padding-left: 14mm;
+    }
+
+    /* ─── チェックリスト ─── */
+    .checklist {
+      border: 1.5px solid var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .checklist-header {
+      display: grid;
+      grid-template-columns: 1fr 40px;
+      background: var(--ink);
+      color: var(--bg);
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      padding: 4px 12px;
+    }
+
+    .check-item {
+      display: grid;
+      grid-template-columns: 16px 1fr 40px;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 10.5px;
+      line-height: 1.45;
+    }
+
+    .check-item:last-child { border-bottom: none; }
+    .check-item:nth-child(even) { background: rgba(0,0,0,0.02); }
+
+    .check-box {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid var(--sub);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .check-label { color: var(--ink); }
+
+    .check-pt {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--accent);
+    }
+
+    .check-note {
+      grid-column: 2 / 4;
+      font-size: 9px;
+      color: var(--sub);
+      margin-top: -2px;
+    }
+
+    /* ─── スコア合計欄 ─── */
+    .score-total {
+      border: 2px solid var(--ink);
+      border-radius: 4px;
+      padding: 7px 12px;
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .score-total-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .score-total-box {
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 700;
+      border-bottom: 2px solid var(--ink);
+      width: 60px;
+      text-align: center;
+      padding-bottom: 2px;
+    }
+
+    .score-total-unit {
+      font-family: var(--mono);
+      font-size: 10px;
+    }
+
+    /* ─── ゾーン帯 ─── */
+    .zone-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border: 1.5px solid var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .zone-cell {
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .zone-cell.green { background: var(--g-bg); }
+    .zone-cell.yellow { background: var(--y-bg); }
+    .zone-cell.red { background: var(--r-bg); }
+
+    .zone-range {
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .zone-cell.green .zone-range { color: var(--g-ink); }
+    .zone-cell.yellow .zone-range { color: var(--y-ink); }
+    .zone-cell.red .zone-range { color: var(--r-ink); }
+
+    .zone-name {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .zone-cell.green .zone-name { color: var(--g-ink); }
+    .zone-cell.yellow .zone-name { color: var(--y-ink); }
+    .zone-cell.red .zone-name { color: var(--r-ink); }
+
+    .zone-desc {
+      font-size: 9px;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .zone-cell.green .zone-desc { color: var(--g-ink); opacity: 0.8; }
+    .zone-cell.yellow .zone-desc { color: var(--y-ink); opacity: 0.8; }
+    .zone-cell.red .zone-desc { color: var(--r-ink); opacity: 0.8; }
+
+    /* ─── アクションガイド（3列）─── */
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .action-card {
+      border-radius: 4px;
+      padding: 9px 10px;
+      font-size: 9.5px;
+      line-height: 1.6;
+    }
+
+    .action-card.green { background: var(--g-bg); border: 1px solid var(--g-line); }
+    .action-card.yellow { background: var(--y-bg); border: 1px solid var(--y-line); }
+    .action-card.red { background: var(--r-bg); border: 1px solid var(--r-line); }
+
+    .action-card-title {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      display: block;
+    }
+
+    .action-card.green .action-card-title { color: var(--g-ink); border-bottom: 1px solid var(--g-line); }
+    .action-card.yellow .action-card-title { color: var(--y-ink); border-bottom: 1px solid var(--y-line); }
+    .action-card.red .action-card-title { color: var(--r-ink); border-bottom: 1px solid var(--r-line); }
+
+    .action-step {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 4px;
+      font-size: 9.5px;
+    }
+
+    .action-step-num {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .action-card.green .action-step-num { color: var(--g-ink); }
+    .action-card.yellow .action-step-num { color: var(--y-ink); }
+    .action-card.red .action-step-num { color: var(--r-ink); }
+
+    /* ─── バイアス警告 ─── */
+    .bias-box {
+      border: 1.5px solid var(--line);
+      border-left: 3px solid var(--accent);
+      padding: 9px 11px;
+      margin-top: 10px;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .bias-title {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .bias-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .bias-item {
+      font-size: 9.5px;
+      line-height: 1.55;
+    }
+
+    .bias-item strong {
+      display: block;
+      font-size: 9.5px;
+      color: var(--ink);
+      margin-bottom: 1px;
+    }
+
+    .bias-item span { color: var(--sub); font-size: 9px; }
+
+    /* ─── NG行動 ─── */
+    .ng-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .ng-item {
+      border: 1px solid var(--r-line);
+      background: var(--r-bg);
+      border-radius: 3px;
+      padding: 5px 8px;
+      font-size: 9px;
+      line-height: 1.5;
+      color: var(--r-ink);
+      position: relative;
+      padding-left: 14px;
+    }
+
+    .ng-item::before {
+      content: '✕';
+      position: absolute;
+      left: 5px;
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 9px;
+    }
+
+    /* ─── 将来像 ─── */
+    .future-strip {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 8px 12px;
+      margin-top: 12px;
+      border-radius: 4px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 9.5px;
+      line-height: 1.6;
+    }
+
+    .future-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      color: #B8E0D4;
+      white-space: nowrap;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    /* ─── フッター ─── */
+    .page-footer {
+      margin: 10px 14mm 0;
+      padding-top: 5px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 8px;
+      color: var(--sub);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── 印刷 ─── */
+    @media print {
+      body { background: none; padding: 0; }
+      .page { width: 210mm; min-height: 297mm; margin: 0; }
+      .print-btn { display: none; }
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+    }
+    .print-btn:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">印刷する</button>
+
+  <div class="page">
+
+    <!-- トップバー -->
+    <div class="top-bar">
+      <span class="top-bar-left">恋愛未来設計展 · Field Guide Series</span>
+      <span class="top-bar-right">BOOTH 14 · 判断・整理</span>
+    </div>
+    <div class="accent-bar"></div>
+
+    <div class="content">
+
+      <!-- ガイドタイトル -->
+      <div class="guide-header">
+        <div class="guide-num">14</div>
+        <div class="guide-title-block">
+          <h1>脈なし判定シート</h1>
+          <p class="subtitle">
+            「返信が来ない」は脈なしとは限らない。でも見極めは必要だ。<br>
+            下のチェックリストで現状のスコアを出し、あなたのゾーンを確認しよう。
+          </p>
+        </div>
+      </div>
+
+      <!-- STEP 1: チェックリスト -->
+      <div class="section-head">Step 01 — 当てはまる項目をチェック</div>
+
+      <div class="checklist">
+        <div class="checklist-header">
+          <span>状況</span>
+          <span style="text-align:center;">pt</span>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-label">返信が1日以上来ないことが2回以上パターンとして続いている</div>
+          <div class="check-pt">1</div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-label">連絡はいつも自分からで、相手から来たことがほとんどない</div>
+          <div class="check-pt">1</div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-label">返信が来ても「そうですね」「笑」など会話を広げないもの</div>
+          <div class="check-pt">1</div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-label">SNSの投稿には反応するが、個人メッセージには返さない</div>
+          <div class="check-pt">1</div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-label">誘いに毎回「忙しい」「また今度」で理由が曖昧なまま断られる</div>
+          <div class="check-pt">2</div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-label">対面でも目が合わない、そっけない、話を早く切り上げようとする</div>
+          <div class="check-pt">2</div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-label">「友達として」という言葉を繰り返し使われた</div>
+          <div class="check-pt">3</div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-label">一度意図的に連絡を止めたが、相手から来なかった</div>
+          <div class="check-pt">3</div>
+        </div>
+      </div>
+
+      <!-- スコア合計 -->
+      <div class="score-total">
+        <span class="score-total-label">合計スコア</span>
+        <div style="display:flex;align-items:baseline;gap:4px;">
+          <div class="score-total-box">&nbsp;</div>
+          <span class="score-total-unit">/ 14 pt</span>
+        </div>
+      </div>
+
+      <!-- STEP 2: ゾーン判定 -->
+      <div class="section-head">Step 02 — スコアでゾーンを確認</div>
+
+      <div class="zone-bar">
+        <div class="zone-cell green">
+          <span class="zone-range">0〜2</span>
+          <span class="zone-name">🟢 Green Zone</span>
+          <span class="zone-desc">様子見でOK</span>
+        </div>
+        <div class="zone-cell yellow">
+          <span class="zone-range">3〜5</span>
+          <span class="zone-name">🟡 Yellow Zone</span>
+          <span class="zone-desc">一度引いてみる</span>
+        </div>
+        <div class="zone-cell red">
+          <span class="zone-range">6以上</span>
+          <span class="zone-name">🔴 Red Zone</span>
+          <span class="zone-desc">見切りを考える段階</span>
+        </div>
+      </div>
+
+      <!-- STEP 3: アクションガイド -->
+      <div class="section-head">Step 03 — ゾーン別アクションガイド</div>
+
+      <div class="action-grid">
+        <div class="action-card green">
+          <span class="action-card-title">Green — 様子見</span>
+          <div class="action-step">
+            <span class="action-step-num">01</span>
+            <span>返信が来ない理由を冷静に分析する（仕事・性格・状況）</span>
+          </div>
+          <div class="action-step">
+            <span class="action-step-num">02</span>
+            <span>感情が不安定な日はメッセージを送らない</span>
+          </div>
+          <div class="action-step">
+            <span class="action-step-num">03</span>
+            <span>対面での反応も観察する</span>
+          </div>
+          <div class="action-step">
+            <span class="action-step-num">04</span>
+            <span>直接会う機会があれば自然な接点を作る</span>
+          </div>
+        </div>
+
+        <div class="action-card yellow">
+          <span class="action-card-title">Yellow — 一度引く</span>
+          <div class="action-step">
+            <span class="action-step-num">01</span>
+            <span>1〜2週間、こちらから連絡するのをやめる</span>
+          </div>
+          <div class="action-step">
+            <span class="action-step-num">02</span>
+            <span>相手が連絡してくるか観察する</span>
+          </div>
+          <div class="action-step">
+            <span class="action-step-num">03</span>
+            <span>友人として自然な関係を保ちながら様子を見る</span>
+          </div>
+          <div class="action-step">
+            <span class="action-step-num">04</span>
+            <span>変化がなければ、気持ちの整理を始める</span>
+          </div>
+        </div>
+
+        <div class="action-card red">
+          <span class="action-card-title">Red — 見切り</span>
+          <div class="action-step">
+            <span class="action-step-num">01</span>
+            <span>「脈なし」を事実として受け入れる</span>
+          </div>
+          <div class="action-step">
+            <span class="action-step-num">02</span>
+            <span>自分の生活・趣味・人間関係に集中する</span>
+          </div>
+          <div class="action-step">
+            <span class="action-step-num">03</span>
+            <span>次の可能性を探す環境を整える</span>
+          </div>
+          <div class="action-step">
+            <span class="action-step-num">04</span>
+            <span>友人関係は壊さず、自然体の距離感を保つ</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- バイアス警告 -->
+      <div class="section-head">Note — 判断を狂わせる認知バイアス</div>
+      <div class="bias-box">
+        <div class="bias-title">⚠ これらに気づいていない状態で判断すると精度が下がる</div>
+        <div class="bias-grid">
+          <div class="bias-item">
+            <strong>確証バイアス</strong>
+            <span>脈ありのサインだけを記憶し、そっけない態度を過小評価する傾向。</span>
+          </div>
+          <div class="bias-item">
+            <strong>サンクコスト効果</strong>
+            <span>「もうこれだけ時間と感情を注いだから」という理由で諦めにくくなる。</span>
+          </div>
+          <div class="bias-item">
+            <strong>透明性の錯覚</strong>
+            <span>「これだけ好意を示せば伝わっているはず」という思い込みで動く。</span>
+          </div>
+          <div class="bias-item">
+            <strong>ザイアンス効果の誤用</strong>
+            <span>接触は逆U字型——増やしすぎると好感度は下がる。またすでに嫌いな相手への接触増加は逆効果。</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NGリスト -->
+      <div class="section-head">NG — 絶対にやってはいけないこと</div>
+      <div class="ng-row">
+        <div class="ng-item">返信がないのに連続メッセージを送る（連投）</div>
+        <div class="ng-item">「なんで返信くれないの？」と問い詰める</div>
+        <div class="ng-item">SNSで相手の行動を監視・過剰チェック</div>
+        <div class="ng-item">断られた直後に「もう一度だけ」と再度誘う</div>
+        <div class="ng-item">共通の友人を通じて気持ちを探ろうとする</div>
+        <div class="ng-item">返信が来たとき過度に喜んで長文で返す</div>
+      </div>
+
+      <!-- 将来像 -->
+      <div class="future-strip">
+        <span class="future-label">Future Vision</span>
+        <span>恋テストと連携し、フェーズ別の推奨行動を自動提示——「今のあなたは様子見フェーズ」「次は○○を試して」と、関係の状態に合わせたガイダンスがリアルタイムで届く未来。</span>
+      </div>
+
+    </div><!-- /content -->
+
+    <div class="page-footer">
+      <span>恋愛未来設計展 · Love Analysis Project（100BANCH採択プロジェクト）</span>
+      <span>BOOTH 14 · 返信が返ってこない</span>
+    </div>
+
+  </div><!-- /page -->
+</body>
+</html>
