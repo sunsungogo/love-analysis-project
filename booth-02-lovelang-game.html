@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>愛の言語テスト</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FFFBF8;
+      --text: #1A1A2E;
+      --text-sub: #8892A0;
+      --border: #EDE8F5;
+    }
+
+    body {
+      font-family: 'Zen Kaku Gothic New', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100dvh;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    .screen.active { display: flex; opacity: 1; }
+
+    /* ======= START ======= */
+    #start {
+      background: linear-gradient(155deg, #FFF8E8 0%, #FFE8F4 50%, #EEE8FF 100%);
+      align-items: center;
+      justify-content: center;
+      padding: 40px 28px 60px;
+      text-align: center;
+    }
+
+    .lang-icons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .li-dot {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      animation: float 3s ease-in-out infinite;
+    }
+    .li-dot:nth-child(1) { background: #FFF0C0; animation-delay: 0s; }
+    .li-dot:nth-child(2) { background: #D8F5E8; animation-delay: 0.2s; }
+    .li-dot:nth-child(3) { background: #FFE4F0; animation-delay: 0.4s; }
+    .li-dot:nth-child(4) { background: #E0EAFF; animation-delay: 0.6s; }
+    .li-dot:nth-child(5) { background: #FFE8D8; animation-delay: 0.8s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .s-title {
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      background: linear-gradient(130deg, #FFB800 0%, #FF6B9D 60%, #9B6DFF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .s-sub {
+      font-size: 14px;
+      color: #6B7A9E;
+      line-height: 1.75;
+      margin-bottom: 10px;
+    }
+
+    .s-note {
+      font-size: 11px;
+      color: #AAB3C4;
+      line-height: 1.6;
+      margin-bottom: 28px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 12px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 36px;
+    }
+
+    .tag {
+      background: white;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #6B7A9E;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+
+    .btn-grad {
+      background: linear-gradient(130deg, #FFB800 0%, #FF6B9D 60%, #9B6DFF 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 17px 52px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(255,107,157,0.3);
+      transition: transform 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+    }
+    .btn-grad:active {
+      transform: scale(0.95);
+      box-shadow: 0 3px 12px rgba(255,107,157,0.2);
+    }
+
+    /* ======= QUESTION ======= */
+    #question { background: var(--bg); }
+
+    .q-top {
+      padding: 16px 20px 12px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .prog-track {
+      height: 5px;
+      background: #EDE8F5;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .prog-fill {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+      background: linear-gradient(90deg, #FFB800, #FF6B9D, #9B6DFF);
+    }
+
+    .q-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-sub);
+    }
+
+    .q-main {
+      flex: 1;
+      padding: 32px 20px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .q-txt {
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.55;
+      margin-bottom: 28px;
+      min-height: 72px;
+      transition: opacity 0.22s ease;
+    }
+    .q-txt.fout { opacity: 0; }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .c-btn {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-family: inherit;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.12s ease;
+      -webkit-appearance: none;
+    }
+    .c-btn:active {
+      transform: scale(0.97);
+      background: #FFF8F0;
+      border-color: #FFB800;
+    }
+
+    .dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #CFC8E8;
+      flex-shrink: 0;
+    }
+
+    /* ======= LOADING ======= */
+    #loading {
+      background: linear-gradient(155deg, #FFF8E8, #FFE8F4, #EEE8FF);
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .loading-icon {
+      font-size: 64px;
+      animation: wobble 0.9s ease-in-out infinite;
+    }
+    @keyframes wobble {
+      0%, 100% { transform: rotate(-8deg) scale(1); }
+      50% { transform: rotate(8deg) scale(1.08); }
+    }
+
+    .loading-txt { font-size: 17px; font-weight: 700; }
+
+    /* ======= RESULT ======= */
+    #result { flex-direction: column; overflow-y: auto; }
+
+    .r-hero {
+      padding: 40px 24px 32px;
+      text-align: center;
+    }
+
+    .r-icon {
+      font-size: 80px;
+      display: block;
+      margin-bottom: 14px;
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    .r-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .r-title {
+      font-size: 25px;
+      font-weight: 900;
+      line-height: 1.35;
+      margin-bottom: 12px;
+    }
+
+    .r-desc {
+      font-size: 13.5px;
+      line-height: 1.8;
+      color: #5A6378;
+    }
+
+    .r-body {
+      padding: 16px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .r-card {
+      background: white;
+      border-radius: 22px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.055);
+    }
+
+    .card-lbl {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    /* Score chart */
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .bar-row:last-child { margin-bottom: 0; }
+
+    .bar-emoji { font-size: 16px; flex-shrink: 0; }
+
+    .bar-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+      width: 64px;
+      flex-shrink: 0;
+    }
+
+    .bar-name.top { color: var(--text); }
+
+    .bar-track {
+      flex: 1;
+      height: 8px;
+      background: #F0EAF8;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.9s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .bar-crown { font-size: 14px; flex-shrink: 0; }
+
+    /* Today list */
+    .today-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .today-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .howto-bubble {
+      background: #F8F6FF;
+      border-left: 3px solid var(--howto-color, #9B6DFF);
+      border-radius: 0 12px 12px 0;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.65;
+      color: #4A5568;
+      font-style: italic;
+    }
+
+    .r-footer {
+      padding: 8px 20px 52px;
+    }
+
+    .btn-outline {
+      width: 100%;
+      background: transparent;
+      border: 2px solid;
+      border-radius: 50px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      -webkit-appearance: none;
+      transition: opacity 0.15s;
+    }
+    .btn-outline:active { opacity: 0.65; }
+  </style>
+</head>
+<body>
+
+<!-- START -->
+<section class="screen" id="start">
+  <div class="lang-icons">
+    <span class="li-dot">💬</span>
+    <span class="li-dot">🤲</span>
+    <span class="li-dot">🎁</span>
+    <span class="li-dot">⏰</span>
+    <span class="li-dot">🫂</span>
+  </div>
+  <h1 class="s-title">あなたへの愛、<br>どこで受け取る？</h1>
+  <p class="s-sub">5つの愛の言語から、あなたの<br>「愛の受け取り方の傾向」を発見しよう。</p>
+  <p class="s-note">※ 科学的な証明より「自己理解のヒント」として使ってね。<br>全部の言語が大切で、これはあくまで傾向を知るテストです。</p>
+  <div class="tags">
+    <span class="tag">⏱ 約3分</span>
+    <span class="tag">📋 15問</span>
+    <span class="tag">💡 伝え方ヒント付き</span>
+  </div>
+  <button class="btn-grad" onclick="startQuiz()">診断スタート</button>
+</section>
+
+<!-- QUESTION -->
+<section class="screen" id="question">
+  <div class="q-top">
+    <div class="prog-track">
+      <div class="prog-fill" id="progFill" style="width:0%"></div>
+    </div>
+    <div class="q-num" id="qNum">Q1 / 15</div>
+  </div>
+  <div class="q-main">
+    <div class="q-txt" id="qTxt"></div>
+    <div class="choices" id="choicesEl"></div>
+  </div>
+</section>
+
+<!-- LOADING -->
+<section class="screen" id="loading">
+  <span class="loading-icon">✨</span>
+  <p class="loading-txt">あなたの愛の言語を分析中…</p>
+</section>
+
+<!-- RESULT -->
+<section class="screen" id="result">
+  <div class="r-hero" id="rHero">
+    <span class="r-icon" id="rIcon"></span>
+    <span class="r-badge" id="rBadge"></span>
+    <h2 class="r-title" id="rTitle"></h2>
+    <p class="r-desc" id="rDesc"></p>
+  </div>
+  <div class="r-body">
+    <div class="r-card">
+      <div class="card-lbl" id="chartLbl">5つの言語スコア</div>
+      <div id="scoreChart"></div>
+    </div>
+    <div class="r-card">
+      <div class="card-lbl" id="todayLbl">今日からできること</div>
+      <ul class="today-list" id="todayList"></ul>
+    </div>
+    <div class="r-card">
+      <div class="card-lbl" id="howtoLbl">パートナーへの伝え方</div>
+      <p class="howto-bubble" id="howtoTxt"></p>
+    </div>
+  </div>
+  <div class="r-footer">
+    <button class="btn-outline" id="retryBtn" onclick="retry()">もう一度診断する</button>
+  </div>
+</section>
+
+<script>
+const LANGS = {
+  w: { key:"w", name:"言葉",        emoji:"💬", accent:"#FFB800", grad:"linear-gradient(155deg,#FFFAE0 0%,#FFF0C4 100%)" },
+  a: { key:"a", name:"行動",        emoji:"🤲", accent:"#2CC878", grad:"linear-gradient(155deg,#E8FBF1 0%,#D4F5E5 100%)" },
+  g: { key:"g", name:"プレゼント",  emoji:"🎁", accent:"#FF6B9D", grad:"linear-gradient(155deg,#FFF0F8 0%,#FFE0EE 100%)" },
+  t: { key:"t", name:"一緒の時間",  emoji:"⏰", accent:"#5B8DEF", grad:"linear-gradient(155deg,#EDF3FF 0%,#DDE8FF 100%)" },
+  p: { key:"p", name:"スキンシップ",emoji:"🫂", accent:"#FF8C42", grad:"linear-gradient(155deg,#FFF4EE 0%,#FFE5D0 100%)" },
+};
+
+const QS = [
+  { q:"恋人から「好きだよ」「すごいね」と言われると、特別な気持ちになる", d:"w" },
+  { q:"相手が自分のために何かしてくれると（料理・送り迎えなど）、愛情を感じる", d:"a" },
+  { q:"プレゼントをもらうとき、値段より「覚えていてくれた」という気持ちがうれしい", d:"g" },
+  { q:"何も特別なことをしなくても、ただ一緒にいる時間が一番の安心感", d:"t" },
+  { q:"手をつないだり、さりげなく触れてもらったりすると安心感がある", d:"p" },
+  { q:"ちょっとしたメッセージや手紙をもらうと、すごくうれしい", d:"w" },
+  { q:"疲れているときに相手が先回りして助けてくれると、特別に感じる", d:"a" },
+  { q:"旅先からのお土産や、ふとした小さな贈り物に、じんとくることがある", d:"g" },
+  { q:"相手が自分の話をちゃんと聞いてくれると、深いつながりを感じる", d:"t" },
+  { q:"疲れているときのハグや頭をなでてもらえると、言葉より癒される", d:"p" },
+  { q:"「あなたのここが好き」と具体的に言ってもらえると、愛されていると感じる", d:"w" },
+  { q:"「言わなくても先にやってくれた」という経験が、深く心に残る", d:"a" },
+  { q:"誕生日や記念日を特別にしてもらえると、大切にされていると感じる", d:"g" },
+  { q:"スマホを置いて、自分だけを見てくれる時間に特別さを感じる", d:"t" },
+  { q:"体の接触（抱き合う、寄り添う）が、愛情の確認になっている", d:"p" },
+];
+
+const LBLS = ["あまりない", "たまにある", "よくある", "まさにそう"];
+
+const DATA = {
+  w: {
+    title: "言葉で満たされるタイプ",
+    desc: "「好き」「ありがとう」「すごいね」のひと言が、関係を深める一番の鍵。言葉がないと関係が冷えているように感じやすく、逆に具体的な言葉一つで、一気に心が満たされます。",
+    today: [
+      "相手にいつもと違う言葉で気持ちを伝えてみよう（「今日の○○がよかった」など具体的に）",
+      "「言葉で言ってくれると、すごく嬉しい」と相手に話してみよう",
+      "短いメッセージでいい——今日、気持ちを文字で送ってみよう",
+    ],
+    howto: "「私って言葉をもらうとすごく嬉しくなるタイプなんだよね。ちょっとした一言がめっちゃ刺さる。具体的に言ってくれると、ほんとに嬉しい」",
+  },
+  a: {
+    title: "してくれたことが刺さるタイプ",
+    desc: "行動で示してくれることに、深く愛情を感じる人です。「やってくれた」という事実が、言葉よりも雄弁に気持ちを伝えます。日常のさりげないサポートが、この人の一番の愛の語彙。",
+    today: [
+      "相手がしてくれたことに「ありがとう、助かった」と具体的に伝えてみよう",
+      "「こういうことをしてくれると愛情感じる」を一つだけ具体的に伝えてみよう",
+      "自分も、今日誰かのために一つだけ先回りしてみよう",
+    ],
+    howto: "「私、言葉よりも行動で見せてもらえると、すごく安心するタイプで。料理してくれたとか、迎えに来てくれたとか、そういうのが一番刺さるんよね」",
+  },
+  g: {
+    title: "気持ちをモノで受け取るタイプ",
+    desc: "「覚えていてくれた」「選んでくれた」という気持ちを受け取る人です。高価さより、心がこもっているかどうかが大切。ものはシンボルで、本当に受け取っているのは「あなたのことを考えていた」というメッセージ。",
+    today: [
+      "相手へのちょっとしたサプライズを考えてみよう（好きなお菓子、手書きメモなど）",
+      "「記念日やふとした日に、何かもらえると嬉しい」と素直に伝えてみよう",
+      "「なんでもない日のプレゼントが一番嬉しいタイプ」だと話してみよう",
+    ],
+    howto: "「私、値段じゃなくて『覚えていてくれた』ってことに弱くて。ちょっとした何かをくれるだけで、すごく大切にされてるって感じるんだよね」",
+  },
+  t: {
+    title: "ただ一緒にいたいタイプ",
+    desc: "一緒にいる時間そのものが愛情の証、という人です。スマホを置いて、ちゃんと自分を見てくれる時間。特別なことは何もしなくていい——ただそこにいてくれることが、一番の言葉です。",
+    today: [
+      "今日、相手と「スマホを置いて話す時間」を15分だけ作ってみよう",
+      "「一緒にいる時間が一番安心する」と素直に伝えてみよう",
+      "ただ隣にいるだけの時間を、意識して楽しんでみよう",
+    ],
+    howto: "「私って一緒にいる時間に一番愛情感じるタイプで。何もしなくていいから、ただいてくれるだけで嬉しい。スマホ見ながらよりも、向き合ってくれる時間が好き」",
+  },
+  p: {
+    title: "触れ合いで通じ合うタイプ",
+    desc: "肌の温もりを通じて安心と愛情を感じる人です。ハグ、手をつなぐ、肩に触れる——これは欲求ではなく、深いところでつながっている感覚を得る大切な手段です。",
+    today: [
+      "「触れてもらうと、すごく安心する」と相手に話してみよう",
+      "今日、相手と少し長めのハグをしてみよう",
+      "日常のさりげない接触（手を握る、肩に触れる）を意識して一回増やしてみよう",
+    ],
+    howto: "「私、スキンシップに弱くて。ハグとか手つなぐとか、ちょっと触れてくれるだけで安心感めちゃくちゃ上がる。言葉より体で伝わるタイプかも」",
+  },
+};
+
+let cur = 0, sc = { w:0, a:0, g:0, t:0, p:0 };
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  const el = document.getElementById(id);
+  el.style.display = 'flex';
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('active')));
+}
+
+function startQuiz() {
+  cur = 0; sc = { w:0, a:0, g:0, t:0, p:0 };
+  showScreen('question');
+  renderQ();
+}
+
+function renderQ() {
+  const q = QS[cur];
+  document.getElementById('progFill').style.width = Math.round((cur / QS.length) * 100) + '%';
+  document.getElementById('qNum').textContent = `Q${cur + 1} / ${QS.length}`;
+
+  const el = document.getElementById('qTxt');
+  el.classList.add('fout');
+  setTimeout(() => { el.textContent = q.q; el.classList.remove('fout'); }, 180);
+
+  const ch = document.getElementById('choicesEl');
+  ch.innerHTML = '';
+  LBLS.forEach((lbl, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'c-btn';
+    btn.innerHTML = `<span class="dot"></span>${lbl}`;
+    btn.addEventListener('click', () => pick(i));
+    ch.appendChild(btn);
+  });
+}
+
+function pick(score) {
+  sc[QS[cur].d] += score;
+  cur++;
+  if (cur >= QS.length) {
+    showScreen('loading');
+    setTimeout(showResult, 1800);
+  } else {
+    renderQ();
+  }
+}
+
+function showResult() {
+  // top language
+  const order = Object.keys(sc).sort((a, b) => sc[b] - sc[a]);
+  const top = order[0];
+  const L = LANGS[top];
+  const D = DATA[top];
+
+  // hero
+  document.getElementById('rHero').style.background = L.grad;
+  document.getElementById('rIcon').textContent = L.emoji;
+  const badge = document.getElementById('rBadge');
+  badge.textContent = L.name;
+  badge.style.background = L.accent;
+  document.getElementById('rTitle').textContent = D.title;
+  document.getElementById('rDesc').textContent = D.desc;
+
+  // card labels
+  ['chartLbl','todayLbl','howtoLbl'].forEach(id =>
+    document.getElementById(id).style.color = L.accent
+  );
+
+  // score chart
+  const chart = document.getElementById('scoreChart');
+  chart.innerHTML = '';
+  const maxScore = 9; // 3 questions × max 3 points
+  order.forEach((key, rank) => {
+    const lang = LANGS[key];
+    const pct = Math.round((sc[key] / maxScore) * 100);
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML = `
+      <span class="bar-emoji">${lang.emoji}</span>
+      <span class="bar-name${rank === 0 ? ' top' : ''}">${lang.name}</span>
+      <div class="bar-track">
+        <div class="bar-fill" id="bf-${key}" style="background:${lang.accent}"></div>
+      </div>
+      ${rank === 0 ? '<span class="bar-crown">👑</span>' : '<span class="bar-crown" style="opacity:0">　</span>'}
+    `;
+    chart.appendChild(row);
+  });
+  // animate bars after paint
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    order.forEach(key => {
+      const pct = Math.round((sc[key] / maxScore) * 100);
+      const el = document.getElementById(`bf-${key}`);
+      if (el) el.style.width = Math.max(pct, 4) + '%';
+    });
+  }));
+
+  // today
+  const list = document.getElementById('todayList');
+  list.innerHTML = '';
+  D.today.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'today-item';
+    li.innerHTML = `<span class="num" style="background:${L.accent}">${i+1}</span><span>${item}</span>`;
+    list.appendChild(li);
+  });
+
+  // howto
+  const howto = document.getElementById('howtoTxt');
+  howto.textContent = D.howto;
+  howto.style.setProperty('--howto-color', L.accent);
+  howto.style.borderLeftColor = L.accent;
+
+  // retry button
+  const btn = document.getElementById('retryBtn');
+  btn.style.borderColor = L.accent;
+  btn.style.color = L.accent;
+
+  showScreen('result');
+}
+
+function retry() { showScreen('start'); }
+
+// init
+document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+const startEl = document.getElementById('start');
+startEl.style.display = 'flex';
+startEl.classList.add('active');
+</script>
+</body>
+</html>
