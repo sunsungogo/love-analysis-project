@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>素の自分を開く質問カード — ブース10</title>
+  <title>恋愛で素が出せないあなたへ — ブース10</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Space+Grotesk:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
@@ -447,48 +447,49 @@
   <!-- ═══ START ═══ -->
   <div class="screen active" id="s-start">
     <div class="start-inner">
-      <div class="start-kicker">BOOTH 10 · Self-Disclosure · 恋愛未来設計展</div>
-      <div class="start-h1">素の自分を<br>開く質問カード</div>
-      <div class="start-h1-en">Self-Disclosure Card Game</div>
+      <div class="start-kicker">BOOTH 10 · Reset Card · 恋愛未来設計展</div>
+      <div class="start-h1">恋愛で、素が<br>出せていますか？</div>
+      <div class="start-h1-en">Back to Yourself</div>
       <div class="start-sub">
-        カードを1枚ずつめくって、質問に答えよう。<br>
-        一人でも、ふたりでも——<br>答えながら、少しずつ本音の自分に近づく。
+        恋愛になると自分が変わってしまう——<br>
+        そんな悩みを持つ人へ。<br>
+        まず一人の自分を取り戻してから、<br>恋愛を冷静に見つめ直そう。
       </div>
       <div class="level-chips">
-        <div class="lv-chip lc1">Lv.1 日常</div>
-        <div class="lv-chip lc2">Lv.2 価値観</div>
-        <div class="lv-chip lc3">Lv.3 本音</div>
+        <div class="lv-chip lc1">一人の自分</div>
+        <div class="lv-chip lc3">恋愛の中の自分</div>
+        <div class="lv-chip lc2">冷静に振り返る</div>
       </div>
 
-      <div class="select-label">レベルを選んでスタート</div>
+      <div class="select-label">どこから始める？</div>
 
       <button class="btn-level bl1" onclick="startGame('lv1')">
         <div class="bl-label">
-          <span class="bl-main">Lv.1 だけ</span>
-          <span class="bl-sub">好みと日常 — 8問</span>
+          <span class="bl-main">まず一人の自分を取り戻す</span>
+          <span class="bl-sub">「一人の自分」カード — 8問</span>
         </div>
         <span class="bl-arrow">→</span>
       </button>
 
       <button class="btn-level bl2" onclick="startGame('lv12')">
         <div class="bl-label">
-          <span class="bl-main">Lv.1 + Lv.2</span>
-          <span class="bl-sub">日常から価値観へ — 16問</span>
+          <span class="bl-main">恋愛のパターンも見てみる</span>
+          <span class="bl-sub">「一人」＋「恋愛の中の自分」— 16問</span>
         </div>
         <span class="bl-arrow">→</span>
       </button>
 
       <button class="btn-level bl3" onclick="startGame('all')">
         <div class="bl-label">
-          <span class="bl-main">全レベル</span>
-          <span class="bl-sub">Lv.1〜3 ＋ ボーナス — 全問</span>
+          <span class="bl-main">全部やる（冷静な振り返りまで）</span>
+          <span class="bl-sub">3カテゴリ ＋ ふたりカード — 全問</span>
         </div>
         <span class="bl-arrow">→</span>
       </button>
 
       <div class="start-footer">
         恋愛未来設計展 · Love Analysis Project（100BANCH採択）<br>
-        Altman &amp; Taylor（1973）社会的浸透理論をもとに設計
+        「恋愛で素が出せない」悩みに向き合う内省カード
       </div>
     </div>
   </div>
@@ -535,8 +536,8 @@
     <div class="end-ornament">✦</div>
     <div class="end-kicker">Complete</div>
     <div class="end-gold-line"></div>
-    <div class="end-title">全部のカードを<br>引き終えました</div>
-    <div class="end-sub" id="end-sub">どの質問が一番印象に残りましたか？\n答えながら、少し素の自分に近づけたかも。</div>
+    <div class="end-title" id="end-title">全部のカードを<br>引き終えました</div>
+    <div class="end-sub" id="end-sub">どの問いが一番響きましたか？\n答えながら、少し素の自分に近づけたかも。</div>
     <div class="end-actions">
       <button class="btn-restart" onclick="restartSame()">同じレベルでもう一度</button>
       <button class="btn-back"    onclick="goStart()">レベルを選び直す</button>
@@ -551,45 +552,45 @@
 /* ════ DATA ════ */
 const CARDS = {
   lv1: [
-    { q: '今、一番「幸せだな」と感じる瞬間はどんなときですか？',             hint: '嬉しい話をすると、次の話がしやすくなります' },
-    { q: '子どものころ、熱中していたものは何ですか？',                       hint: '子どもの頃の話をすると、自然と素の自分が出てきます' },
-    { q: 'あなたにとって「理想の一日」はどんな一日ですか？',                 hint: '二人の距離を縮める効果が研究で確認されている質問です' },
-    { q: '最近ハマっていることや、お気に入りのコンテンツを教えてください。', hint: '趣味や関心の共有は会話の入口として最適' },
-    { q: '自分なりの「リセット方法」はなんですか？\n元気を取り戻す方法。',   hint: '自分なりの元気の取り戻し方に、その人らしさが出ます' },
-    { q: '好きな季節と、その理由を教えてください。',                         hint: '感覚的な好みの共有で距離が縮まる' },
-    { q: '「これは絶対続けていきたい」という習慣や趣味はありますか？',        hint: '継続の理由に、大切にしているものが現れる' },
-    { q: '今まで行った場所で、一番印象に残っているところはどこですか？',      hint: '場所の思い出には感情が結びついていて、自然と本音が出やすくなります' },
+    { q: '一人でいるとき、どんなことに時間を使うのが一番落ち着く？',               hint: '「一人の好き」は、あなたの本当のニーズを教えてくれます' },
+    { q: '誰も見ていないとき、どんな「自分だけの習慣」がある？',                   hint: '人前では見せない行動の中に、素の自分がいます' },
+    { q: '恋愛が忙しくなると、一番後回しにしがちなことは何？',                     hint: '後回しにするものに、あなたが本当に大切にしているものが隠れています' },
+    { q: '気持ちがしんどいとき、自分を回復させる方法は？',                         hint: '自分の回復方法を知っていることが、素でいられる土台になります' },
+    { q: '最近「自分らしいな」と感じた瞬間はいつ？',                               hint: '「自分らしさ」の条件を具体的にすると、関係に持ち込みやすくなります' },
+    { q: '誰にも頼らず、自分だけで決めたい領域ってある？',                         hint: '「ゆずれない」領域を知ることが、適切な距離感につながります' },
+    { q: 'ひとりで出かけるとしたら、今どこに行きたい？',                           hint: '行き先の想像から、今の自分に必要なものが見えてきます' },
+    { q: '「いい一日だった」と思える条件は、あなたにとって何？',                   hint: '「自分が満足できる日」の基準があると、恋愛でも自分を見失いにくくなります' },
   ],
   lv2: [
-    { q: 'これまでで「本当によかった」と思える経験を1つ教えてください。',                    hint: '良い思い出を話すことが、次の深い話への入口になります' },
-    { q: '「こんな人になりたい」と思う人物はいますか？どんな部分が好きですか？',             hint: '憧れの人を語るとき、自分が本当に大切にしていることが自然と出てきます' },
-    { q: '誰かに「ありがとう」と伝えそびれていることがありますか？',                         hint: '後悔や感謝を話すことで、普段は出てこない深い気持ちに触れられます' },
-    { q: '「これだけは譲れない」と感じる価値観や信念はありますか？',                         hint: '自分の信念を伝える、大切な問いです' },
-    { q: '過去に「こうすればよかった」と今でも思う選択はありますか？',                       hint: '後悔を話すと、自分をよく見つめていることが伝わり、共感されやすいです' },
-    { q: '自分が得意なことと、苦手なことを正直に教えてください。',                           hint: '得意・苦手を話し合うことが、お互いを理解する土台になります' },
-    { q: 'お金よりも大切にしていると感じるものはなんですか？',                               hint: '何を大切にしているかが見えてくる問いです' },
-    { q: '誰かに「この人すごいな」と感じたエピソードがあれば教えてください。',               hint: '尊敬する行動を語ることで、自分の基準が見える' },
+    { q: '恋愛すると、自分はどんなタイプに変わる？',                               hint: '「恋愛前後の変化」を言葉にすると、自分を失っている部分が見えやすくなります' },
+    { q: '好きな人の前で「自分じゃない自分」を演じたことはある？',                 hint: '「演じている」自覚があるのは、変化に気づいている証拠です' },
+    { q: '本当は伝えたかったのに、言えなかったことはある？',                       hint: '言えなかった言葉の中に、あなたの本音があります' },
+    { q: '相手に合わせるとき、よく我慢していることは何？',                         hint: '我慢のパターンを知ると、どこから素を出せるか見えてきます' },
+    { q: '「これをしてもらえると自分らしくいられる」ということはある？',           hint: '自分が自分でいるために必要なものを、言葉にしておく練習です' },
+    { q: '恋愛で一番怖いのは、どんなこと？',                                       hint: '「恋愛の怖さ」の根っこには、素が出せない理由が隠れていることが多い' },
+    { q: '今の関係の中で「なんか違う」と感じることはある？',                       hint: '「なんか違う」という感覚は、素の自分からのサインかもしれません' },
+    { q: '恋人といるときと、友達といるとき、どっちが「本物の自分」に近いと感じる？', hint: 'ふたりの自分を比べることで、恋愛の中でどこが変わっているか見えてきます' },
   ],
   lv3: [
-    { q: '自分のどんな部分を、一番「見られたくない」と思いますか？', hint: '恥ずかしさや弱さの核心に触れる問いです' },
-    { q: 'あなたが「愛されている」と感じるのはどんな瞬間ですか？',   hint: '自分がどんな愛され方をすると嬉しいか——その人なりの愛の形を探る問いです' },
-    { q: '恋愛で「これが一番怖い」と感じることは何ですか？',         hint: '恋愛での不安の根っこに触れる問いです。お互いに話すと一気に距離が縮まります' },
-    { q: '今のあなたに、5年前の自分が会ったら何と言うと思いますか？', hint: '自分の変化を振り返ることで、今の本当の自分が言葉になります' },
-    { q: '誰にも言いにくくて、あまり話したことがないことはありますか？', hint: '口に出せなかった言葉が、深い信頼関係の扉を開く' },
-    { q: '「本当の自分」を一番自然に出せる場所や瞬間はいつですか？',   hint: '「本当の自分でいられる場所」を言葉にすることで、素の自分の条件がわかります' },
+    { q: '友達が今のあなたと同じ悩みを持っていたら、何て言う？',       hint: '自分へのアドバイスは、友達に向けて考えると突然クリアになることが多い' },
+    { q: '一人になったとき、今の関係についてどう感じる？',             hint: '「一人のときの感覚」は、飾らない本音に一番近い' },
+    { q: '「素の自分でいてもいい」と思える条件って、どんなこと？',     hint: '条件が言葉になると、それを相手に伝えるための出発点になります' },
+    { q: '今の恋愛で、自分が一番大切にしたいことは何？',               hint: '「大切にしたいこと」を確認すると、何かを我慢しすぎていないか見えてきます' },
+    { q: 'もし全部うまくいったとして、どんな関係でいたい？',           hint: '「ゴール」を言葉にすることで、今の状況を相対化できます' },
+    { q: '今のあなたに必要なのは、「相手の変化」？「自分の変化」？',   hint: 'この問いに「正解」はありません。どちらと感じるかに、気づきがあります' },
   ],
   bonus: [
-    { q: '私たちが出会ってよかったと思えることを、ひとつ教えてください。', hint: '「私たち」の視点から関係を語る最初の一歩' },
-    { q: '私のことで「もっと知りたい」と思っていることはありますか？',    hint: '相互の好奇心を確認することで関係がより深まる' },
+    { q: '私が恋愛で素を出しにくくなるのは、どんなときだろう？',           hint: 'パートナーと一緒に考えると、お互いの理解が深まります' },
+    { q: '私が「もっとこうしてほしい」と思っていることを、一つだけ伝えてみよう', hint: '小さな一歩が、関係を変えるきっかけになることがあります' },
   ],
 };
 
 /* Level display config */
 const LV_INFO = {
-  lv1:   { badge: 'Lv.1', label: 'LEVEL 1', sub: '好みと日常',    acc: '#4CAF7D', bg1: '#1E3A2F', bg2: '#2D5A3F', lt: '#A8D5B8', orn: '❧' },
-  lv2:   { badge: 'Lv.2', label: 'LEVEL 2', sub: '価値観と記憶',  acc: '#5B84C4', bg1: '#1E2A4A', bg2: '#2D3F6E', lt: '#A8BEE8', orn: '✦' },
-  lv3:   { badge: 'Lv.3', label: 'LEVEL 3', sub: '本音と怖さ',    acc: '#C45B84', bg1: '#3A1A2E', bg2: '#5E2040', lt: '#E8A8C0', orn: '♦' },
-  bonus: { badge: 'BONUS', label: 'BONUS',  sub: 'ふたりの視点',  acc: '#C9A84C', bg1: '#2A2010', bg2: '#40320A', lt: '#E8C97A', orn: '✸' },
+  lv1:   { badge: '一人の自分',    label: 'SOLO SELF',    sub: '一人のときの自分',  acc: '#4CAF7D', bg1: '#1E3A2F', bg2: '#2D5A3F', lt: '#A8D5B8', orn: '❧' },
+  lv2:   { badge: '恋愛の中の自分', label: 'IN ROMANCE',  sub: '恋愛で変わる自分',  acc: '#C45B84', bg1: '#3A1A2E', bg2: '#5E2040', lt: '#E8A8C0', orn: '♦' },
+  lv3:   { badge: '冷静に振り返る', label: 'REFLECT',     sub: '俯瞰して見る',      acc: '#5B84C4', bg1: '#1E2A4A', bg2: '#2D3F6E', lt: '#A8BEE8', orn: '✦' },
+  bonus: { badge: 'ふたりで',       label: 'TOGETHER',    sub: 'パートナーと話す',   acc: '#C9A84C', bg1: '#2A2010', bg2: '#40320A', lt: '#E8C97A', orn: '✸' },
 };
 
 /* ════ STATE ════ */
@@ -724,10 +725,19 @@ function nextCard() {
 
 function showEnd() {
   const hasLv3 = deck.some(c => c.lv === 'lv3');
+  const hasLv2 = deck.some(c => c.lv === 'lv2');
   const sub = document.getElementById('end-sub');
-  sub.textContent = hasLv3
-    ? 'Lv.3まで話せたなら、かなり素の自分を開けたはず。\nどの質問が一番印象に残りましたか？'
-    : 'どの質問が一番印象に残りましたか？\n答えながら、少し素の自分に近づけたかも。';
+  const title = document.getElementById('end-title');
+  if (hasLv3) {
+    title.textContent = '全部のカードを\n引き終えました';
+    sub.textContent = '「冷静に振り返る」まで到達。\n今の関係を、少し上から見られたかも。\nどの問いが一番響きましたか？';
+  } else if (hasLv2) {
+    title.textContent = '恋愛の中の\n自分が見えてきた';
+    sub.textContent = '「恋愛で変わっている自分」に気づくことが、\n素を取り戻す最初の一歩です。';
+  } else {
+    title.textContent = '一人の自分を\n思い出せた？';
+    sub.textContent = '「恋愛モード」から一時離れて、\n素の自分を確認できましたか。';
+  }
   show('s-end');
 }
 
