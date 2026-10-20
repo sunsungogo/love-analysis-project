@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>愛着タイプ診断</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FFFBF8;
+      --text: #1A1A2E;
+      --text-sub: #8892A0;
+      --border: #EDE8F5;
+    }
+
+    body {
+      font-family: 'Zen Kaku Gothic New', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100dvh;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    .screen.active { display: flex; opacity: 1; }
+
+    /* ======= START ======= */
+    #start {
+      background: linear-gradient(155deg, #FFF0F8 0%, #EDE8FF 55%, #E8F2FF 100%);
+      align-items: center;
+      justify-content: center;
+      padding: 48px 28px 64px;
+      text-align: center;
+    }
+
+    .s-icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+      display: block;
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .s-title {
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.45;
+      margin-bottom: 14px;
+      background: linear-gradient(130deg, #FF6B9D 0%, #9B6DFF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .s-sub {
+      font-size: 14px;
+      color: #6B7A9E;
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .tag {
+      background: white;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #6B7A9E;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+
+    .btn-grad {
+      background: linear-gradient(130deg, #FF6B9D 0%, #9B6DFF 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 17px 52px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(155,109,255,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+    }
+    .btn-grad:active {
+      transform: scale(0.95);
+      box-shadow: 0 3px 12px rgba(155,109,255,0.25);
+    }
+
+    /* ======= QUESTION ======= */
+    #question { background: var(--bg); }
+
+    .q-top {
+      padding: 16px 20px 12px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .prog-track {
+      height: 5px;
+      background: #EDE8F5;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .prog-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FF6B9D, #9B6DFF);
+      border-radius: 5px;
+      transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .q-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-sub);
+    }
+
+    .q-main {
+      flex: 1;
+      padding: 32px 20px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .q-txt {
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.55;
+      margin-bottom: 28px;
+      min-height: 72px;
+      transition: opacity 0.22s ease;
+    }
+    .q-txt.fout { opacity: 0; }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .c-btn {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-family: inherit;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.12s ease;
+      -webkit-appearance: none;
+    }
+    .c-btn:active {
+      transform: scale(0.97);
+      background: linear-gradient(130deg, #FF6B9D0D, #9B6DFF0D);
+      border-color: #9B6DFF;
+    }
+
+    .dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #CFC8E8;
+      flex-shrink: 0;
+    }
+
+    /* ======= LOADING ======= */
+    #loading {
+      background: linear-gradient(155deg, #FFF0F8, #EDE8FF, #E8F2FF);
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .loading-icon {
+      font-size: 64px;
+      animation: wobble 0.9s ease-in-out infinite;
+    }
+    @keyframes wobble {
+      0%, 100% { transform: rotate(-8deg) scale(1); }
+      50% { transform: rotate(8deg) scale(1.08); }
+    }
+
+    .loading-txt {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    /* ======= RESULT ======= */
+    #result { flex-direction: column; overflow-y: auto; }
+
+    .r-hero {
+      padding: 44px 24px 36px;
+      text-align: center;
+    }
+
+    .r-icon {
+      font-size: 84px;
+      display: block;
+      margin-bottom: 16px;
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    .r-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .r-title {
+      font-size: 27px;
+      font-weight: 900;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+
+    .r-desc {
+      font-size: 13.5px;
+      line-height: 1.8;
+      color: #5A6378;
+    }
+
+    .r-body {
+      padding: 20px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .r-card {
+      background: white;
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.055);
+    }
+
+    .card-lbl {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .today-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .today-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .r-text {
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .memo-txt {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    .r-footer {
+      padding: 8px 20px 52px;
+    }
+
+    .btn-outline {
+      width: 100%;
+      background: transparent;
+      border: 2px solid;
+      border-radius: 50px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      -webkit-appearance: none;
+      transition: opacity 0.15s;
+    }
+    .btn-outline:active { opacity: 0.65; }
+  </style>
+</head>
+<body>
+
+<!-- START -->
+<section class="screen" id="start">
+  <span class="s-icon">🫀</span>
+  <h1 class="s-title">あなたの恋愛グセ、<br>正直に見てみよう</h1>
+  <p class="s-sub">「なんかうまくいかない…」には<br>理由があります。<br>愛着タイプを知れば、<br>今日から変えられることが見えてくる。</p>
+  <div class="tags">
+    <span class="tag">⏱ 約3分</span>
+    <span class="tag">📋 12問</span>
+    <span class="tag">✨ 今日できること付き</span>
+  </div>
+  <button class="btn-grad" onclick="startQuiz()">診断スタート</button>
+</section>
+
+<!-- QUESTION -->
+<section class="screen" id="question">
+  <div class="q-top">
+    <div class="prog-track">
+      <div class="prog-fill" id="progFill" style="width:0%"></div>
+    </div>
+    <div class="q-num" id="qNum">Q1 / 12</div>
+  </div>
+  <div class="q-main">
+    <div class="q-txt" id="qTxt"></div>
+    <div class="choices" id="choicesEl"></div>
+  </div>
+</section>
+
+<!-- LOADING -->
+<section class="screen" id="loading">
+  <span class="loading-icon">🔮</span>
+  <p class="loading-txt">あなたのタイプを分析中…</p>
+</section>
+
+<!-- RESULT -->
+<section class="screen" id="result">
+  <div class="r-hero" id="rHero">
+    <span class="r-icon" id="rIcon"></span>
+    <span class="r-badge" id="rBadge"></span>
+    <h2 class="r-title" id="rTitle"></h2>
+    <p class="r-desc" id="rDesc"></p>
+  </div>
+  <div class="r-body">
+    <div class="r-card">
+      <div class="card-lbl" id="todayLbl">今日からできること</div>
+      <ul class="today-list" id="todayList"></ul>
+    </div>
+    <div class="r-card">
+      <div class="card-lbl" id="strengthLbl">あなたの強み</div>
+      <p class="r-text" id="strengthTxt"></p>
+    </div>
+    <div class="r-card">
+      <div class="card-lbl" id="memoLbl">今日のひとこと</div>
+      <p class="memo-txt" id="memoTxt"></p>
+    </div>
+  </div>
+  <div class="r-footer">
+    <button class="btn-outline" id="retryBtn" onclick="retry()">もう一度診断する</button>
+  </div>
+</section>
+
+<script>
+/* 12問：anxiety(a) と avoidance(v) を交互に配置 */
+const QS = [
+  { q: "恋人から返信が来ないとき、嫌われたかなと不安になる", d: "a" },
+  { q: "誰かに頼ることが苦手で、一人で抱え込んでしまう", d: "v" },
+  { q: "相手の気持ちをいつも確認したくなる", d: "a" },
+  { q: "好きな人と長時間一緒にいると、一人の時間が恋しくなる", d: "v" },
+  { q: "少し冷たい態度をされるだけで、関係が終わりそうで怖くなる", d: "a" },
+  { q: "深い関係になりそうになると、気持ちが引いてしまうことがある", d: "v" },
+  { q: "相手に嫌われたくなくて、本音を言えないことがある", d: "a" },
+  { q: "自分の感情や弱みを人に話すのが難しい", d: "v" },
+  { q: "付き合っていても「本当に好かれているのかな」と疑ってしまう", d: "a" },
+  { q: "「もっと会いたい」と言われると、プレッシャーに感じる", d: "v" },
+  { q: "関係を壊したくなくて、相手のわがままを受け入れすぎてしまう", d: "a" },
+  { q: "困ったとき、人に助けを求めるより一人で解決したいと思う", d: "v" },
+];
+
+const LBLS = ["ほぼない", "たまにある", "よくある", "いつもそう"];
+
+const TYPES = {
+  secure: {
+    emoji: "☁️", badge: "安定型", title: "ふんわり安心タイプ",
+    desc: "自分の感情を大切にしながら、相手との距離感もちゃんと保てる人。「壊れるかも」という不安より「この人といると楽しい」という感覚を軸に動けています。",
+    today: [
+      "今日、相手に「ありがとう」をひとつ言葉で伝えてみよう",
+      "自分が今感じていることを、一行だけ書き出してみよう",
+      "大切な人との時間に、スマホを置いてみよう",
+    ],
+    strength: "周りの人が自然と安心して話しかけられる雰囲気を持っています。あなたの落ち着いた在り方は、相手にとっての居場所になっています。",
+    memo: "「今のバランス、いい感じ。」焦らず、でも止まらず。",
+    grad: "linear-gradient(155deg, #E8F8F2 0%, #EBF4FB 100%)",
+    accent: "#2CC878",
+  },
+  anxious: {
+    emoji: "🌊", badge: "不安型", title: "もっと近くにいたいタイプ",
+    desc: "愛情表現や感情の共有を大切にする、感受性の豊かな人です。ただ、相手の反応に振り回されやすく、自分より相手を優先しすぎてしまうことも。あなたの気持ちには、ちゃんと大切にする価値があります。",
+    today: [
+      "返信待ちの時間に、自分が好きなことをひとつやってみよう",
+      "今日だけでいい——確認の連絡を1回だけ減らしてみよう",
+      "「自分はどうしたい？」を一行だけメモに書いてみよう",
+    ],
+    strength: "感情の豊かさと共感力は本物の強みです。相手が言葉にできない気持ちに気づけるあなたの繊細さは、かけがえのない才能です。",
+    memo: "「相手を大切にする前に、自分を大切にする練習をしよう。」",
+    grad: "linear-gradient(155deg, #EDF3FF 0%, #F0E8FF 100%)",
+    accent: "#5B8DEF",
+  },
+  avoidant: {
+    emoji: "🌙", badge: "回避型", title: "じぶん時間大事タイプ",
+    desc: "自立心が強く、自分の世界を大切にできる人。ただ、感情を閉じ込めすぎて「伝わらない」と感じたり、相手に「近づけない」と思わせてしまうことも。",
+    today: [
+      "「疲れた」「うれしかった」など、感情を一言だけ誰かに話してみよう",
+      "小さなことでいい——人の助けを借りる経験を一つしてみよう",
+      "今日、自分の「好き」をひとつ誰かと共有してみよう",
+    ],
+    strength: "自分のペースで物事を進める力と、感情に流されない安定感。「一歩引いて見る」姿勢は、関係を冷静に保つ大きな強みです。",
+    memo: "「距離を置くことと、心を閉じることは違う。少しずつ、開いていい。」",
+    grad: "linear-gradient(155deg, #F3EEFF 0%, #EBE4FF 100%)",
+    accent: "#9B6DFF",
+  },
+  disorganized: {
+    emoji: "🌀", badge: "混乱型", title: "近くて遠いタイプ",
+    desc: "近づきたいけど怖い、愛されたいけど信じられない。そんな矛盾した気持ちを抱えているかもしれません。これは弱さではなく、あなたが経験の中で身につけた、自分を守る方法です。",
+    today: [
+      "今感じていることに名前をつけてみよう（不安？怖い？さみしい？）",
+      "「安心できる人」を一人だけ思い浮かべて、その人との時間を大切にしよう",
+      "今日一日、自分のペースでいいと自分に許可を出してみよう",
+    ],
+    strength: "深く感じる力と、複雑な感情を知っている強さがあります。他の人が気づかないものを見える繊細さは、特別な才能です。",
+    memo: "「全部すぐ変えなくていい。今日一日、自分に優しくするだけでいい。」",
+    grad: "linear-gradient(155deg, #FFF4EE 0%, #FFF0F8 100%)",
+    accent: "#FF8C42",
+  },
+};
+
+let cur = 0, sc = { a: 0, v: 0 };
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  const el = document.getElementById(id);
+  el.style.display = 'flex';
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('active')));
+}
+
+function startQuiz() {
+  cur = 0; sc = { a: 0, v: 0 };
+  showScreen('question');
+  renderQ();
+}
+
+function renderQ() {
+  const q = QS[cur];
+  document.getElementById('progFill').style.width = Math.round((cur / QS.length) * 100) + '%';
+  document.getElementById('qNum').textContent = `Q${cur + 1} / ${QS.length}`;
+
+  const el = document.getElementById('qTxt');
+  el.classList.add('fout');
+  setTimeout(() => {
+    el.textContent = q.q;
+    el.classList.remove('fout');
+  }, 180);
+
+  const ch = document.getElementById('choicesEl');
+  ch.innerHTML = '';
+  LBLS.forEach((lbl, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'c-btn';
+    btn.innerHTML = `<span class="dot"></span>${lbl}`;
+    btn.addEventListener('click', () => pick(i));
+    ch.appendChild(btn);
+  });
+}
+
+function pick(score) {
+  sc[QS[cur].d] += score;
+  cur++;
+  if (cur >= QS.length) {
+    showScreen('loading');
+    setTimeout(showResult, 1800);
+  } else {
+    renderQ();
+  }
+}
+
+function showResult() {
+  const aHi = sc.a >= 9, vHi = sc.v >= 9;
+  const key = (!aHi && !vHi) ? 'secure'
+            : (aHi  && !vHi) ? 'anxious'
+            : (!aHi && vHi)  ? 'avoidant'
+            : 'disorganized';
+  const t = TYPES[key];
+
+  document.getElementById('rHero').style.background = t.grad;
+  document.getElementById('rIcon').textContent = t.emoji;
+
+  const badge = document.getElementById('rBadge');
+  badge.textContent = t.badge;
+  badge.style.background = t.accent;
+
+  document.getElementById('rTitle').textContent = t.title;
+  document.getElementById('rDesc').textContent = t.desc;
+
+  ['todayLbl','strengthLbl','memoLbl'].forEach(id =>
+    document.getElementById(id).style.color = t.accent
+  );
+
+  const list = document.getElementById('todayList');
+  list.innerHTML = '';
+  t.today.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'today-item';
+    li.innerHTML = `<span class="num" style="background:${t.accent}">${i+1}</span><span>${item}</span>`;
+    list.appendChild(li);
+  });
+
+  document.getElementById('strengthTxt').textContent = t.strength;
+  document.getElementById('memoTxt').textContent = t.memo;
+
+  const btn = document.getElementById('retryBtn');
+  btn.style.borderColor = t.accent;
+  btn.style.color = t.accent;
+
+  showScreen('result');
+}
+
+function retry() { showScreen('start'); }
+
+// init
+document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+const startEl = document.getElementById('start');
+startEl.style.display = 'flex';
+startEl.classList.add('active');
+</script>
+</body>
+</html>
