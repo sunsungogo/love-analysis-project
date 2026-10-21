@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>壁打ち相談チャット — ブース07</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0A0E17;
+      --ink: #E8ECF5;
+      --line: #232B3D;
+      --accent: #6B7FFF;
+      --accent2: #00E6B8;
+      --sub: rgba(232,236,245,0.45);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+      height: 100%;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 480px;
+      height: 100dvh;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    }
+    .avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .header-info { flex: 1; }
+    .booth-label {
+      font-family: 'Space Grotesk', monospace; font-size: 10px; color: var(--accent2);
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2px;
+    }
+    .booth-title { font-size: 15px; font-weight: 700; }
+    .gear-btn {
+      background: none; border: none; color: rgba(232,236,245,0.25);
+      cursor: pointer; font-size: 20px; padding: 6px; line-height: 1; transition: color 0.2s;
+    }
+    .gear-btn:hover { color: var(--accent2); }
+
+    .intro-card {
+      margin: 14px 16px 0; padding: 14px 16px;
+      background: rgba(107,127,255,0.08); border: 1px solid rgba(107,127,255,0.25);
+      border-radius: 12px; font-size: 12.5px; line-height: 1.7;
+      color: rgba(232,236,245,0.75); flex-shrink: 0;
+    }
+    .intro-card b { color: var(--accent); }
+
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 16px 16px 8px;
+      display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth;
+      background-image:
+        linear-gradient(rgba(35,43,61,0.4) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(35,43,61,0.4) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .chat-messages::-webkit-scrollbar { width: 3px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+    .message { display: flex; gap: 10px; align-items: flex-end; }
+    .message.user { flex-direction: row-reverse; }
+    .m-avatar {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; margin-bottom: 2px;
+    }
+    .message.ai .m-avatar { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+    .message.user .m-avatar { background: var(--line); border: 1px solid var(--accent2); }
+
+    .bubble { max-width: min(74%, 320px); padding: 10px 14px; font-size: 14px; line-height: 1.65; }
+    .message.ai .bubble { background: var(--line); border-radius: 4px 14px 14px 14px; }
+    .message.user .bubble { background: var(--accent2); border-radius: 14px 4px 14px 14px; color: #06251f; }
+
+    .typing-indicator {
+      display: flex; gap: 5px; padding: 12px 14px;
+      background: var(--line); border-radius: 4px 14px 14px 14px; width: fit-content; align-items: center;
+    }
+    .typing-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: bounce 1.2s infinite ease-in-out; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%,60%,100% { opacity:.3; transform:translateY(0); } 30% { opacity:1; transform:translateY(-5px); } }
+
+    .input-area { padding: 10px 14px 12px; border-top: 1px solid var(--line); display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+    .chat-input {
+      flex: 1; background: var(--line); border: 1px solid transparent; border-radius: 24px;
+      padding: 10px 16px; color: var(--ink); font-family: inherit; font-size: 14px; outline: none; transition: border-color 0.2s;
+    }
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-input::placeholder { color: rgba(232,236,245,0.25); }
+
+    .send-btn {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; transition: opacity 0.2s, transform 0.1s;
+    }
+    .send-btn:hover { opacity: 0.85; }
+    .send-btn:active { transform: scale(0.93); }
+    .send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .reset-area { text-align: center; padding: 4px 0 8px; }
+    .reset-btn {
+      background: none; border: 1px solid var(--line); color: rgba(232,236,245,0.3);
+      padding: 4px 14px; border-radius: 12px; font-size: 11px; cursor: pointer;
+      font-family: 'Space Grotesk', monospace; letter-spacing: 0.05em; transition: all 0.2s;
+    }
+    .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .mode-badge { font-family: 'Space Grotesk', monospace; font-size: 9px; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.08em; }
+    .mode-ai { background: rgba(107,127,255,0.14); color: var(--accent); border: 1px solid rgba(107,127,255,0.35); }
+    .mode-fallback { background: rgba(0,230,184,0.12); color: var(--accent2); border: 1px solid rgba(0,230,184,0.3); }
+
+    .settings-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(10,14,23,0.92); z-index: 200;
+      align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px);
+    }
+    .settings-overlay.open { display: flex; }
+    .settings-card { background: #141923; border: 1px solid var(--line); border-radius: 14px; padding: 24px; width: 100%; max-width: 340px; }
+    .settings-heading { font-family: 'Space Grotesk', monospace; font-size: 11px; color: var(--accent2); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 20px; }
+    .settings-label { font-size: 12px; color: rgba(232,236,245,0.5); margin-bottom: 6px; font-family: 'Space Grotesk', monospace; }
+    .settings-input {
+      width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+      color: var(--ink); font-family: 'Space Grotesk', monospace; font-size: 13px; outline: none; margin-bottom: 10px; transition: border-color 0.2s;
+    }
+    .settings-input:focus { border-color: var(--accent); }
+    .settings-note { font-size: 11px; color: rgba(232,236,245,0.35); margin-bottom: 20px; line-height: 1.6; }
+    .settings-note a { color: var(--accent2); text-decoration: none; }
+    .settings-save-btn {
+      width: 100%; padding: 11px; background: var(--accent); color: #fff; border: none; border-radius: 8px;
+      font-family: 'Space Grotesk', monospace; font-weight: 700; font-size: 13px; letter-spacing: 0.06em; cursor: pointer; transition: opacity 0.2s;
+    }
+    .settings-save-btn:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div class="chat-header">
+    <div class="avatar">🌙</div>
+    <div class="header-info">
+      <div class="booth-label">BOOTH 07 · 判断・整理</div>
+      <div class="booth-title">壁打ち相談チャット</div>
+    </div>
+    <span class="mode-badge mode-ai" id="modeBadge">AI</span>
+    <button class="gear-btn" onclick="openSettings()" title="API設定">⚙</button>
+  </div>
+
+  <div class="intro-card">
+    <b>モエ</b>は、判断も説教もしないリスナーAIです。「身体の関係が先だった相手を好きになってしまった」——
+    そんな、人には話しづらいことも、ここでは安心して話してみてください。
+  </div>
+
+  <div class="chat-messages" id="chatMessages"></div>
+
+  <div class="reset-area">
+    <button class="reset-btn" onclick="resetChat()">会話をリセット</button>
+  </div>
+
+  <div class="input-area">
+    <input class="chat-input" id="chatInput" type="text" placeholder="話してみたいことを…" autocomplete="off" maxlength="200">
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+        <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="settings-overlay" id="settingsOverlay">
+    <div class="settings-card">
+      <div class="settings-heading">API 設定</div>
+      <div class="settings-label">Gemini API Key</div>
+      <input class="settings-input" id="apiKeyInput" type="password" placeholder="AIzaSy..." autocomplete="off">
+      <div class="settings-note">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> で無料取得できます。<br>
+        空欄のままにすると固定返答モードで動作します（展示の予備動作）。
+      </div>
+      <button class="settings-save-btn" onclick="saveSettings()">保存して閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let apiKey = '';
+  try { apiKey = localStorage.getItem('moe_gemini_key') || ''; } catch(e) {}
+  let history = [];
+  let isWaiting = false;
+
+  const SYSTEM_PROMPT = `あなたは「モエ」、30代のリスナーAIです。
+展示会場で「身体の関係が先にあった相手を好きになってしまった」という、人には話しづらい悩みを持つ来場者の話を聞いています。
+
+【姿勢】
+- 絶対に説教しない、驚かない、否定しない。来場者の状況や選択を道徳的に評価しない
+- 「それは普通のことですよ」と決めつけず、まず気持ちをそのまま受け止める
+- 2〜4文で短く、落ち着いたトーンで返す
+- 聞き役に徹し、こちらから一方的にアドバイスを押しつけない。必ず問い返して、来場者自身の言葉を引き出す
+
+【会話の流れに応じて自然に使ってよい心理学的な視点（押しつけない）】
+- 身体的な接触によってオキシトシン（愛着ホルモン）が分泌され、感情的な愛着が後から育つことがある（順序が違うだけで、感情自体は本物であり得る）
+- 「好き」という気持ちと、「関係を終わらせたくない依存」は区別が難しいことがある
+- 感情の順番（身体→気持ち）と、関係が健全かどうかは別の話であること
+- 相手が自分にとってどういう存在になっていきたいのかを、焦らず一緒に整理していく
+
+【目標】
+来場者が自分を責めずに、今の気持ちを言葉にできるよう手伝う。結論やアドバイスを急がない。
+
+【制約】
+- 必ず日本語で返す
+- 性的に露骨な描写はしない。感情面に焦点を当てる
+- 初回メッセージは、モエとしての短い自己紹介と、安心して話してよいという一言から始める`;
+
+  const FALLBACK_FLOW = [
+    "こんにちは、モエです。ここで話したことに、良い悪いの判断はつけません。今日はどんなことがありましたか？",
+    "そうだったんですね。話してくれてありがとうございます。それを知った時、どんな気持ちが一番強かったですか？",
+    "うん、その気持ち、わかります。身体の関係が先にあっても、そこから本当に好きになることは、よくあることなんですよ。順番が違うだけで、気持ち自体が偽物ってわけじゃないと思います。",
+    "もう少し聞かせてください。その人のことで、一番「好きだな」と感じたのはどんな瞬間でしたか？",
+    "それって、ただの依存じゃなくて、ちゃんとその人自身を見てる感情のように聞こえますよ。焦らず、今の気持ちのまま、もう少し近づいてみてもいいんじゃないでしょうか。",
+    "今日話してくれたこと、大事に受け取りました。また気持ちが動いたら、いつでも話しにきてくださいね。",
+  ];
+  let fallbackIdx = 0;
+
+  window.addEventListener('load', () => {
+    if (apiKey) { document.getElementById('apiKeyInput').value = apiKey; updateModeBadge(true); }
+    else { updateModeBadge(false); }
+    startChat();
+  });
+
+  function startChat() {
+    history = [];
+    fallbackIdx = 0;
+    if (apiKey) { sendFirstAIMessage(); }
+    else {
+      const firstMsg = FALLBACK_FLOW[fallbackIdx++];
+      appendMessage('ai', firstMsg);
+      history.push({ role: 'model', parts: [{ text: firstMsg }] });
+    }
+  }
+
+  async function sendFirstAIMessage() {
+    showTyping();
+    const reply = await callGemini(true);
+    removeTyping();
+    appendMessage('ai', reply);
+    history.push({ role: 'model', parts: [{ text: reply }] });
+  }
+
+  function appendMessage(role, text) {
+    const container = document.getElementById('chatMessages');
+    const wrap = document.createElement('div');
+    wrap.className = `message ${role}`;
+    const avatar = document.createElement('div');
+    avatar.className = 'm-avatar';
+    avatar.textContent = role === 'ai' ? '🌙' : '🙂';
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+    wrap.appendChild(avatar);
+    wrap.appendChild(bubble);
+    container.appendChild(wrap);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function showTyping() {
+    const container = document.getElementById('chatMessages');
+    const wrap = document.createElement('div');
+    wrap.className = 'message ai';
+    wrap.id = 'typingWrap';
+    const avatar = document.createElement('div');
+    avatar.className = 'm-avatar';
+    avatar.textContent = '🌙';
+    const ind = document.createElement('div');
+    ind.className = 'typing-indicator';
+    ind.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+    wrap.appendChild(avatar);
+    wrap.appendChild(ind);
+    container.appendChild(wrap);
+    container.scrollTop = container.scrollHeight;
+  }
+  function removeTyping() { const el = document.getElementById('typingWrap'); if (el) el.remove(); }
+
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text || isWaiting) return;
+
+    input.value = '';
+    isWaiting = true;
+    document.getElementById('sendBtn').disabled = true;
+
+    appendMessage('user', text);
+    history.push({ role: 'user', parts: [{ text }] });
+    showTyping();
+
+    let reply;
+    if (apiKey) { reply = await callGemini(false); }
+    else {
+      await sleep(700 + Math.random() * 500);
+      reply = FALLBACK_FLOW[fallbackIdx % FALLBACK_FLOW.length];
+      fallbackIdx++;
+    }
+
+    removeTyping();
+    appendMessage('ai', reply);
+    history.push({ role: 'model', parts: [{ text: reply }] });
+
+    isWaiting = false;
+    document.getElementById('sendBtn').disabled = false;
+    input.focus();
+  }
+
+  async function callGemini(isFirst) {
+    try {
+      const contents = isFirst
+        ? [{ role: 'user', parts: [{ text: '（自己紹介をしてください）' }] }]
+        : history;
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+            contents: contents,
+            generationConfig: { maxOutputTokens: 250, temperature: 0.9 }
+          })
+        }
+      );
+      if (!res.ok) { console.warn('Gemini API error:', res.status); return getRandomFallback(); }
+      const data = await res.json();
+      return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || getRandomFallback();
+    } catch (e) { console.warn('Gemini fetch error:', e); return getRandomFallback(); }
+  }
+
+  function getRandomFallback() { const r = FALLBACK_FLOW[fallbackIdx % FALLBACK_FLOW.length]; fallbackIdx++; return r; }
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function resetChat() { document.getElementById('chatMessages').innerHTML = ''; startChat(); }
+
+  document.getElementById('chatInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+
+  function openSettings() { document.getElementById('settingsOverlay').classList.add('open'); }
+  function saveSettings() {
+    const val = document.getElementById('apiKeyInput').value.trim();
+    apiKey = val;
+    try { if (val) { localStorage.setItem('moe_gemini_key', val); } else { localStorage.removeItem('moe_gemini_key'); } } catch(e) {}
+    updateModeBadge(!!val);
+    document.getElementById('settingsOverlay').classList.remove('open');
+  }
+  function updateModeBadge(isAI) {
+    const badge = document.getElementById('modeBadge');
+    if (isAI) { badge.textContent = 'AI'; badge.className = 'mode-badge mode-ai'; }
+    else { badge.textContent = 'DEMO'; badge.className = 'mode-badge mode-fallback'; }
+  }
+  document.getElementById('settingsOverlay').addEventListener('click', (e) => { if (e.target === e.currentTarget) saveSettings(); });
+</script>
+</body>
+</html>
