@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>都合のいい人、診断室。— ブース01</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0C0E1A;
+      --ink: #E8ECF5;
+      --sub: rgba(232,236,245,0.5);
+      --line: #232B3D;
+      --card: rgba(232,236,245,0.04);
+      --accent: #FF5C72;
+      --accent2: #FFB443;
+      --accent3: #6B7FFF;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+    }
+
+    .mono { font-family: 'Space Grotesk', monospace; }
+
+    #app {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 18px 60px;
+    }
+
+    /* ── ヘッダー ── */
+    .page-header {
+      padding: 18px 0 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 22px;
+    }
+    .header-text { flex: 1; }
+    .booth-label {
+      font-family: 'Space Grotesk', monospace; font-size: 10px; color: var(--accent2);
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .page-title { font-size: 19px; font-weight: 900; line-height: 1.5; margin-bottom: 8px; }
+    .page-title em { color: var(--accent); font-style: normal; }
+    .page-lede { font-size: 12.5px; color: var(--sub); line-height: 1.8; }
+    .gear-btn {
+      background: none; border: 1px solid var(--line); color: rgba(232,236,245,0.4);
+      cursor: pointer; font-size: 17px; width: 36px; height: 36px; border-radius: 50%;
+      flex-shrink: 0; transition: all 0.2s;
+    }
+    .gear-btn:hover { color: var(--accent2); border-color: var(--accent2); }
+
+    /* ── モードタブ ── */
+    .mode-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .mode-tab {
+      flex: 1; padding: 10px; text-align: center; border-radius: 10px;
+      border: 1px solid var(--line); background: var(--card); color: var(--sub);
+      font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .mode-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(255,92,114,0.1); }
+
+    .field-label { font-size: 12px; color: var(--sub); line-height: 1.7; margin-bottom: 8px; display: block; }
+
+    textarea {
+      width: 100%; min-height: 150px; background: var(--card); border: 1px solid var(--line);
+      border-radius: 12px; padding: 14px; color: var(--ink); font-family: inherit; font-size: 13.5px;
+      line-height: 1.8; resize: vertical; outline: none; transition: border-color 0.2s;
+    }
+    textarea:focus { border-color: var(--accent); }
+    textarea::placeholder { color: rgba(232,236,245,0.25); }
+
+    .examples { display: flex; gap: 8px; margin-top: 10px; }
+    .example-btn {
+      flex: 1; background: none; border: 1px solid var(--line); color: var(--sub);
+      padding: 7px; border-radius: 8px; font-size: 11.5px; cursor: pointer; transition: all 0.2s;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+    }
+    .example-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+
+    .drop-zone {
+      border: 1.5px dashed var(--line); border-radius: 12px; padding: 24px 16px;
+      text-align: center; cursor: pointer; transition: border-color 0.2s;
+    }
+    .drop-zone:hover { border-color: var(--accent); }
+    .drop-hint { font-size: 12.5px; color: var(--sub); }
+    .thumb-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; justify-content: center; }
+    .thumb {
+      width: 64px; height: 64px; border-radius: 8px; overflow: hidden; position: relative;
+      border: 1px solid var(--line);
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb .rm {
+      position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(10,14,23,0.85); color: #fff; border: none; font-size: 11px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .img-unavailable {
+      font-size: 12px; color: var(--accent2); line-height: 1.8; margin-top: 10px;
+      padding: 10px 12px; background: rgba(255,180,67,0.08); border: 1px solid rgba(255,180,67,0.25); border-radius: 10px;
+    }
+
+    .submit-row { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
+    .btn-primary {
+      flex: 1; background: var(--accent); color: #2a0a0f; border: none; padding: 13px;
+      border-radius: 24px; font-size: 14px; font-weight: 700; cursor: pointer;
+      font-family: 'Zen Kaku Gothic New', sans-serif; transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+    .status-text { font-size: 11px; color: var(--sub); }
+
+    .mode-badge {
+      font-family: 'Space Grotesk', monospace; font-size: 9px; padding: 2px 6px;
+      border-radius: 4px; letter-spacing: 0.08em; display: inline-block; margin-top: 4px;
+    }
+    .mode-ai { background: rgba(255,92,114,0.14); color: var(--accent); border: 1px solid rgba(255,92,114,0.35); }
+    .mode-fallback { background: rgba(107,127,255,0.12); color: var(--accent3); border: 1px solid rgba(107,127,255,0.3); }
+
+    /* ── 診断結果 ── */
+    #result { display: none; margin-top: 30px; }
+    #result.show { display: block; animation: fadein 0.4s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .divider {
+      font-family: 'Space Grotesk', monospace; font-size: 10px; color: var(--sub);
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--line);
+    }
+
+    .score-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+    .score-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+    .score-label { font-size: 12px; color: var(--sub); }
+    .score-num .big { font-family: 'Space Grotesk', monospace; font-size: 26px; font-weight: 700; color: var(--accent); }
+    .score-num .unit { font-family: 'Space Grotesk', monospace; font-size: 11px; color: var(--sub); }
+    .meter { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+    .meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent3), var(--accent2), var(--accent)); transition: width 0.8s cubic-bezier(.2,.8,.2,1); }
+    .meter-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--sub); margin-top: 6px; font-family: 'Space Grotesk', monospace; }
+    .type-tag {
+      display: inline-block; margin-top: 16px; padding: 6px 14px; border-radius: 20px;
+      background: rgba(255,92,114,0.12); border: 1px solid rgba(255,92,114,0.35);
+      color: var(--accent); font-size: 13px; font-weight: 700;
+    }
+
+    .insight-card, .advice-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+    .card-heading { font-size: 12px; font-weight: 700; color: var(--accent3); margin-bottom: 8px; }
+    .card-text { font-size: 13.5px; line-height: 1.85; color: rgba(232,236,245,0.85); }
+
+    .highlight-block { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+    .highlight-block h2 { font-size: 12px; font-weight: 700; color: var(--accent2); margin-bottom: 10px; }
+    .transcript {
+      background: rgba(0,0,0,0.2); border: 1px solid var(--line); border-radius: 10px;
+      padding: 14px; font-size: 13px; line-height: 2; white-space: pre-wrap; word-break: break-word;
+      max-height: 220px; overflow-y: auto;
+    }
+    .transcript mark { background: none; color: inherit; box-shadow: inset 0 -0.6em 0 rgba(255,180,67,0.3); padding: 0 1px; }
+    .phrase-notes { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .phrase-note { font-size: 12px; line-height: 1.8; color: var(--sub); padding-left: 12px; border-left: 2px solid var(--accent2); }
+    .phrase-note b { color: var(--ink); font-weight: 700; }
+
+    .retry-row { text-align: center; margin-top: 10px; }
+    .btn-ghost {
+      background: none; border: 1px solid var(--line); color: var(--sub); font-size: 12.5px;
+      border-radius: 20px; padding: 9px 20px; cursor: pointer; font-family: 'Zen Kaku Gothic New', sans-serif;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { color: var(--accent3); border-color: var(--accent3); }
+
+    .errbox {
+      background: rgba(255,92,114,0.08); border: 1px solid rgba(255,92,114,0.3); border-radius: 10px;
+      padding: 14px; font-size: 12.5px; line-height: 1.8; margin-top: 14px;
+    }
+
+    .page-footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 10.5px; color: rgba(232,236,245,0.3); line-height: 1.8; }
+
+    /* ── 設定オーバーレイ ── */
+    .settings-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(10,14,23,0.92); z-index: 200;
+      align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px);
+    }
+    .settings-overlay.open { display: flex; }
+    .settings-card { background: #141923; border: 1px solid var(--line); border-radius: 14px; padding: 24px; width: 100%; max-width: 340px; }
+    .settings-heading { font-family: 'Space Grotesk', monospace; font-size: 11px; color: var(--accent3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 20px; }
+    .settings-label { font-size: 12px; color: rgba(232,236,245,0.5); margin-bottom: 6px; font-family: 'Space Grotesk', monospace; }
+    .settings-input {
+      width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+      color: var(--ink); font-family: 'Space Grotesk', monospace; font-size: 13px; outline: none; margin-bottom: 10px; transition: border-color 0.2s;
+    }
+    .settings-input:focus { border-color: var(--accent); }
+    .settings-note { font-size: 11px; color: rgba(232,236,245,0.35); margin-bottom: 20px; line-height: 1.6; }
+    .settings-note a { color: var(--accent3); text-decoration: none; }
+    .settings-save-btn {
+      width: 100%; padding: 11px; background: var(--accent); color: #2a0a0f; border: none; border-radius: 8px;
+      font-family: 'Zen Kaku Gothic New', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.02em; cursor: pointer; transition: opacity 0.2s;
+    }
+    .settings-save-btn:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+
+<div id="app">
+
+  <div class="page-header">
+    <div class="header-text">
+      <div class="booth-label">BOOTH 01 · 気づき・警告</div>
+      <div class="page-title">その優しさ、<br><em>都合よく</em>使われていませんか。</div>
+      <div class="page-lede">やりとりを貼り付けると、「都合のいい人」になりかけているサインを読み解きます。</div>
+    </div>
+    <button class="gear-btn" onclick="openSettings()" title="API設定">⚙</button>
+  </div>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="text" id="tabText">文章を貼る</button>
+    <button class="mode-tab" data-mode="image" id="tabImage">スクショを送る</button>
+  </div>
+
+  <div id="modeText">
+    <label class="field-label" for="chatlog">LINEなどのやりとりをそのまま貼り付けてください（自分の発言だけでも診断できます）</label>
+    <textarea id="chatlog" placeholder="例）
+りょう 19:42
+今日って空いてたりする？急なんだけどw
+
+自分 19:43
+あ、大丈夫だよ！何時から？
+
+りょう 19:44
+ごめんいつも頼っちゃって
+
+自分 19:44
+全然気にしないで、いつでも言って！"></textarea>
+    <div class="examples">
+      <button class="example-btn" data-sample="1">サンプルを試す①</button>
+      <button class="example-btn" data-sample="2">サンプルを試す②</button>
+    </div>
+  </div>
+
+  <div id="modeImage" style="display:none;">
+    <label class="field-label">トーク画面のスクリーンショットを選んでください（複数枚可、最大<span id="imgMaxCount">4</span>枚）</label>
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="imgInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple style="display:none;">
+      <p class="drop-hint" id="dropHint">タップしてスクショを選択</p>
+      <div class="thumb-row" id="thumbRow"></div>
+    </div>
+    <p class="img-unavailable" id="imgUnavailable" style="display:none;">
+      画像診断はAPIキー設定時のみご利用いただけます（⚙から設定）。キーなしの場合は「文章を貼る」からお試しください。
+    </p>
+  </div>
+
+  <div class="submit-row">
+    <button class="btn-primary" id="diagBtn" onclick="runDiagnosis()">診断する</button>
+  </div>
+  <div class="status-text" id="statusText"></div>
+  <div class="mode-badge mode-ai" id="modeBadge">AI</div>
+
+  <div id="errArea"></div>
+
+  <div id="result">
+    <div class="divider">診断結果</div>
+
+    <div class="score-card">
+      <div class="score-top">
+        <span class="score-label">都合のいい人 傾向スコア</span>
+        <span class="score-num"><span class="big mono" id="scoreNum">–</span><span class="unit mono"> / 100</span></span>
+      </div>
+      <div class="meter"><div class="meter-fill" id="meterFill"></div></div>
+      <div class="meter-labels"><span>自分軸</span><span>相手軸</span></div>
+      <div><span class="type-tag" id="typeTag">–</span></div>
+    </div>
+
+    <div class="insight-card">
+      <div class="card-heading">心理学的には、こう説明できます</div>
+      <p class="card-text" id="insightText">–</p>
+    </div>
+
+    <div class="advice-card">
+      <div class="card-heading">今、できそうなこと</div>
+      <p class="card-text" id="adviceText">–</p>
+    </div>
+
+    <div class="highlight-block" id="highlightBlock">
+      <h2>会話の中で、気になった部分</h2>
+      <div class="transcript" id="transcriptView"></div>
+      <div class="phrase-notes" id="phraseNotes"></div>
+    </div>
+
+    <div class="retry-row">
+      <button class="btn-ghost" onclick="resetDiagnosis()">別のやりとりで診断し直す</button>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    この診断はAIまたは簡易ロジックによる参考結果です。断定や評価を目的としたものではありません。<br>
+    入力内容はこの診断のためだけに使われ、保存・公開されることはありません。
+  </div>
+
+  <div class="settings-overlay" id="settingsOverlay">
+    <div class="settings-card">
+      <div class="settings-heading">API 設定</div>
+      <div class="settings-label">Gemini API Key</div>
+      <input class="settings-input" id="apiKeyInput" type="password" placeholder="AIzaSy..." autocomplete="off">
+      <div class="settings-note">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> で無料取得できます。<br>
+        空欄のままにすると、簡易ロジックによるDEMOモード（文章のみ）で動作します。
+      </div>
+      <button class="settings-save-btn" onclick="saveSettings()">保存して閉じる</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const SAMPLES = {
+    "1": `2026/11/12（木）\n\nりょう 19:42\n今日って空いてたりする？急なんだけどw\n\n自分 19:43\nあ、大丈夫だよ！何時から？\n\nりょう 19:44\nごめんいつも頼っちゃって\n\n自分 19:44\n全然気にしないで、いつでも言って！\n\nりょう 19:50\nほんと助かる〜他の人だと大体断られるからさ\n\n自分 19:51\n私でよければいくらでも頼って〜`,
+    "2": `2026/11/09（月）\n\n自分 21:03\n明日って空いてたりする？\n\nみさき 21:40\nあーごめん、その日ちょっと厳しいかも！\n\n自分 21:41\nあ、大丈夫だよ全然！また今度で🙆\n\nみさき 22:15\nありがとう、埋め合わせするね〜\n\n自分 22:16\n気にしないで〜楽しみにしてるね`
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const chatlog = $("chatlog");
+  const diagBtn = $("diagBtn");
+  const statusText = $("statusText");
+  const resultEl = $("result");
+  const errArea = $("errArea");
+  const tabText = $("tabText");
+  const tabImage = $("tabImage");
+  const modeText = $("modeText");
+  const modeImage = $("modeImage");
+  const dropZone = $("dropZone");
+  const imgInput = $("imgInput");
+  const dropHint = $("dropHint");
+  const thumbRow = $("thumbRow");
+  const imgUnavailable = $("imgUnavailable");
+
+  let apiKey = '';
+  try { apiKey = localStorage.getItem('convenient_gemini_key') || ''; } catch(e) {}
+
+  let currentMode = "text";
+  let selectedFiles = [];
+  const maxImages = 4;
+
+  function setMode(mode) {
+    currentMode = mode;
+    tabText.classList.toggle("active", mode === "text");
+    tabImage.classList.toggle("active", mode === "image");
+    modeText.style.display = mode === "text" ? "block" : "none";
+    modeImage.style.display = mode === "image" ? "block" : "none";
+  }
+  tabText.addEventListener("click", () => setMode("text"));
+  tabImage.addEventListener("click", () => setMode("image"));
+
+  document.querySelectorAll(".example-btn").forEach(btn => {
+    btn.addEventListener("click", () => { chatlog.value = SAMPLES[btn.dataset.sample]; });
+  });
+
+  function renderThumbs() {
+    thumbRow.innerHTML = "";
+    selectedFiles.forEach((file, i) => {
+      const url = URL.createObjectURL(file);
+      const t = document.createElement("div");
+      t.className = "thumb";
+      t.innerHTML = `<img src="${url}"><button class="rm" data-i="${i}">×</button>`;
+      thumbRow.appendChild(t);
+    });
+    thumbRow.querySelectorAll(".rm").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selectedFiles.splice(Number(btn.dataset.i), 1);
+        renderThumbs();
+        dropHint.textContent = selectedFiles.length ? `${selectedFiles.length}枚選択中（タップして変更）` : "タップしてスクショを選択";
+      });
+    });
+  }
+
+  dropZone.addEventListener("click", () => imgInput.click());
+  imgInput.addEventListener("change", () => {
+    const incoming = Array.from(imgInput.files || []);
+    selectedFiles = [...selectedFiles, ...incoming].slice(0, maxImages);
+    dropHint.textContent = `${selectedFiles.length}枚選択中（タップして変更）`;
+    renderThumbs();
+  });
+  dropZone.addEventListener("dragover", (e) => e.preventDefault());
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const incoming = Array.from(e.dataTransfer?.files || []).filter(f => f.type.startsWith("image/"));
+    selectedFiles = [...selectedFiles, ...incoming].slice(0, maxImages);
+    dropHint.textContent = `${selectedFiles.length}枚選択中（タップして変更）`;
+    renderThumbs();
+  });
+
+  function updateModeBadge() {
+    const badge = $("modeBadge");
+    if (apiKey) { badge.textContent = "AI"; badge.className = "mode-badge mode-ai"; }
+    else { badge.textContent = "DEMO（文章のみ）"; badge.className = "mode-badge mode-fallback"; }
+    imgUnavailable.style.display = apiKey ? "none" : "block";
+    dropZone.style.display = apiKey ? "block" : "none";
+  }
+
+  window.addEventListener("load", () => {
+    if (apiKey) { $("apiKeyInput").value = apiKey; }
+    updateModeBadge();
+  });
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function renderTranscriptWithHighlights(rawText, phrases) {
+    let html = escapeHtml(rawText);
+    const seen = new Set();
+    const list = (phrases || [])
+      .filter(p => p && p.quote && p.quote.trim().length >= 2 && !seen.has(p.quote) && seen.add(p.quote))
+      .sort((a, b) => b.quote.length - a.quote.length);
+    list.forEach((p, i) => {
+      const esc = escapeHtml(p.quote);
+      const idx = html.indexOf(esc);
+      if (idx === -1) return;
+      const openTag = `<mark data-i="${i}" title="${escapeHtml(p.note || '')}">`;
+      html = html.slice(0, idx) + openTag + esc + "</mark>" + html.slice(idx + esc.length);
+    });
+    return { html, used: list };
+  }
+
+  function showError(msg) {
+    errArea.innerHTML = `<div class="errbox">${msg}</div>`;
+  }
+
+  function setBusy(busy) {
+    diagBtn.disabled = busy;
+    statusText.textContent = busy ? "会話を読んでいます…" : "";
+  }
+
+  // ===== ローカル簡易診断（DEMOモード・テキストのみ） =====
+  const PUSHOVER_PHRASES = [
+    { q: "大丈夫だよ", note: "即座の許容。自分の都合より先に相手を安心させている" },
+    { q: "全然大丈夫", note: "過剰な肯定。本音とのズレが起きやすい言い回し" },
+    { q: "全然気にしないで", note: "相手の罪悪感を先回りして取り除いている" },
+    { q: "気にしないで", note: "相手の負担を軽くしようとする自己犠牲的な配慮" },
+    { q: "いつでも言って", note: "際限のない許容。断る選択肢を自ら手放している" },
+    { q: "私でよければ", note: "自分の価値を条件づきで差し出す言い回し" },
+    { q: "いくらでも頼って", note: "頼られることで自分の存在価値を確認している可能性" },
+    { q: "いいよいいよ", note: "反射的な了承。熟考する間を自分に与えていない" },
+    { q: "全然いい", note: "即答の肯定。本当に「いい」のか立ち止まっていない" },
+    { q: "ごめんね", note: "謝る必要のない場面での謝罪は、自己評価の低さと結びつくことがある" },
+    { q: "合わせるよ", note: "自分の希望より相手のスケジュールを優先" },
+    { q: "任せる", note: "判断を手放すことで対立を避けている可能性" },
+  ];
+
+  function localDiagnose(text) {
+    const matched = [];
+    PUSHOVER_PHRASES.forEach(p => {
+      if (text.includes(p.q) && !matched.find(m => m.quote === p.q)) {
+        matched.push({ quote: p.q, note: p.note });
+      }
+    });
+    const n = matched.length;
+    const score = Math.min(100, 12 + n * 14 + Math.floor(Math.random() * 6));
+
+    let type, insight, advice;
+    if (score < 30) {
+      type = "自分軸しっかりタイプ";
+      insight = "今回の文章からは、無理に合わせているような言い回しはあまり見られませんでした。自分の意思をある程度保てている可能性が高いです。";
+      advice = "今のバランス感覚を大事にしつつ、疲れていると感じた時は無理せず一拍置いてみてください。";
+    } else if (score < 55) {
+      type = "ちょっと遠慮しがちタイプ";
+      insight = `「${matched[0] ? matched[0].quote : '大丈夫'}」のような言い回しが見られます。返報性の規範（人から何かをしてもらうと、お返しをしなければと感じる心理傾向。Gouldner, 1960）が働き、つい相手の期待に応えようとしているのかもしれません。`;
+      advice = "返事をする前に、3秒だけ「これは本当に大丈夫か」と自分に聞いてみる習慣をつけてみてください。";
+    } else if (score < 78) {
+      type = "尽くしすぎちゃんタイプ";
+      insight = `相手の要求にすぐ応じる言い回しが複数見られました。否定的評価への恐れ（相手にどう思われるかを過度に気にする傾向を測る尺度。Watson &amp; Friend, 1969）が強いと、自己主張をおさえて相手に合わせやすくなることが研究で示されています。`;
+      advice = "一度にすべて変えようとせず、まずは小さなお願いごとを一つだけ断ってみることから始めてみてください。";
+    } else {
+      type = "全部受け止めちゃうタイプ";
+      insight = "相手の要求を無条件に受け入れるような言い回しが多く見られました。相手の期待に応え続けることで自分の価値を確認しようとする「迎合」的なパターンが、関係の中で習慣化している可能性があります。";
+      advice = "すべてのお願いに応える必要はありません。信頼できる人に、今の関係について一度話してみることをおすすめします。";
+    }
+    return {
+      score, type, insight, advice,
+      phrases: matched.slice(0, 4)
+    };
+  }
+
+  // ===== メイン診断処理 =====
+  async function runDiagnosis() {
+    const text = chatlog.value.trim();
+    const useImages = currentMode === "image";
+
+    if (useImages && selectedFiles.length === 0) {
+      dropZone.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    if (!useImages && !text) {
+      chatlog.focus();
+      return;
+    }
+
+    errArea.innerHTML = "";
+    resultEl.classList.remove("show");
+    resultEl.style.display = "none";
+    setBusy(true);
+
+    try {
+      let data;
+      if (apiKey) {
+        data = await callGeminiDiagnose(text, useImages);
+      } else {
+        if (useImages) {
+          showError("画像診断はAPIキー設定時のみご利用いただけます。「文章を貼る」からお試しください。");
+          setBusy(false);
+          return;
+        }
+        await sleep(600 + Math.random() * 500);
+        data = localDiagnose(text);
+      }
+      if (!data) { showError("うまく読み取れませんでした。もう一度お試しください。"); setBusy(false); return; }
+      renderResult(useImages ? null : text, data);
+    } catch (e) {
+      console.warn(e);
+      showError("診断中に問題が発生しました。もう一度お試しください。");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(",")[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function callGeminiDiagnose(text, useImages) {
+    const basePrompt = useImages
+      ? `あなたは恋愛・対人関係の心理を専門とするカウンセラーです。添付された画像は、ある人のトーク画面（LINEなど）のスクリーンショットです。画面内の会話から、書き手本人と思われる側（画面の右側・自分の発言として表示されている側が一般的）が「都合のいい人」になりかけているサイン（例：断れない、自己犠牲的な言い回し、過剰な譲歩、相手の要求を無条件に受け入れる、罪悪感の利用に応じてしまう等）を分析してください。複数枚ある場合は時系列順の会話として扱ってください。`
+      : `あなたは恋愛・対人関係の心理を専門とするカウンセラーです。以下は、ある人が誰かとやり取りした会話ログです。この会話から、書き手（「自分」と書かれている側、あるいは主に発言している側）が「都合のいい人」になりかけているサイン（例：断れない、自己犠牲的な言い回し、過剰な譲歩、相手の要求を無条件に受け入れる、罪悪感の利用に応じてしまう等）を分析してください。
+
+会話ログ：
+"""
+${text}
+"""`;
+
+    const phrasesInstruction = useImages
+      ? `画像から読み取れる、本人の発言の中から気になるフレーズを文字起こしして引用してください`
+      : `会話ログ内から一字一句そのまま抜き出した気になるフレーズ（本人の発言のみ）を引用してください（要約や言い換えは禁止）`;
+
+    const prompt = `${basePrompt}
+
+次のJSON形式のみで出力してください。前後に文章や説明を一切つけないでください。
+
+{
+  "score": 0から100の整数（都合のいい人傾向が強いほど高い）,
+  "type": "会話の傾向を表す一言タイプ名（例：尽くしすぎちゃんタイプ、断れない優等生タイプ、罪悪感ホイホイタイプ　など。10文字以内、来場者が思わずくすっとするような、キツすぎない優しいネーミングにする）",
+  "insight": "120〜180文字程度。心理学・コミュニケーション理論の専門用語を1〜2個使いながら、この会話の傾向を学術的に説明する。専門用語には必ずその場で簡単な意味の補足をつける（例：『返報性の規範（人から何かしてもらうとお返しをしなければと感じる心理。Gouldner, 1960）が働き〜』のように）。断定口調ではなく『〜と考えられます』『〜の傾向が読み取れます』といった解説調にする。",
+  "advice": "80〜130文字程度の、責めるのではなく気づきを与える優しい実践的アドバイス。次にできる小さな一歩を具体的に示す。学術用語は使わず平易な言葉で。",
+  "phrases": [
+    {"quote": "${phrasesInstruction}（5〜25文字程度）", "note": "なぜそのフレーズが気になるかの短い解説（30文字以内）"}
+  ]
+}
+
+phrasesは最大4つまで。該当がなければ空配列で構いません。`;
+
+    const parts = [{ text: prompt }];
+    if (useImages) {
+      for (const file of selectedFiles) {
+        const b64 = await fileToBase64(file);
+        parts.push({ inline_data: { mime_type: file.type || "image/jpeg", data: b64 } });
+      }
+    }
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ role: "user", parts }],
+          generationConfig: { maxOutputTokens: 500, temperature: 0.8 }
+        })
+      }
+    );
+    if (!res.ok) { throw new Error("Gemini API error: " + res.status); }
+    const resData = await res.json();
+    const raw = resData.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) { throw new Error("no json in response"); }
+    return JSON.parse(jsonMatch[0]);
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function renderResult(rawText, data) {
+    $("scoreNum").textContent = data.score;
+    $("typeTag").textContent = data.type;
+    $("insightText").innerHTML = escapeHtml(data.insight || "");
+    $("adviceText").textContent = data.advice || "";
+
+    const highlightBlock = $("highlightBlock");
+    if (rawText) {
+      highlightBlock.style.display = "block";
+      const { html, used } = renderTranscriptWithHighlights(rawText, data.phrases);
+      $("transcriptView").innerHTML = html;
+      const notesEl = $("phraseNotes");
+      notesEl.innerHTML = "";
+      used.forEach(p => {
+        const d = document.createElement("div");
+        d.className = "phrase-note";
+        d.innerHTML = `<b>「${escapeHtml(p.quote)}」</b> — ${escapeHtml(p.note || "")}`;
+        notesEl.appendChild(d);
+      });
+    } else {
+      highlightBlock.style.display = "none";
+    }
+
+    resultEl.style.display = "block";
+    requestAnimationFrame(() => {
+      resultEl.classList.add("show");
+      requestAnimationFrame(() => { $("meterFill").style.width = data.score + "%"; });
+    });
+    resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function resetDiagnosis() {
+    resultEl.classList.remove("show");
+    resultEl.style.display = "none";
+    errArea.innerHTML = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function openSettings() { $("settingsOverlay").classList.add("open"); }
+  function saveSettings() {
+    const val = $("apiKeyInput").value.trim();
+    apiKey = val;
+    try { if (val) { localStorage.setItem('convenient_gemini_key', val); } else { localStorage.removeItem('convenient_gemini_key'); } } catch(e) {}
+    updateModeBadge();
+    $("settingsOverlay").classList.remove("open");
+  }
+  $("settingsOverlay").addEventListener("click", (e) => { if (e.target === e.currentTarget) saveSettings(); });
+</script>
+</body>
+</html>
