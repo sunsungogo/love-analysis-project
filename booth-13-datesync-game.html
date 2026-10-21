@@ -149,6 +149,18 @@
 
     .note-card { width: 100%; max-width: 380px; font-size: 11px; color: var(--sub); line-height: 1.8; text-align: center; margin-bottom: 20px; }
 
+    .research-tip {
+      width: 100%; max-width: 380px; margin-top: 14px;
+      background: rgba(107,127,255,0.08); border: 1px solid rgba(107,127,255,0.25);
+      border-radius: 12px; padding: 11px 14px; font-size: 11.5px; line-height: 1.7; color: rgba(232,236,245,0.75);
+    }
+    .research-tip b { color: var(--accent2); }
+
+    .citation-line {
+      width: 100%; max-width: 380px; font-size: 9.5px; color: rgba(232,236,245,0.3);
+      text-align: center; line-height: 1.8; margin-top: 4px;
+    }
+
     .link-row { display: flex; gap: 10px; width: 100%; max-width: 380px; }
     .btn-secondary {
       flex: 1; background: none; border: 1px solid var(--line); color: var(--sub);
@@ -172,6 +184,9 @@
       口実（言い訳）と候補日時をセットで、その場で調整URLを発行するデモです。
     </div>
     <button class="btn-primary" onclick="goTo('s-pretext')">はじめる →</button>
+    <div class="research-tip">
+      💡 人は「頼みごとをしたら相手がどれくらい応じてくれるか」を、実際より低く見積もりがちだと分かっています（Flynn &amp; Lake, 2008）。誘うこと自体、思っているより重く受け取られません。
+    </div>
   </div>
 
   <!-- STEP 1: 口実選択 -->
@@ -185,6 +200,9 @@
     <div class="choice-grid" id="pretextGrid"></div>
     <div class="bottom-bar">
       <button class="btn-primary btn-wide" id="pretextNextBtn" disabled onclick="goTo('s-slots')">次へ →</button>
+    </div>
+    <div class="research-tip">
+      💡 頼みごとに一言理由を添えるだけで、応じてもらいやすくなることが社会心理学の実験で示されています（Langer et al., 1978）。理由の中身よりも、「理由らしきものがある」こと自体が効くそうです。
     </div>
   </div>
 
@@ -200,6 +218,9 @@
     <div class="bottom-bar">
       <div class="count-note" id="slotCountNote">0件選択中（2件以上を選んでください）</div>
       <button class="btn-primary btn-wide" id="slotsNextBtn" disabled onclick="generate()">調整URLを発行する →</button>
+    </div>
+    <div class="research-tip">
+      💡 「いつでもいいよ」より、具体的な日時をあらかじめ決めておく方が、実際に行動に移りやすいことが分かっています（if-thenプランニング、Gollwitzer &amp; Sheeran, 2006のメタ分析）。候補を絞って出すことも、選択肢が多すぎると決めづらくなる「選択のパラドックス」（Schwartz）を避ける工夫です。
     </div>
   </div>
 
@@ -230,6 +251,11 @@
 
     <div class="link-row">
       <button class="btn-secondary" onclick="resetAll()">もう一度試す</button>
+    </div>
+
+    <div class="citation-line mono">
+      Langer, Blank &amp; Chanowitz (1978) · Gollwitzer &amp; Sheeran (2006) · Flynn &amp; Lake (2008) · Schwartz, The Paradox of Choice<br>
+      恋愛未来実験展 BOOTH 13
     </div>
   </div>
 
