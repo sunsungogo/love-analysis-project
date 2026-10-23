@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>元恋人を手放すガイド — ブース09</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Space+Grotesk:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --bg: #FAF6F0;
+      --text: #2C2420;
+      --text-sub: #9A8A82;
+      --amber: #C4834A;
+      --rose: #C47A8A;
+      --sage: #6B9A82;
+      --border: #EAE0D8;
+    }
+
+    body {
+      font-family: 'Zen Kaku Gothic New', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100dvh;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .screen.active { display: flex; opacity: 1; }
+
+    /* ======= START ======= */
+    #start {
+      background: linear-gradient(160deg, #FAF6F0 0%, #F5EAE2 55%, #EDE8F5 100%);
+      align-items: center;
+      justify-content: center;
+      padding: 48px 28px 64px;
+      text-align: center;
+    }
+
+    .s-ornament {
+      font-size: 56px;
+      margin-bottom: 24px;
+      display: block;
+      animation: breathe 4s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0%,100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.06); opacity: 1; }
+    }
+
+    .s-kicker {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 16px;
+    }
+
+    .s-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .s-sub {
+      font-size: 13.5px;
+      color: var(--text-sub);
+      line-height: 1.9;
+      margin-bottom: 10px;
+    }
+
+    .s-note {
+      font-size: 11px;
+      color: #B8ADA8;
+      line-height: 1.7;
+      background: rgba(255,255,255,0.6);
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 36px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .tag {
+      background: white;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .btn-warm {
+      background: linear-gradient(130deg, #C4834A, #C47A8A);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 17px 52px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(196,131,74,0.28);
+      transition: transform 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+    }
+    .btn-warm:active { transform: scale(0.95); }
+
+    /* ======= QUESTION ======= */
+    #question {
+      background: var(--bg);
+    }
+
+    .q-top {
+      padding: 20px 22px 14px;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+    .prog-track {
+      height: 4px;
+      background: #EAE0D8;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .prog-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #C4834A, #C47A8A);
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+    .q-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .q-body {
+      flex: 1;
+      padding: 24px 22px 28px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .q-txt {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.65;
+      margin-bottom: 32px;
+      transition: opacity 0.2s;
+      color: var(--text);
+    }
+    .q-txt.fout { opacity: 0; }
+
+    .choices { display: flex; flex-direction: column; gap: 10px; }
+
+    .c-btn {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 18px;
+      font-family: inherit;
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      line-height: 1.5;
+      transition: all 0.12s ease;
+      -webkit-appearance: none;
+    }
+    .c-btn:active {
+      transform: scale(0.97);
+      border-color: var(--amber);
+      background: #FFF8F3;
+    }
+
+    /* ======= LOADING ======= */
+    #loading {
+      background: linear-gradient(160deg, #FAF6F0, #F5EAE2, #EDE8F5);
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .loading-leaf {
+      font-size: 56px;
+      animation: spin-float 2s ease-in-out infinite;
+    }
+    @keyframes spin-float {
+      0%,100% { transform: rotate(-10deg) translateY(0); opacity: 0.8; }
+      50% { transform: rotate(10deg) translateY(-12px); opacity: 1; }
+    }
+    .loading-txt { font-size: 15px; font-weight: 700; color: var(--text-sub); }
+
+    /* ======= RESULT ======= */
+    #result { overflow-y: auto; }
+
+    .r-hero {
+      padding: 44px 24px 32px;
+      text-align: center;
+    }
+    .r-icon { font-size: 72px; display: block; margin-bottom: 16px; }
+    .r-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: 0.08em;
+      color: white;
+      margin-bottom: 10px;
+    }
+    .r-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 23px;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+    .r-desc {
+      font-size: 13.5px;
+      line-height: 1.85;
+      color: #6A5A52;
+    }
+
+    .r-body { padding: 12px 20px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+    .r-card {
+      background: white;
+      border-radius: 22px;
+      padding: 20px 20px;
+      box-shadow: 0 2px 16px rgba(44,36,32,0.06);
+    }
+    .card-lbl {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .need-txt {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #4A3C36;
+    }
+
+    .today-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .today-item { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 1.55; }
+    .num {
+      width: 22px; height: 22px; border-radius: 50%;
+      color: white; font-size: 11px; font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* ======= RELEASE ======= */
+    #release {
+      background: linear-gradient(160deg, #FAF6F0 0%, #F5EAE2 60%, #EDE8F5 100%);
+      align-items: center;
+      justify-content: center;
+      padding: 40px 28px 60px;
+      text-align: center;
+    }
+    .rel-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .rel-sub {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.85;
+      margin-bottom: 40px;
+    }
+
+    /* floating orb tap-to-release */
+    .orb-wrap {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 36px;
+      cursor: pointer;
+    }
+    .orb {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 38%, rgba(255,255,255,0.6), rgba(196,131,74,0.35) 60%, rgba(196,122,138,0.3));
+      box-shadow: 0 0 40px rgba(196,131,74,0.25), inset 0 0 30px rgba(255,255,255,0.3);
+      animation: orb-pulse 3s ease-in-out infinite;
+      transition: transform 0.6s ease, opacity 0.8s ease;
+    }
+    .orb.releasing {
+      transform: scale(0.1) translateY(-120px);
+      opacity: 0;
+    }
+    @keyframes orb-pulse {
+      0%,100% { transform: scale(1); box-shadow: 0 0 40px rgba(196,131,74,0.25); }
+      50% { transform: scale(1.05); box-shadow: 0 0 60px rgba(196,131,74,0.38); }
+    }
+    .orb-hint {
+      font-size: 11px;
+      color: var(--text-sub);
+      letter-spacing: 0.08em;
+      margin-top: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      transition: opacity 0.4s;
+    }
+
+    .released-msg {
+      opacity: 0;
+      transition: opacity 0.8s ease 0.6s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .released-msg.show { opacity: 1; }
+    .rel-emo { font-size: 44px; }
+    .rel-word {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .btn-outline-warm {
+      background: transparent;
+      border: 1.5px solid var(--amber);
+      border-radius: 50px;
+      padding: 14px 40px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      color: var(--amber);
+      cursor: pointer;
+      transition: opacity 0.15s;
+      margin-top: 24px;
+      -webkit-appearance: none;
+    }
+    .btn-outline-warm:active { opacity: 0.6; }
+
+    .r-footer {
+      padding: 8px 20px 52px;
+    }
+    .btn-retry {
+      width: 100%;
+      background: transparent;
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      color: var(--text-sub);
+      cursor: pointer;
+      -webkit-appearance: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- START -->
+<section class="screen" id="start">
+  <span class="s-ornament">🍂</span>
+  <div class="s-kicker">BOOTH 09 · 恋愛未来実験展</div>
+  <h1 class="s-title">まだ、元恋人を<br>想っている</h1>
+  <p class="s-sub">「忘れよう」とするほど、思い出す。<br>忘れることが目標じゃない。<br>今日ここで、少しだけ整理してみよう。</p>
+  <p class="s-note">※ 4問に答えると、あなたの「忘れられない理由」のタイプと、<br>今日できることをお伝えします。</p>
+  <div class="tags">
+    <span class="tag">⏱ 約2分</span>
+    <span class="tag">📋 4問</span>
+    <span class="tag">🍂 手放すモーション付き</span>
+  </div>
+  <button class="btn-warm" onclick="startQuiz()">自分の状態を確認する</button>
+</section>
+
+<!-- QUESTION -->
+<section class="screen" id="question">
+  <div class="q-top">
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="q-num" id="qNum">Q1 / 4</div>
+  </div>
+  <div class="q-body">
+    <div class="q-txt" id="qTxt"></div>
+    <div class="choices" id="choices"></div>
+  </div>
+</section>
+
+<!-- LOADING -->
+<section class="screen" id="loading">
+  <span class="loading-leaf">🍂</span>
+  <p class="loading-txt">あなたの「忘れられない理由」を整理中…</p>
+</section>
+
+<!-- RESULT -->
+<section class="screen" id="result">
+  <div class="r-hero" id="rHero">
+    <span class="r-icon" id="rIcon"></span>
+    <span class="r-badge" id="rBadge"></span>
+    <h2 class="r-title" id="rTitle"></h2>
+    <p class="r-desc" id="rDesc"></p>
+  </div>
+  <div class="r-body">
+    <div class="r-card">
+      <div class="card-lbl" id="needLbl">本当に欲しいもの</div>
+      <p class="need-txt" id="needTxt"></p>
+    </div>
+    <div class="r-card">
+      <div class="card-lbl" id="todayLbl">今日からできること</div>
+      <ul class="today-list" id="todayList"></ul>
+    </div>
+  </div>
+  <div class="r-footer">
+    <button class="btn-retry" onclick="goRelease()">最後に「手放すモーション」を体験する →</button>
+  </div>
+</section>
+
+<!-- RELEASE -->
+<section class="screen" id="release">
+  <h2 class="rel-title" id="relTitle">今日だけでいい。<br>一度だけ、手放してみよう。</h2>
+  <p class="rel-sub">元恋人への気持ちを、この光に込めて。<br>タップすると、空に放ちます。</p>
+  <div class="orb-wrap" id="orbWrap" onclick="releaseOrb()">
+    <div class="orb" id="orb"></div>
+  </div>
+  <div class="orb-hint" id="orbHint">タップして手放す</div>
+  <div class="released-msg" id="releasedMsg">
+    <span class="rel-emo">✨</span>
+    <p class="rel-word">手放せた。<br>また戻ってきても、いい。<br>何度でも、放せばいい。</p>
+  </div>
+  <button class="btn-outline-warm" onclick="retry()" id="retryBtn" style="opacity:0;pointer-events:none;transition:opacity 0.4s ease 1.4s">もう一度最初から</button>
+</section>
+
+<script>
+const QS = [
+  {
+    q: "元恋人を思い出すのは、どんなとき？",
+    choices: [
+      { t: "一人でいるとき、ふと寂しくなる",           d: "a" },
+      { t: "「あのとき、こうすればよかった」と思い返す", d: "b" },
+      { t: "楽しかった場面ばかりが浮かんでくる",         d: "c" },
+      { t: "あのときの自分が好きだったな、と思う",       d: "d" },
+    ]
+  },
+  {
+    q: "今も元恋人に伝えたい言葉は？",
+    choices: [
+      { t: "「また会えないかな」",                     d: "a" },
+      { t: "「あのとき本当はこうしたかった」",           d: "b" },
+      { t: "「ありがとう、楽しかった」",                 d: "c" },
+      { t: "まだ言葉にならない",                         d: "d" },
+    ]
+  },
+  {
+    q: "別れてから、自分自身はどう変わった？",
+    choices: [
+      { t: "連絡したい気持ちをずっと抑えている",         d: "a" },
+      { t: "後悔することが増えた",                       d: "b" },
+      { t: "あの頃の自分に戻りたいと思う",               d: "c" },
+      { t: "自分に自信が持てなくなった気がする",         d: "d" },
+    ]
+  },
+  {
+    q: "今、一番つらいのはどんなこと？",
+    choices: [
+      { t: "相手を想うと、胸が痛い",                   d: "a" },
+      { t: "「別れなければよかった」という気持ち",       d: "b" },
+      { t: "あの幸せな時間が戻らないこと",               d: "c" },
+      { t: "あのときの自分に戻れないこと",               d: "d" },
+    ]
+  },
+];
+
+const DATA = {
+  a: {
+    icon: "🌊", badge: "未練型",
+    title: "まだ近くにいたい気持ち",
+    grad: "linear-gradient(155deg, #FFF0E8 0%, #FFE4D4 100%)",
+    accent: "#C4834A",
+    desc: "「また会いたい」という気持ちが強く残っています。それは弱さではなく、あなたが深く誰かを愛せる証拠。ただ今は、その気持ちを「行動」に変える前に、少し立ち止まってみましょう。",
+    need: "あなたが本当に欲しいのは「その人」ではなく、「誰かと深くつながれているという感覚」かもしれません。それは、別の形でも満たせます。",
+    today: [
+      "今日だけ——LINEのアイコンを見るのを一回だけ我慢してみよう",
+      "「また会いたい気持ち」を紙に書き出してみよう（送らない。書くだけでいい）",
+      "「つながりたい」という気持ちを、別の誰かに少しだけ向けてみよう",
+    ],
+  },
+  b: {
+    icon: "⏪", badge: "後悔型",
+    title: "「あのとき」に戻りたい気持ち",
+    grad: "linear-gradient(155deg, #F0EEF8 0%, #E4E0F4 100%)",
+    accent: "#8A78C4",
+    desc: "「あのときこうすればよかった」という思いが、頭を離れません。後悔は、あなたが本気で向き合っていた証拠。でも、過去は変えられない——その事実を受け取ることが、次の一歩になります。",
+    need: "あなたが本当に欲しいのは「やり直せること」ではなく、「伝えられなかった言葉を解放すること」かもしれません。",
+    today: [
+      "後悔している場面を1つだけ紙に書き、その隣に「あのとき自分は精一杯だった」と書き添えてみよう",
+      "伝えられなかった言葉を、届かない手紙として書いてみよう（送らなくていい）",
+      "その後悔から学んだことを1行だけメモしてみよう。それは次の恋愛への贈り物になる",
+    ],
+  },
+  c: {
+    icon: "☀️", badge: "美化型",
+    title: "あの頃の幸せに戻りたい気持ち",
+    grad: "linear-gradient(155deg, #FFFAE0 0%, #FFF4C4 100%)",
+    accent: "#C4A43A",
+    desc: "楽しかった記憶ばかりが鮮明に残っています。それはごく自然な反応。でも記憶は美化されやすく、「あの頃」はきっと100点ではなかった。思い出の「全体像」を思い出してみましょう。",
+    need: "あなたが本当に欲しいのは「その人との時間」ではなく、「あの頃感じていた幸福感」です。その感覚は、別の文脈でも作れます。",
+    today: [
+      "楽しかった思い出と同じくらい、しんどかったことを3つ思い出してみよう",
+      "「なぜ別れたのか」を冷静に5行だけ書いてみよう",
+      "「あの関係の中でよかった体験」を次の生活に少しだけ持ち込む方法を考えてみよう",
+    ],
+  },
+  d: {
+    icon: "🪞", badge: "自己喪失型",
+    title: "あの関係の中の自分が好きだった気持ち",
+    grad: "linear-gradient(155deg, #EEF5F0 0%, #E0F0E8 100%)",
+    accent: "#6B9A82",
+    desc: "元恋人のことより、「あのときの自分」への思いが強いかもしれません。好きな人のそばで輝いていた自分。その自分は、誰かがいないと存在できないわけではありません。",
+    need: "あなたが本当に欲しいのは「その人」ではなく、「自分自身への自信」です。それは今日から、自分で育てられます。",
+    today: [
+      "「あの関係の中でよかった自分の部分」を3つ書き出そう。それはあなた自身がもともと持っている力",
+      "今日、自分が自分のためだけにできることを1つだけやってみよう",
+      "恋愛の外で「自分らしい」と感じる瞬間を、一つ探してみよう",
+    ],
+  },
+};
+
+let cur = 0, sc = { a:0, b:0, c:0, d:0 };
+let topType = '';
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  const el = document.getElementById(id);
+  el.style.display = 'flex';
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('active')));
+}
+
+function startQuiz() {
+  cur = 0; sc = { a:0, b:0, c:0, d:0 };
+  showScreen('question');
+  renderQ();
+}
+
+function renderQ() {
+  const q = QS[cur];
+  document.getElementById('progFill').style.width = Math.round((cur / QS.length) * 100) + '%';
+  document.getElementById('qNum').textContent = `Q${cur+1} / ${QS.length}`;
+
+  const el = document.getElementById('qTxt');
+  el.classList.add('fout');
+  setTimeout(() => { el.textContent = q.q; el.classList.remove('fout'); }, 180);
+
+  const ch = document.getElementById('choices');
+  ch.innerHTML = '';
+  q.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'c-btn';
+    btn.textContent = c.t;
+    btn.addEventListener('click', () => pick(c.d));
+    ch.appendChild(btn);
+  });
+}
+
+function pick(type) {
+  sc[type]++;
+  cur++;
+  if (cur >= QS.length) {
+    showScreen('loading');
+    setTimeout(showResult, 1600);
+  } else {
+    renderQ();
+  }
+}
+
+function showResult() {
+  const order = Object.keys(sc).sort((a,b) => sc[b] - sc[a]);
+  topType = order[0];
+  const D = DATA[topType];
+
+  document.getElementById('rHero').style.background = D.grad;
+  document.getElementById('rIcon').textContent = D.icon;
+  const badge = document.getElementById('rBadge');
+  badge.textContent = D.badge;
+  badge.style.background = D.accent;
+  document.getElementById('rTitle').textContent = D.title;
+  document.getElementById('rDesc').textContent = D.desc;
+  ['needLbl','todayLbl'].forEach(id => document.getElementById(id).style.color = D.accent);
+  document.getElementById('needTxt').textContent = D.need;
+
+  const list = document.getElementById('todayList');
+  list.innerHTML = '';
+  D.today.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'today-item';
+    li.innerHTML = `<span class="num" style="background:${D.accent}">${i+1}</span><span>${item}</span>`;
+    list.appendChild(li);
+  });
+
+  showScreen('result');
+}
+
+function goRelease() {
+  // reset orb state
+  const orb = document.getElementById('orb');
+  orb.classList.remove('releasing');
+  document.getElementById('releasedMsg').classList.remove('show');
+  const retryBtn = document.getElementById('retryBtn');
+  retryBtn.style.opacity = '0';
+  retryBtn.style.pointerEvents = 'none';
+  document.getElementById('orbHint').style.opacity = '1';
+  showScreen('release');
+}
+
+function releaseOrb() {
+  const orb = document.getElementById('orb');
+  if (orb.classList.contains('releasing')) return;
+  orb.classList.add('releasing');
+  document.getElementById('orbHint').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('releasedMsg').classList.add('show');
+    const retryBtn = document.getElementById('retryBtn');
+    retryBtn.style.opacity = '1';
+    retryBtn.style.pointerEvents = 'auto';
+  }, 800);
+}
+
+function retry() { showScreen('start'); }
+
+// init
+document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+const startEl = document.getElementById('start');
+startEl.style.display = 'flex';
+startEl.classList.add('active');
+</script>
+</body>
+</html>
