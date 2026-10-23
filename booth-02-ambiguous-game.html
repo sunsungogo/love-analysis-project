@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>思わせぶり度センサー — ブース02</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0C0E1A;
+      --ink: #E8ECF5;
+      --sub: rgba(232,236,245,0.45);
+      --line: rgba(232,236,245,0.12);
+      --accent: #FF5C72;
+      --accent2: #FFB443;
+      --accent3: #6B7FFF;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%; background: var(--bg); color: var(--ink);
+      font-family: 'Zen Kaku Gothic New', sans-serif; overflow: hidden;
+    }
+    .mono { font-family: 'Space Grotesk', monospace; }
+
+    #app {
+      width: 100%; max-width: 480px; height: 100dvh; margin: 0 auto;
+      position: relative; overflow: hidden;
+    }
+
+    .screen {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; padding: 24px 20px; opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease; overflow-y: auto;
+    }
+    .screen.active { opacity: 1; pointer-events: all; }
+
+    /* ── START ── */
+    #s-start {
+      justify-content: center; text-align: center;
+      background: radial-gradient(ellipse at 50% 30%, #2A1018 0%, var(--bg) 70%);
+    }
+    .start-glow { font-size: 60px; margin-bottom: 20px; filter: drop-shadow(0 0 22px rgba(255,92,114,0.5)); animation: breathe 3s ease-in-out infinite; }
+    @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    .start-kicker { font-size: 10px; letter-spacing: 0.14em; color: var(--accent2); margin-bottom: 10px; }
+    .start-title { font-size: 24px; font-weight: 900; line-height: 1.5; margin-bottom: 14px; }
+    .start-desc { font-size: 13px; color: var(--sub); line-height: 1.8; max-width: 300px; margin-bottom: 32px; }
+    .btn-primary {
+      background: var(--accent); color: #2a0a0f; border: none; padding: 14px 32px;
+      border-radius: 28px; font-size: 14px; font-weight: 700; font-family: 'Zen Kaku Gothic New', sans-serif;
+      cursor: pointer; letter-spacing: 0.02em; transition: transform 0.15s, opacity 0.2s;
+    }
+    .btn-primary:active { transform: scale(0.96); }
+    .research-tip {
+      width: 100%; max-width: 380px; margin-top: 18px; background: rgba(107,127,255,0.08);
+      border: 1px solid rgba(107,127,255,0.25); border-radius: 12px; padding: 11px 14px;
+      font-size: 11.5px; line-height: 1.7; color: rgba(232,236,245,0.7);
+    }
+
+    /* ── QUESTION ── */
+    #s-quiz { justify-content: flex-start; }
+    .q-header { width: 100%; max-width: 380px; margin-bottom: 24px; flex-shrink: 0; }
+    .q-progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .q-count { font-size: 10px; color: var(--sub); letter-spacing: 0.1em; }
+    .q-bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+    .q-bar-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; }
+    .q-text { font-size: 18px; font-weight: 700; line-height: 1.7; margin-top: 18px; }
+
+    .opt-list { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 10px; }
+    .opt-btn {
+      background: rgba(232,236,245,0.04); border: 1px solid var(--line); border-radius: 12px;
+      padding: 14px 16px; text-align: left; color: var(--ink); font-size: 13.5px;
+      font-family: 'Zen Kaku Gothic New', sans-serif; cursor: pointer; transition: all 0.15s;
+    }
+    .opt-btn:active { transform: scale(0.98); }
+    .opt-btn.selected { border-color: var(--accent); background: rgba(255,92,114,0.1); }
+
+    /* ── RESULT ── */
+    #s-result { justify-content: flex-start; padding-top: 30px; }
+    .r-kicker { font-size: 10px; letter-spacing: 0.12em; color: var(--accent2); margin-bottom: 8px; }
+    .r-title { font-size: 21px; font-weight: 900; margin-bottom: 20px; text-align: center; line-height: 1.5; }
+
+    .dual-meter-card {
+      width: 100%; max-width: 380px; background: rgba(232,236,245,0.04); border: 1px solid var(--line);
+      border-radius: 14px; padding: 18px; margin-bottom: 14px;
+    }
+    .dm-row { margin-bottom: 16px; }
+    .dm-row:last-child { margin-bottom: 0; }
+    .dm-label-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 11.5px; color: var(--sub); }
+    .dm-label-row b { color: var(--ink); font-weight: 700; }
+    .dm-bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+    .dm-fill { height: 100%; width: 0%; transition: width 0.8s cubic-bezier(.2,.8,.2,1); }
+    .dm-fill.received { background: linear-gradient(90deg, var(--accent3), var(--accent)); }
+    .dm-fill.given { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+
+    .type-tag {
+      display: block; width: fit-content; margin: 16px auto 0; padding: 7px 16px; border-radius: 20px;
+      background: rgba(255,92,114,0.12); border: 1px solid rgba(255,92,114,0.35);
+      color: var(--accent); font-size: 13.5px; font-weight: 700;
+    }
+
+    .insight-card, .advice-card {
+      width: 100%; max-width: 380px; background: rgba(232,236,245,0.04); border: 1px solid var(--line);
+      border-radius: 14px; padding: 16px; margin-bottom: 14px;
+    }
+    .card-heading { font-size: 12px; font-weight: 700; color: var(--accent3); margin-bottom: 8px; }
+    .card-text { font-size: 13.5px; line-height: 1.85; color: rgba(232,236,245,0.85); }
+
+    .retry-row { width: 100%; max-width: 380px; text-align: center; margin-top: 6px; margin-bottom: 14px; }
+    .btn-ghost {
+      background: none; border: 1px solid var(--line); color: var(--sub); font-size: 12.5px;
+      border-radius: 20px; padding: 9px 20px; cursor: pointer; font-family: 'Zen Kaku Gothic New', sans-serif;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { color: var(--accent3); border-color: var(--accent3); }
+
+    .citation-line {
+      width: 100%; max-width: 380px; font-size: 9.5px; color: rgba(232,236,245,0.3);
+      text-align: center; line-height: 1.8; margin-top: 4px; padding-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- START -->
+  <div class="screen active" id="s-start">
+    <div class="start-glow">🌗</div>
+    <div class="start-kicker mono">BOOTH 02 · 気づき・警告</div>
+    <div class="start-title">思わせぶりに<br>振り回されていませんか。</div>
+    <div class="start-desc">
+      8つの質問に答えると、「振り回されがちな傾向」と「思わせぶりにしてしまいがちな傾向」を、
+      それぞれ別のメーターで診断します。相手を判定するものではなく、自分の傾向を知るための診断です。
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">はじめる →</button>
+    <div class="research-tip">
+      💡 一定しない態度が、かえって強い執着を生むことがあります。心理学ではこれを「間歇強化（かんけつきょうか）」と呼び、ギャンブル依存の仕組みと同じ原理だとされています。
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="s-quiz">
+    <div class="q-header">
+      <div class="q-progress-row">
+        <span class="q-count mono" id="qCount">Q1 / 8</span>
+      </div>
+      <div class="q-bar"><div class="q-bar-fill" id="qBarFill"></div></div>
+      <div class="q-text" id="qText"></div>
+    </div>
+    <div class="opt-list" id="optList"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="s-result">
+    <div class="r-kicker mono">BOOTH 02 · RESULT</div>
+    <div class="r-title" id="rTitle">診断結果</div>
+
+    <div class="dual-meter-card">
+      <div class="dm-row">
+        <div class="dm-label-row"><span>振り回され<b>がち</b>な傾向</span><span class="mono" id="receivedPct">0%</span></div>
+        <div class="dm-bar"><div class="dm-fill received" id="receivedFill"></div></div>
+      </div>
+      <div class="dm-row">
+        <div class="dm-label-row"><span>思わせぶりに<b>してしまい</b>がちな傾向</span><span class="mono" id="givenPct">0%</span></div>
+        <div class="dm-bar"><div class="dm-fill given" id="givenFill"></div></div>
+      </div>
+      <span class="type-tag" id="typeTag">–</span>
+    </div>
+
+    <div class="insight-card">
+      <div class="card-heading">心理学的には、こう説明できます</div>
+      <p class="card-text" id="insightText">–</p>
+    </div>
+
+    <div class="advice-card">
+      <div class="card-heading">今、できそうなこと</div>
+      <p class="card-text" id="adviceText">–</p>
+    </div>
+
+    <div class="retry-row">
+      <button class="btn-ghost" onclick="resetQuiz()">もう一度診断する</button>
+    </div>
+
+    <div class="citation-line mono">
+      Skinner, variable-ratio reinforcement · Breadcrumbing研究（BMC Psychology, 2023）<br>
+      不安型愛着と対人注意に関する研究群 · 恋愛未来実験展 BOOTH 02
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const QUESTIONS = [
+    { text: "既読なのに返信が遅い相手でも、「忙しいだけだよね」と自分を納得させてしまう", axis: "received" },
+    { text: "冷たくされた後にちょっと優しくされると、それだけで一気に気持ちが盛り返す", axis: "received" },
+    { text: "「本当はどう思ってるんだろう」と、相手の態度を一日中考えてしまうことがある", axis: "received" },
+    { text: "はっきりしない関係のままでも、自分から「これからどうする？」と聞けずにいる", axis: "received" },
+    { text: "気持ちが固まっていなくても、相手を期待させるような言動をしてしまうことがある", axis: "given" },
+    { text: "本命を決めかねて、複数の人に同じくらい優しくしてしまうことがある", axis: "given" },
+    { text: "わざと返信を遅らせたり素っ気なくしたりして、相手の反応を試したくなることがある", axis: "given" },
+    { text: "「はっきりさせる」会話を避けて、今のあいまいな関係のままでいいと感じることがある", axis: "given" },
+  ];
+  const OPTIONS = [
+    { label: "あてはまらない", v: 0 },
+    { label: "あまりない", v: 1 },
+    { label: "ややある", v: 2 },
+    { label: "よくある", v: 3 },
+  ];
+
+  let qIdx = 0;
+  let answers = [];
+
+  function goTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function startQuiz() {
+    qIdx = 0;
+    answers = [];
+    goTo('s-quiz');
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    const q = QUESTIONS[qIdx];
+    document.getElementById('qCount').textContent = `Q${qIdx + 1} / ${QUESTIONS.length}`;
+    document.getElementById('qBarFill').style.width = `${(qIdx / QUESTIONS.length) * 100}%`;
+    document.getElementById('qText').textContent = q.text;
+
+    const list = document.getElementById('optList');
+    list.innerHTML = '';
+    OPTIONS.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = opt.label;
+      btn.addEventListener('click', () => selectAnswer(opt.v));
+      list.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(v) {
+    answers.push({ axis: QUESTIONS[qIdx].axis, v });
+    qIdx++;
+    if (qIdx < QUESTIONS.length) {
+      renderQuestion();
+    } else {
+      document.getElementById('qBarFill').style.width = '100%';
+      setTimeout(showResult, 250);
+    }
+  }
+
+  function showResult() {
+    const receivedSum = answers.filter(a => a.axis === 'received').reduce((s, a) => s + a.v, 0);
+    const givenSum = answers.filter(a => a.axis === 'given').reduce((s, a) => s + a.v, 0);
+    const receivedPct = Math.round((receivedSum / 12) * 100);
+    const givenPct = Math.round((givenSum / 12) * 100);
+
+    let type, insight, advice;
+    if (receivedPct >= 60 && givenPct >= 60) {
+      type = "一進一退タイプ";
+      insight = "振り回される側にも、思わせぶりにしてしまう側にも、どちらにも心当たりがあるようです。人によって関係性の中での立ち位置が変わるのは自然なことで、どちらかが「悪い」わけではありません。ただ、あいまいな関係は双方にとって消耗しやすいことが、Breadcrumbing（思わせぶりな態度を続けて相手を宙ぶらりんにすること）の研究でも示されています。";
+      advice = "まずは目の前の一つの関係だけでも、「次どうしたいか」を自分の中で言葉にしてみることから始めてみてください。";
+    } else if (receivedPct >= givenPct && receivedPct >= 40) {
+      type = "振り回されがちタイプ";
+      insight = "一定しない相手の態度に、強く心を動かされやすい傾向が見られます。報酬が不規則なタイミングで与えられると、かえって執着が強まることが心理学で知られており（間歇強化、B.F. Skinner）、相手の「たまにの優しさ」に反応が強く出やすいのは、あなたの意思の弱さではなく、この仕組みのせいでもあります。";
+      advice = "「優しくされた瞬間」ではなく、「ここ1週間の態度の平均」で相手との関係を評価してみると、感情に流されにくくなります。";
+    } else if (givenPct > receivedPct && givenPct >= 40) {
+      type = "気持ち決めかねタイプ";
+      insight = "相手に期待を持たせるような言動が、自分でも気づかないうちに出てしまっているようです。はっきりさせる会話を避けたくなる背景には、関係が終わることへの不安や、相手からの関心を失いたくない気持ちがあることが多いとされています。相手を傷つける意図がなくても、あいまいな態度が続くと、相手の孤独感や生活満足度の低下につながるという調査結果もあります。";
+      advice = "今すぐ答えを出せなくても、「まだ決められていない」という状態そのものを、相手に正直に伝えてみることはできます。";
+    } else {
+      type = "白黒はっきりタイプ";
+      insight = "今回の回答からは、あいまいな態度に振り回されたり、自分から思わせぶりな態度を取ったりする傾向はあまり見られませんでした。自分の気持ちや相手との境界線を、比較的はっきり保てている可能性が高いです。";
+      advice = "今の感覚を大事にしつつ、周りの人があいまいな関係で悩んでいたら、この診断を勧めてあげてください。";
+    }
+
+    document.getElementById('rTitle').textContent = "診断結果";
+    document.getElementById('typeTag').textContent = type;
+    document.getElementById('insightText').textContent = insight;
+    document.getElementById('adviceText').textContent = advice;
+    document.getElementById('receivedPct').textContent = receivedPct + '%';
+    document.getElementById('givenPct').textContent = givenPct + '%';
+
+    goTo('s-result');
+    requestAnimationFrame(() => {
+      document.getElementById('receivedFill').style.width = receivedPct + '%';
+      document.getElementById('givenFill').style.width = givenPct + '%';
+    });
+  }
+
+  function resetQuiz() {
+    goTo('s-start');
+  }
+</script>
+</body>
+</html>

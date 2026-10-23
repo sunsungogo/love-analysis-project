@@ -87,7 +87,7 @@
 | 番号 | ステータス | メモ |
 | :---- | :---- | :---- |
 | 01 | 完成 | `booth-01-convenient-game.html`。旧`都合のいい人、診断室。.html`はclaude.ai専用の`window.claude.use("sample")`機能に依存しており、GitHub Pages等の通常ホスティングでは診断が一切動かないことが判明したため、04・07と同じ「Gemini APIキーをスタッフが⚙から設定／未設定時は簡易ロジックでDEMO動作」の方式で作り直した。画像診断（スクショ送信）はAPIキー設定時のみ、キーなしのDEMOモードはテキスト貼り付けのみ対応。`index.html`・`qr-index.html`のリンクも新ファイルに差し替え済み。`booth-01-attachment-game.html`（愛着タイプ診断）は別内容で無関係のため未リンクのまま |
-| 02 | 見送り候補のまま | `booth-02-lovelang-game.html`（愛の言語テスト）は現行02番の悩みと無関係。ガイド§3で元々見送り候補。`qr-index.html`のQR一覧からも外した |
+| 02 | 完成 | `booth-02-ambiguous-game.html`を本来のLP02（思わせぶりに振り回される）として新規制作。「振り回されがちな傾向」「思わせぶりにしてしまいがちな傾向」を2軸で診断する8問クイズ。間歇強化（Skinner）・breadcrumbing研究（BMC Psychology, 2023）等を根拠に使用。`booth-02-lovelang-game.html`（愛の言語テスト）はLP02とは別内容だが、Love Languagesのマッチング仮説に関する実証研究（Impett, Park, & Muise, 2024）を踏まえて結果画面に誠実な注記を追加した上で、「番外編」として`index.html`・`qr-index.html`に別枠掲載することにした |
 | 03 | 完成（ローカルのみ・確認済み） | Gemini AIチャット使用のため`.gitignore`で除外、クラウド環境には存在しない。ローカル端末で制作済みとご本人確認済み |
 | 04 | 完成 | `booth-04-approach-game.html`。AIロールプレイ形式のアプローチ練習チャット。Gemini APIキーは来場者側で入力不要、スタッフが⚙から設定（未設定時は固定フローのDEMOモードで動作） |
 | 05 |  |  |
