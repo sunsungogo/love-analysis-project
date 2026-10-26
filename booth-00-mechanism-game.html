@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>恋愛メカニズム診断 — ブース00</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0A0E17;
+      --ink: #E8ECF5;
+      --sub: rgba(232,236,245,0.45);
+      --line: rgba(232,236,245,0.12);
+      --accent: #6B7FFF;
+      --accent2: #00E6B8;
+      --accent3: #FFB443;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%; background: var(--bg); color: var(--ink);
+      font-family: 'Zen Kaku Gothic New', sans-serif; overflow: hidden;
+    }
+    .mono { font-family: 'Space Grotesk', monospace; }
+
+    #app {
+      width: 100%; max-width: 480px; height: 100dvh; margin: 0 auto;
+      position: relative; overflow: hidden;
+    }
+
+    .screen {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; padding: 24px 20px; opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease; overflow-y: auto;
+    }
+    .screen.active { opacity: 1; pointer-events: all; }
+
+    /* ── START ── */
+    #s-start {
+      justify-content: center; text-align: center;
+      background: radial-gradient(ellipse at 50% 25%, #141040 0%, var(--bg) 70%);
+      background-image:
+        radial-gradient(ellipse at 50% 25%, #141040 0%, var(--bg) 70%),
+        linear-gradient(rgba(107,127,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(107,127,255,0.08) 1px, transparent 1px);
+      background-size: auto, 28px 28px, 28px 28px;
+    }
+    .start-glow { font-size: 58px; margin-bottom: 18px; filter: drop-shadow(0 0 22px rgba(107,127,255,0.5)); animation: breathe 3s ease-in-out infinite; }
+    @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    .start-kicker { font-size: 10px; letter-spacing: 0.14em; color: var(--accent2); margin-bottom: 10px; }
+    .start-title { font-size: 23px; font-weight: 900; line-height: 1.5; margin-bottom: 14px; }
+    .start-desc { font-size: 12.5px; color: var(--sub); line-height: 1.85; max-width: 310px; margin-bottom: 10px; }
+    .start-tags { display: flex; gap: 8px; margin: 14px 0 26px; flex-wrap: wrap; justify-content: center; }
+    .tag {
+      font-family: 'Space Grotesk', monospace; font-size: 10px; color: var(--sub);
+      border: 1px solid var(--line); border-radius: 12px; padding: 4px 10px;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff; border: none; padding: 14px 32px;
+      border-radius: 28px; font-size: 14px; font-weight: 700; font-family: 'Zen Kaku Gothic New', sans-serif;
+      cursor: pointer; letter-spacing: 0.02em; transition: transform 0.15s, opacity 0.2s;
+    }
+    .btn-primary:active { transform: scale(0.96); }
+    .research-tip {
+      width: 100%; max-width: 380px; margin-top: 18px; background: rgba(0,230,184,0.07);
+      border: 1px solid rgba(0,230,184,0.22); border-radius: 12px; padding: 11px 14px;
+      font-size: 11px; line-height: 1.7; color: rgba(232,236,245,0.65); text-align: left;
+    }
+
+    /* ── QUESTION ── */
+    #s-quiz { justify-content: flex-start; }
+    .q-header { width: 100%; max-width: 380px; margin-bottom: 24px; flex-shrink: 0; }
+    .q-count { font-size: 10px; color: var(--sub); letter-spacing: 0.1em; margin-bottom: 10px; display: block; }
+    .q-bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+    .q-bar-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; }
+    .q-text { font-size: 17px; font-weight: 700; line-height: 1.7; margin-top: 18px; }
+
+    .opt-list { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 10px; }
+    .opt-btn {
+      background: rgba(232,236,245,0.04); border: 1px solid var(--line); border-radius: 12px;
+      padding: 14px 16px; text-align: left; color: var(--ink); font-size: 13.5px;
+      font-family: 'Zen Kaku Gothic New', sans-serif; cursor: pointer; transition: all 0.15s;
+    }
+    .opt-btn:active { transform: scale(0.98); background: rgba(107,127,255,0.12); border-color: var(--accent); }
+
+    /* ── RESULT ── */
+    #s-result { justify-content: flex-start; padding-top: 28px; }
+    .r-kicker { font-size: 10px; letter-spacing: 0.12em; color: var(--accent2); margin-bottom: 8px; }
+    .r-emoji { font-size: 44px; margin-bottom: 6px; }
+    .r-title { font-size: 21px; font-weight: 900; margin-bottom: 4px; text-align: center; line-height: 1.5; }
+    .r-sub { font-size: 12px; color: var(--sub); text-align: center; margin-bottom: 20px; }
+
+    .axis-card {
+      width: 100%; max-width: 380px; background: rgba(232,236,245,0.04); border: 1px solid var(--line);
+      border-radius: 14px; padding: 16px; margin-bottom: 12px;
+    }
+    .axis-row { margin-bottom: 10px; }
+    .axis-row:last-child { margin-bottom: 0; }
+    .axis-label-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--sub); margin-bottom: 5px; }
+    .axis-bar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+    .axis-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.7s cubic-bezier(.2,.8,.2,1); }
+    .axis-fill.primary { background: linear-gradient(90deg, var(--accent3), var(--accent)); }
+
+    .section-card {
+      width: 100%; max-width: 380px; background: rgba(232,236,245,0.04); border: 1px solid var(--line);
+      border-radius: 14px; padding: 16px; margin-bottom: 12px;
+    }
+    .section-num {
+      font-family: 'Space Grotesk', monospace; font-size: 10px; color: var(--accent3);
+      letter-spacing: 0.1em; margin-bottom: 6px;
+    }
+    .section-heading { font-size: 13px; font-weight: 700; color: var(--accent2); margin-bottom: 8px; }
+    .section-text { font-size: 13.5px; line-height: 1.85; color: rgba(232,236,245,0.85); }
+
+    .retry-row { width: 100%; max-width: 380px; text-align: center; margin: 6px 0 14px; }
+    .btn-ghost {
+      background: none; border: 1px solid var(--line); color: var(--sub); font-size: 12.5px;
+      border-radius: 20px; padding: 9px 20px; cursor: pointer; font-family: 'Zen Kaku Gothic New', sans-serif;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { color: var(--accent2); border-color: var(--accent2); }
+
+    .citation-line {
+      width: 100%; max-width: 380px; font-size: 9.5px; color: rgba(232,236,245,0.3);
+      text-align: center; line-height: 1.9; padding-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- START -->
+  <div class="screen active" id="s-start">
+    <div class="start-glow">🧭</div>
+    <div class="start-kicker mono">BOOTH 00 · 自己分析 × 科学</div>
+    <div class="start-title">そもそも自分が、<br>何で好きになるか知ってる？</div>
+    <div class="start-desc">
+      10の質問に答えると、神経科学・心理学の研究にもとづいて、
+      あなたが恋愛感情を抱きやすい「引き金」のタイプを診断します。
+      何で好きになるか、どんな人に惹かれやすいか、
+      それをどう行動に活かせるかまでお伝えします。
+    </div>
+    <div class="start-tags">
+      <span class="tag">⏱ 約3分</span>
+      <span class="tag">📋 10問</span>
+      <span class="tag">🔬 文献ベース</span>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">診断をはじめる →</button>
+    <div class="research-tip">
+      💡 「恋に落ちる」は一つの感情ではなく、相手を目標にした脳の報酬系の働きだと考えられています（Aron, Fisher et al., 2005）。そのきっかけは人によって違い、研究で再現性高く示されているものだけでも5パターンあります。
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="s-quiz">
+    <div class="q-header">
+      <span class="q-count mono" id="qCount">Q1 / 10</span>
+      <div class="q-bar"><div class="q-bar-fill" id="qBarFill"></div></div>
+      <div class="q-text" id="qText"></div>
+    </div>
+    <div class="opt-list" id="optList"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="s-result">
+    <div class="r-kicker mono">BOOTH 00 · RESULT</div>
+    <div class="r-emoji" id="rEmoji">–</div>
+    <div class="r-title" id="rTitle">–</div>
+    <div class="r-sub" id="rSub">あなたが恋に落ちやすい「引き金」診断</div>
+
+    <div class="axis-card" id="axisCard"></div>
+
+    <div class="section-card">
+      <div class="section-num mono">01 · WHY</div>
+      <div class="section-heading">何で好きになるか</div>
+      <p class="section-text" id="mechText">–</p>
+    </div>
+
+    <div class="section-card">
+      <div class="section-num mono">02 · TYPE</div>
+      <div class="section-heading">どういうものを好きになりやすいか</div>
+      <p class="section-text" id="typeText">–</p>
+    </div>
+
+    <div class="section-card">
+      <div class="section-num mono">03 · ACTION</div>
+      <div class="section-heading">恋愛にどう活かすか</div>
+      <p class="section-text" id="actionText">–</p>
+    </div>
+
+    <div class="section-card">
+      <div class="section-num mono">04 · WHERE</div>
+      <div class="section-heading">相性の良い相手が見つかりやすい場</div>
+      <p class="section-text" id="communityText">–</p>
+    </div>
+
+    <div class="retry-row">
+      <button class="btn-ghost" onclick="resetQuiz()">もう一度診断する</button>
+    </div>
+
+    <div class="citation-line mono">
+      Moreland &amp; Beach (1992) · Montoya et al. (2008) · Eastwick &amp; Finkel (2007)<br>
+      Zsok et al. (2017) · Prochazkova et al. (2022)<br>
+      恋愛未来実験展 BOOTH 00
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const QUESTIONS = [
+    { text: "最初はそこまで意識してなかった人でも、会う回数が増えるうちにだんだん気になってくることが多い", axis: "A" },
+    { text: "同じ場所に通ったり、同じコミュニティに所属している人の方が好きになりやすい", axis: "A" },
+    { text: "趣味や価値観が似ていると分かった瞬間、一気に距離が縮まる感覚がある", axis: "B" },
+    { text: "「え、それ私も好き」のような共通点の発見にすごく弱い", axis: "B" },
+    { text: "自分に好意を持ってくれていると分かると、急に相手のことが気になり始める", axis: "C" },
+    { text: "「誰にでも優しい人」より「自分にだけ特別扱いしてくれる人」に惹かれる", axis: "C" },
+    { text: "第一印象の見た目や雰囲気で、好きになるかどうかがほぼ決まる気がする", axis: "D" },
+    { text: "会った瞬間に「あ、好きかも」と感じることがよくある", axis: "D" },
+    { text: "一緒にドキドキする体験（旅行やイベント、刺激的な出来事）をした相手に惹かれやすい", axis: "E" },
+    { text: "緊張する場面を一緒に乗り越えた相手には、特別な感情が芽生えやすい", axis: "E" },
+  ];
+  const OPTIONS = [
+    { label: "あてはまらない", v: 0 },
+    { label: "あまりない", v: 1 },
+    { label: "ややある", v: 2 },
+    { label: "よくある", v: 3 },
+  ];
+
+  const TYPES = {
+    A: {
+      name: "単純接触型",
+      tagline: "会うたびに好きになるタイプ",
+      emoji: "🔁",
+      mech: "繰り返し顔を合わせることで、無意識のうちに好意が積み重なっていく「単純接触効果」が強く働くタイプです。外見が似た初対面の協力者が大学の講義にそれぞれ違う回数出席した実験では、出席回数が多いほど学生からの好感度が上がりました（Moreland &amp; Beach, 1992）。意識的な「見覚えがある」という自覚がなくても、無意識に好意は積み上がっていきます。",
+      type: "最初の印象が強烈でなくても、日常の中で自然と顔を合わせる相手に惹かれやすい傾向があります。一目惚れよりも、じわじわ育つタイプの恋をしやすい人です。",
+      action: "一目惚れを狙うより、相手と定期的に顔を合わせられる接点を作ることの方が効果的です。気になる集まりには、1回だけでなく続けて顔を出してみてください。",
+      community: "同じ場に定期的に集まるタイプのコミュニティ（サークル、習い事、職場の近くの人間関係、行きつけの場所の常連同士など）に、相性の良い相手が見つかりやすいはずです。",
+    },
+    B: {
+      name: "類似性型",
+      tagline: "似てると感じた瞬間に好きになるタイプ",
+      emoji: "🪞",
+      mech: "価値観や趣味の「似ている」という感覚が、強い好意の引き金になるタイプです。313の研究・460の効果量を統合したメタ分析では、実際の類似性（相関r=.47）よりも「似ていると感じる」知覚された類似性（r=.39）の方が、交流が長くなるほど魅力との結びつきが持続することが示されています（Montoya, Horton &amp; Kirchner, 2008）。",
+      type: "表面的なスペックより、会話の中で価値観や感性が一致する瞬間に強く心を動かされる傾向があります。",
+      action: "自分の好きなものや考え方を早めにオープンにしてみることで、「似ている」が発見されやすくなります。共通点を探す会話を、意識して増やしてみてください。",
+      community: "共通の趣味・価値観でつながるコミュニティ（趣味のサークル、読書会、同じ関心を持つ集まりなど）の方が、相性の良い出会いにつながりやすいタイプです。",
+    },
+    C: {
+      name: "返報性型",
+      tagline: "好かれてると気づくと好きになるタイプ",
+      emoji: "💌",
+      mech: "「自分だけが特別に望まれている」と感じることが、恋愛感情の強いきっかけになるタイプです。スピードデーティング研究では、相手が自分を「他の人以上に」望んでいると感じたときに好意が強く返ることが確認されました。一方、誰にでも好意を示す人は、かえって相手から好かれにくいという結果も出ています（Eastwick &amp; Finkel, 2007）。",
+      type: "分け隔てなく優しい人より、「自分にだけ向けられている」と感じられる好意に強く反応する傾向があります。",
+      action: "自分から先に、さりげなく特別感のあるアプローチ（名前や話した内容を覚えている、気にかけている素振りを見せる）をしてみると、相手からも同じものが返ってきやすくなります。",
+      community: "少人数で密にやり取りできる場（友人を介した紹介、少人数の集まり）の方が、「自分だけに向けられた好意」を感じやすく、相性が良いはずです。",
+    },
+    D: {
+      name: "一目惚れ型",
+      tagline: "第一印象でビビッとくるタイプ",
+      emoji: "⚡",
+      mech: "身体的な魅力や第一印象のインパクトが、恋愛感情の強いきっかけになるタイプです。一目惚れを報告した人の多くは、親密さやコミットメントをまだ伴わない「強い初期の惹かれ」を経験しており、身体的魅力による強い予測力が確認されています（Zsok et al., 2017）。",
+      type: "出会ってすぐに「好きかも」と感じることが多く、直感的な第一印象を大事にするタイプです。",
+      action: "一目惚れの感覚自体は悪いものではありませんが、それだけで関係の全部を決めつけず、親密性やコミットメントは出会った後に時間をかけて育てるものだと意識しておくと、関係が長続きしやすくなります。",
+      community: "多くの人と出会う機会がある場（マッチングアプリ、規模の大きい交流イベント）の方が、第一印象で惹かれる相手に出会うチャンスが増えるはずです。",
+    },
+    E: {
+      name: "同調型",
+      tagline: "一緒にドキドキした相手に惹かれるタイプ",
+      emoji: "💓",
+      mech: "緊張や興奮を誰かと共有する体験が、恋愛感情の強い引き金になるタイプです。2022年の研究（Ig Nobel賞受賞）では、ブラインドデートをした男女の心拍・皮膚電気反応の「同期」が、表情や視線などの見える合図よりも強く魅力を予測しました（Prochazkova et al., 2022）。「つり橋効果」として知られる、覚醒を恋愛感情と勘違いする現象も、効果は控えめながら同じ系統の現象です。",
+      type: "穏やかな日常より、ちょっとした緊張や非日常を一緒に乗り越えた相手に、強い感情を抱きやすい傾向があります。",
+      action: "刺激のある体験（旅行、新しい挑戦、ちょっとしたスリルのあるアクティビティ）を一緒にする機会を作ると、お互いの気持ちが動きやすくなります。",
+      community: "一緒に何かに取り組むタイプのコミュニティ（スポーツ系サークル、ボランティア、プロジェクト活動、旅行系の集まりなど）に、相性の良い相手が見つかりやすいはずです。",
+    },
+  };
+  const AXIS_ORDER = ["A", "B", "C", "D", "E"];
+
+  let qIdx = 0;
+  let scores = { A: 0, B: 0, C: 0, D: 0, E: 0 };
+
+  function goTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function startQuiz() {
+    qIdx = 0;
+    scores = { A: 0, B: 0, C: 0, D: 0, E: 0 };
+    goTo('s-quiz');
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    const q = QUESTIONS[qIdx];
+    document.getElementById('qCount').textContent = `Q${qIdx + 1} / ${QUESTIONS.length}`;
+    document.getElementById('qBarFill').style.width = `${(qIdx / QUESTIONS.length) * 100}%`;
+    document.getElementById('qText').textContent = q.text;
+
+    const list = document.getElementById('optList');
+    list.innerHTML = '';
+    OPTIONS.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = opt.label;
+      btn.addEventListener('click', () => selectAnswer(opt.v));
+      list.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(v) {
+    scores[QUESTIONS[qIdx].axis] += v;
+    qIdx++;
+    if (qIdx < QUESTIONS.length) {
+      renderQuestion();
+    } else {
+      document.getElementById('qBarFill').style.width = '100%';
+      setTimeout(showResult, 250);
+    }
+  }
+
+  function showResult() {
+    let primary = AXIS_ORDER[0];
+    AXIS_ORDER.forEach(ax => { if (scores[ax] > scores[primary]) primary = ax; });
+    const t = TYPES[primary];
+
+    document.getElementById('rEmoji').textContent = t.emoji;
+    document.getElementById('rTitle').textContent = t.name;
+    document.getElementById('rSub').textContent = t.tagline;
+    document.getElementById('mechText').innerHTML = t.mech;
+    document.getElementById('typeText').textContent = t.type;
+    document.getElementById('actionText').textContent = t.action;
+    document.getElementById('communityText').textContent = t.community;
+
+    const card = document.getElementById('axisCard');
+    card.innerHTML = '';
+    const labels = { A: "単純接触", B: "類似性", C: "返報性", D: "一目惚れ", E: "同調" };
+    AXIS_ORDER.forEach(ax => {
+      const pct = Math.round((scores[ax] / 6) * 100);
+      const row = document.createElement('div');
+      row.className = 'axis-row';
+      row.innerHTML = `
+        <div class="axis-label-row"><span>${labels[ax]}</span><span class="mono">${pct}%</span></div>
+        <div class="axis-bar"><div class="axis-fill${ax === primary ? ' primary' : ''}" style="width:0%" data-pct="${pct}"></div></div>
+      `;
+      card.appendChild(row);
+    });
+
+    goTo('s-result');
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.axis-fill').forEach(el => { el.style.width = el.dataset.pct + '%'; });
+    });
+  }
+
+  function resetQuiz() {
+    goTo('s-start');
+  }
+</script>
+</body>
+</html>
