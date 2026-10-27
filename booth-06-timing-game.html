@@ -564,7 +564,7 @@
       border: 1px solid var(--line);
       border-radius: 16px;
       padding: 18px 20px;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
       animation: fadeUp 0.6s 1.1s both ease-out;
     }
 
@@ -583,6 +583,46 @@
       color: var(--ink);
     }
 
+    .r-phrases-card {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.6s 1.3s both ease-out;
+    }
+
+    .r-phrases-label {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 10px;
+    }
+
+    .r-phrase-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--ink);
+    }
+    .r-phrase-item:first-child { padding-top: 0; }
+    .r-phrase-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .r-phrase-mark {
+      flex-shrink: 0;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 11px;
+      color: var(--sub);
+      padding-top: 3px;
+    }
+
     .btn-retry {
       width: 100%;
       max-width: 280px;
@@ -597,7 +637,7 @@
       cursor: pointer;
       transition: border-color 0.2s, color 0.2s, background 0.2s;
       margin-bottom: 16px;
-      animation: fadeUp 0.6s 1.3s both ease-out;
+      animation: fadeUp 0.6s 1.5s both ease-out;
     }
 
     .btn-retry:hover, .btn-retry:active {
@@ -707,6 +747,10 @@
       <div class="r-advice-label">次のアクション</div>
       <div class="r-advice-text" id="r-advice"></div>
     </div>
+    <div class="r-phrases-card">
+      <div class="r-phrases-label" id="r-phrases-label">セリフ例</div>
+      <div id="r-phrases-list"></div>
+    </div>
     <button class="btn-retry" onclick="resetGame()">🔄 もう一度測る</button>
     <div class="r-ref">
       Hadden et al. (2018) · Sternberg (1986) · Altman & Taylor (1973)
@@ -758,16 +802,40 @@
   const ZONES = {
     ice:  { name:'氷点', icon:'❄️', color:'#7EC8E3', bg:'linear-gradient(160deg,#071830 0%,#0C0E1A 70%)',
             desc:'心のどこかが閉じている状態です。',
-            advice:'まず自分の回復を優先しましょう。今は「仕込み期」と捉えて。準備が整ったとき、気持ちは自然と動き出します。焦る必要はありません。' },
+            advice:'まず自分の回復を優先しましょう。今は「仕込み期」と捉えて。準備が整ったとき、気持ちは自然と動き出します。焦る必要はありません。',
+            phrasesLabel:'今できる小さな一歩',
+            phrases:[
+              '一人でカフェや映画に行って、ひとりの時間を楽しんでみる',
+              '信頼できる友人に「最近どう？」と連絡してみる',
+              '昔好きだったこと（趣味・場所）をもう一度やってみる',
+            ] },
     cold: { name:'冷温', icon:'🌬️', color:'#52C49A', bg:'linear-gradient(160deg,#071A14 0%,#0C0E1A 70%)',
             desc:'動けそうだが何かが引っかかっています。',
-            advice:'深い話を一つ増やすことから始めてみましょう。受け身をやめて小さく一歩だけ踏み出すと、関係が温まりやすいタイミングです。' },
+            advice:'深い話を一つ増やすことから始めてみましょう。受け身をやめて小さく一歩だけ踏み出すと、関係が温まりやすいタイミングです。',
+            phrasesLabel:'話し出し例',
+            phrases:[
+              '「最近なんか気になってることってある？」',
+              '「〇〇のこと、もう少し聞かせてほしいな」',
+              '「今度ランチでも行かない？ちょっと話したいことがあって」',
+            ] },
     warm: { name:'適温', icon:'🌡️', color:'#F5C542', bg:'linear-gradient(160deg,#1A1408 0%,#0C0E1A 70%)',
             desc:'多くの条件が整いつつあります。',
-            advice:'「一緒に○○したい」という具体的な提案が効果的です。あと一歩の行動で大きく変わりやすい、良いタイミングに来ています。' },
+            advice:'「一緒に○○したい」という具体的な提案が効果的です。あと一歩の行動で大きく変わりやすい、良いタイミングに来ています。',
+            phrasesLabel:'誘い方・セリフ例',
+            phrases:[
+              '「今度ふたりでゆっくり話せる時間、作れたら嬉しいんだけど」',
+              '「〇〇、一緒に行ってみたいんだけど付き合ってくれない？」',
+              '「正直に言うと、もっといろいろ話したいと思ってる」',
+            ] },
     hot:  { name:'熱温', icon:'🔥', color:'#F57C4A', bg:'linear-gradient(160deg,#200A04 0%,#0C0E1A 70%)',
             desc:'タイミングは整っています。',
-            advice:'動けないとすれば、それはタイミングより勇気の問題かもしれません。今日がそのタイミングです。小さくても動いてみましょう。' },
+            advice:'動けないとすれば、それはタイミングより勇気の問題かもしれません。今日がそのタイミングです。小さくても動いてみましょう。',
+            phrasesLabel:'伝え方・セリフ例',
+            phrases:[
+              '「ちゃんと伝えたいことがあって。あなたのことが好きです」',
+              '「一緒にいる時間がすごく好きで、もっと一緒にいたいと思ってる」',
+              '「付き合ってほしい。ずっと言えなかったけど、本当にそう思ってる」',
+            ] },
   };
 
   /* ════ STATE ════ */
@@ -923,6 +991,10 @@
     document.getElementById('r-name').textContent = z.name;
     document.getElementById('r-desc').textContent = z.desc;
     document.getElementById('r-advice').textContent = z.advice;
+    document.getElementById('r-phrases-label').textContent = z.phrasesLabel;
+    document.getElementById('r-phrases-list').innerHTML = z.phrases.map(p =>
+      `<div class="r-phrase-item"><span class="r-phrase-mark">»</span><span>${p}</span></div>`
+    ).join('');
 
     // Score count-up
     const scoreEl = document.getElementById('r-score');
