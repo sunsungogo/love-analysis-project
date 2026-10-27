@@ -351,6 +351,45 @@
     .btn-next-on  { background: var(--gold); color: #1A1A2E; }
     .btn-next-off { background: rgba(255,255,255,0.07); color: var(--text-sub); pointer-events: none; }
 
+    /* answer wrap */
+    .answer-wrap {
+      width: 100%;
+      max-width: 380px;
+      padding: 0 4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease 0.25s;
+    }
+    .answer-wrap.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .answer-label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+      font-family: 'Space Grotesk', monospace;
+      text-transform: uppercase;
+    }
+    .answer-input {
+      width: 100%;
+      min-height: 76px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(240,234,214,0.18);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 13.5px;
+      line-height: 1.75;
+      resize: none;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .answer-input::placeholder { color: rgba(240,234,214,0.28); }
+    .answer-input:focus { border-color: rgba(240,234,214,0.38); background: rgba(255,255,255,0.07); }
+
     /* ═══════════════════════
        END SCREEN
     ═══════════════════════ */
@@ -526,6 +565,11 @@
       </div>
     </div>
 
+    <div class="answer-wrap" id="answer-wrap">
+      <div class="answer-label">あなたの答え（任意）</div>
+      <textarea class="answer-input" id="answer-input" placeholder="ここに書いてみてください…"></textarea>
+    </div>
+
     <div class="card-actions">
       <button class="btn-next btn-next-off" id="btn-next" onclick="nextCard()">次のカード →</button>
     </div>
@@ -687,6 +731,11 @@ function renderCard(i) {
   document.getElementById('cf-q').textContent    = card.q;
   document.getElementById('cf-hint').textContent = '→ ' + card.hint;
 
+  /* Answer area */
+  const aw = document.getElementById('answer-wrap');
+  aw.classList.remove('visible');
+  document.getElementById('answer-input').value = '';
+
   /* Flip hint */
   document.getElementById('flip-hint').classList.remove('hidden');
 
@@ -709,6 +758,7 @@ function flipCard() {
   setTimeout(() => {
     const btn = document.getElementById('btn-next');
     btn.className = 'btn-next btn-next-on';
+    document.getElementById('answer-wrap').classList.add('visible');
   }, 420);
 }
 
