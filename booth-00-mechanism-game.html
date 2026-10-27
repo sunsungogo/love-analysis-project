@@ -88,9 +88,14 @@
     /* ── RESULT ── */
     #s-result { justify-content: flex-start; padding-top: 28px; }
     .r-kicker { font-size: 10px; letter-spacing: 0.12em; color: var(--accent2); margin-bottom: 8px; }
-    .r-emoji { font-size: 44px; margin-bottom: 6px; }
-    .r-title { font-size: 21px; font-weight: 900; margin-bottom: 4px; text-align: center; line-height: 1.5; }
-    .r-sub { font-size: 12px; color: var(--sub); text-align: center; margin-bottom: 20px; }
+    .r-emoji { font-size: 44px; margin-bottom: 10px; }
+    .r-badge {
+      display: inline-block; padding: 5px 16px; border-radius: 20px; margin-bottom: 10px;
+      background: rgba(107,127,255,0.18); border: 1px solid rgba(107,127,255,0.4);
+      color: var(--accent); font-size: 13px; font-weight: 700;
+      font-family: 'Space Grotesk', monospace; letter-spacing: 0.04em;
+    }
+    .r-title { font-size: 19px; font-weight: 900; margin-bottom: 20px; text-align: center; line-height: 1.6; }
 
     .axis-card {
       width: 100%; max-width: 380px; background: rgba(232,236,245,0.04); border: 1px solid var(--line);
@@ -135,13 +140,11 @@
   <!-- START -->
   <div class="screen active" id="s-start">
     <div class="start-glow">🧭</div>
-    <div class="start-kicker mono">BOOTH 00 · 自己分析 × 科学</div>
+    <div class="start-kicker mono">恋愛未来実験展 · 恋愛メカニズム診断</div>
     <div class="start-title">そもそも自分が、<br>何で好きになるか知ってる？</div>
     <div class="start-desc">
-      10の質問に答えると、神経科学・心理学の研究にもとづいて、
-      あなたが恋愛感情を抱きやすい「引き金」のタイプを診断します。
-      何で好きになるか、どんな人に惹かれやすいか、
-      それをどう行動に活かせるかまでお伝えします。
+      10問に答えるだけで、あなたが恋に落ちる「きっかけ」のパターンがわかります。
+      診断後には、自分のパターンに合った出会いの場やアプローチのコツまでお伝えします。
     </div>
     <div class="start-tags">
       <span class="tag">⏱ 約3分</span>
@@ -149,9 +152,6 @@
       <span class="tag">🔬 文献ベース</span>
     </div>
     <button class="btn-primary" onclick="startQuiz()">診断をはじめる →</button>
-    <div class="research-tip">
-      💡 「恋に落ちる」は一つの感情ではなく、相手を目標にした脳の報酬系の働きだと考えられています（Aron, Fisher et al., 2005）。そのきっかけは人によって違い、研究で再現性高く示されているものだけでも5パターンあります。
-    </div>
   </div>
 
   <!-- QUIZ -->
@@ -166,10 +166,10 @@
 
   <!-- RESULT -->
   <div class="screen" id="s-result">
-    <div class="r-kicker mono">BOOTH 00 · RESULT</div>
+    <div class="r-kicker mono">RESULT · 恋愛メカニズム診断</div>
     <div class="r-emoji" id="rEmoji">–</div>
+    <div class="r-badge" id="rBadge">–</div>
     <div class="r-title" id="rTitle">–</div>
-    <div class="r-sub" id="rSub">あなたが恋に落ちやすい「引き金」診断</div>
 
     <div class="axis-card" id="axisCard"></div>
 
@@ -232,8 +232,8 @@
 
   const TYPES = {
     A: {
-      name: "単純接触型",
-      tagline: "会うたびに好きになるタイプ",
+      name: "じわじわ型",
+      tagline: "会うたびに、じわじわ好きになっていく",
       emoji: "🔁",
       mech: "繰り返し顔を合わせることで、無意識のうちに好意が積み重なっていく「単純接触効果」が強く働くタイプです。外見が似た初対面の協力者が大学の講義にそれぞれ違う回数出席した実験では、出席回数が多いほど学生からの好感度が上がりました（Moreland &amp; Beach, 1992）。意識的な「見覚えがある」という自覚がなくても、無意識に好意は積み上がっていきます。",
       type: "最初の印象が強烈でなくても、日常の中で自然と顔を合わせる相手に惹かれやすい傾向があります。一目惚れよりも、じわじわ育つタイプの恋をしやすい人です。",
@@ -241,8 +241,8 @@
       community: "同じ場に定期的に集まるタイプのコミュニティ（サークル、習い事、職場の近くの人間関係、行きつけの場所の常連同士など）に、相性の良い相手が見つかりやすいはずです。",
     },
     B: {
-      name: "類似性型",
-      tagline: "似てると感じた瞬間に好きになるタイプ",
+      name: "共感型",
+      tagline: "似てると気づいた瞬間、一気に惹かれる",
       emoji: "🪞",
       mech: "価値観や趣味の「似ている」という感覚が、強い好意の引き金になるタイプです。313の研究・460の効果量を統合したメタ分析では、実際の類似性（相関r=.47）よりも「似ていると感じる」知覚された類似性（r=.39）の方が、交流が長くなるほど魅力との結びつきが持続することが示されています（Montoya, Horton &amp; Kirchner, 2008）。",
       type: "表面的なスペックより、会話の中で価値観や感性が一致する瞬間に強く心を動かされる傾向があります。",
@@ -250,8 +250,8 @@
       community: "共通の趣味・価値観でつながるコミュニティ（趣味のサークル、読書会、同じ関心を持つ集まりなど）の方が、相性の良い出会いにつながりやすいタイプです。",
     },
     C: {
-      name: "返報性型",
-      tagline: "好かれてると気づくと好きになるタイプ",
+      name: "ギブ＆テイク型",
+      tagline: "好かれてると気づくと、好きになっていく",
       emoji: "💌",
       mech: "「自分だけが特別に望まれている」と感じることが、恋愛感情の強いきっかけになるタイプです。スピードデーティング研究では、相手が自分を「他の人以上に」望んでいると感じたときに好意が強く返ることが確認されました。一方、誰にでも好意を示す人は、かえって相手から好かれにくいという結果も出ています（Eastwick &amp; Finkel, 2007）。",
       type: "分け隔てなく優しい人より、「自分にだけ向けられている」と感じられる好意に強く反応する傾向があります。",
@@ -259,8 +259,8 @@
       community: "少人数で密にやり取りできる場（友人を介した紹介、少人数の集まり）の方が、「自分だけに向けられた好意」を感じやすく、相性が良いはずです。",
     },
     D: {
-      name: "一目惚れ型",
-      tagline: "第一印象でビビッとくるタイプ",
+      name: "直感型",
+      tagline: "第一印象でビビッとくる",
       emoji: "⚡",
       mech: "身体的な魅力や第一印象のインパクトが、恋愛感情の強いきっかけになるタイプです。一目惚れを報告した人の多くは、親密さやコミットメントをまだ伴わない「強い初期の惹かれ」を経験しており、身体的魅力による強い予測力が確認されています（Zsok et al., 2017）。",
       type: "出会ってすぐに「好きかも」と感じることが多く、直感的な第一印象を大事にするタイプです。",
@@ -268,8 +268,8 @@
       community: "多くの人と出会う機会がある場（マッチングアプリ、規模の大きい交流イベント）の方が、第一印象で惹かれる相手に出会うチャンスが増えるはずです。",
     },
     E: {
-      name: "同調型",
-      tagline: "一緒にドキドキした相手に惹かれるタイプ",
+      name: "共鳴型",
+      tagline: "一緒にドキドキした相手に、強く惹かれる",
       emoji: "💓",
       mech: "緊張や興奮を誰かと共有する体験が、恋愛感情の強い引き金になるタイプです。2022年の研究（Ig Nobel賞受賞）では、ブラインドデートをした男女の心拍・皮膚電気反応の「同期」が、表情や視線などの見える合図よりも強く魅力を予測しました（Prochazkova et al., 2022）。「つり橋効果」として知られる、覚醒を恋愛感情と勘違いする現象も、効果は控えめながら同じ系統の現象です。",
       type: "穏やかな日常より、ちょっとした緊張や非日常を一緒に乗り越えた相手に、強い感情を抱きやすい傾向があります。",
@@ -328,8 +328,8 @@
     const t = TYPES[primary];
 
     document.getElementById('rEmoji').textContent = t.emoji;
-    document.getElementById('rTitle').textContent = t.name;
-    document.getElementById('rSub').textContent = t.tagline;
+    document.getElementById('rBadge').textContent = t.name;
+    document.getElementById('rTitle').textContent = t.tagline;
     document.getElementById('mechText').innerHTML = t.mech;
     document.getElementById('typeText').textContent = t.type;
     document.getElementById('actionText').textContent = t.action;
@@ -337,7 +337,7 @@
 
     const card = document.getElementById('axisCard');
     card.innerHTML = '';
-    const labels = { A: "単純接触", B: "類似性", C: "返報性", D: "一目惚れ", E: "同調" };
+    const labels = { A: "じわじわ", B: "共感", C: "G&T", D: "直感", E: "共鳴" };
     AXIS_ORDER.forEach(ax => {
       const pct = Math.round((scores[ax] / 6) * 100);
       const row = document.createElement('div');
