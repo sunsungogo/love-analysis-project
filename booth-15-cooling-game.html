@@ -542,16 +542,16 @@
     <div class="start-badge">BOOTH 15 · LOVE ANALYSIS PROJECT</div>
     <div class="start-icon">🩺</div>
     <div class="start-title">冷め症状<br>診断</div>
-    <div class="start-sub">仮性冷め？ それとも 真性冷め？</div>
+    <div class="start-sub">挽回できる？ それとも 冷めきった？</div>
     <div class="type-cards">
       <div class="type-card temp">
         <div class="tc-label">Type A</div>
-        <div class="tc-name">仮性冷め</div>
+        <div class="tc-name">挽回できる冷め</div>
         <div class="tc-desc">疲れ・マンネリが原因の一時的な冷め。修復可能。</div>
       </div>
       <div class="type-card perm">
         <div class="tc-label">Type B</div>
-        <div class="tc-name">真性冷め</div>
+        <div class="tc-name">冷めきった状態</div>
         <div class="tc-desc">価値観のズレや信頼が失われたことによる根本的な冷め。</div>
       </div>
     </div>
@@ -565,14 +565,14 @@
       <div class="sl-top-label">症状強度 · Live Measurement</div>
       <div class="dual-meters">
         <div class="meter-row">
-          <div class="meter-label temp">仮性</div>
+          <div class="meter-label temp">挽回</div>
           <div class="meter-track">
             <div class="meter-fill temp" id="m-temp" style="width:0%"></div>
           </div>
           <div class="meter-val temp" id="v-temp">0%</div>
         </div>
         <div class="meter-row">
-          <div class="meter-label perm">真性</div>
+          <div class="meter-label perm">深刻</div>
           <div class="meter-track">
             <div class="meter-fill perm" id="m-perm" style="width:0%"></div>
           </div>
@@ -602,14 +602,14 @@
     <div class="r-score-box">
       <div class="r-score-hd">症状強度スコア · Score</div>
       <div class="r-bar-row">
-        <div class="r-bar-label temp">仮性</div>
+        <div class="r-bar-label temp">挽回</div>
         <div class="r-bar-track">
           <div class="r-bar-fill temp" id="rb-temp" style="width:0%"></div>
         </div>
         <div class="r-bar-ct temp" id="rc-temp">0%</div>
       </div>
       <div class="r-bar-row">
-        <div class="r-bar-label perm">真性</div>
+        <div class="r-bar-label perm">深刻</div>
         <div class="r-bar-track">
           <div class="r-bar-fill perm" id="rb-perm" style="width:0%"></div>
         </div>
@@ -619,8 +619,7 @@
 
     <div class="r-rx-box">
       <div class="r-rx-hd">
-        <span class="r-rx-sym" id="r-rx-sym">Rp.</span>
-        <span>処方 · Prescription</span>
+        <span>今のあなたに必要なこと</span>
       </div>
       <div class="rx-list" id="rx-list"></div>
     </div>
@@ -653,7 +652,7 @@
   const RESULTS = {
     temp: {
       cls:'temp', typeLabel:'Type A · Temporary',
-      icon:'🌤️', name:'仮性冷め',
+      icon:'🌤️', name:'挽回できる冷め',
       desc:'今感じている冷めは、外部ストレスや疲れ、マンネリが主な原因の可能性が高いです。感情は一時的に沈んでいますが、関係そのものは修復できる状態にあります。',
       rxColor:'#E8850A',
       rx:[
@@ -665,7 +664,7 @@
     },
     perm: {
       cls:'perm', typeLabel:'Type B · Persistent',
-      icon:'🌧️', name:'真性冷め',
+      icon:'🌧️', name:'冷めきった状態',
       desc:'価値観のズレ、慢性的な嫌悪感、将来が見えない——これらは関係の根本的な問題のサインです。自分の気持ちと正直に向き合う時期かもしれません。',
       rxColor:'#2A4A6B',
       rx:[
@@ -678,7 +677,7 @@
     mixed: {
       cls:'mixed', typeLabel:'Mixed · Undecided',
       icon:'🌥️', name:'まだ判断中',
-      desc:'仮性・真性どちらの症状も見られます。今は白黒つけるタイミングではなく、もう少し自分の感情を観察する期間です。焦らず様子を見ましょう。',
+      desc:'挽回できる冷め・冷めきった状態どちらの症状も見られます。今は白黒つけるタイミングではなく、もう少し自分の感情を観察する期間です。焦らず様子を見ましょう。',
       rxColor:'#7A7060',
       rx:[
         { title:'結論を急がない',                detail:'感情が不安定なまま決断すると後悔しやすい。少し時間を置いてみましょう。' },
@@ -712,7 +711,7 @@
       div.className = `sl-group ${sl.t}`;
       div.innerHTML =
         `<div class="sl-group-head">` +
-          `<span class="sl-type-badge">${sl.t === 'temp' ? '仮性' : '真性'}</span>` +
+          `<span class="sl-type-badge">${sl.t === 'temp' ? '挽回型' : '深刻型'}</span>` +
           `<span class="sl-text" style="white-space:pre-line">${sl.text}</span>` +
         `</div>` +
         `<input type="range" class="sl-input" id="sl-${i}" data-type="${sl.t}" ` +
