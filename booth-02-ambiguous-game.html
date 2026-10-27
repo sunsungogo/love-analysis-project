@@ -101,12 +101,21 @@
       color: var(--accent); font-size: 13.5px; font-weight: 700;
     }
 
-    .insight-card, .advice-card {
+    .insight-card, .advice-card, .na-card {
       width: 100%; max-width: 380px; background: rgba(232,236,245,0.04); border: 1px solid var(--line);
       border-radius: 14px; padding: 16px; margin-bottom: 14px;
     }
     .card-heading { font-size: 12px; font-weight: 700; color: var(--accent3); margin-bottom: 8px; }
     .card-text { font-size: 13.5px; line-height: 1.85; color: rgba(232,236,245,0.85); }
+
+    .na-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 9px 0; border-bottom: 1px solid var(--line);
+      font-size: 13px; line-height: 1.8; color: rgba(232,236,245,0.85);
+    }
+    .na-item:first-child { padding-top: 0; }
+    .na-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .na-mark { flex-shrink: 0; font-family: 'Space Grotesk', monospace; font-size: 11px; color: var(--sub); padding-top: 3px; }
 
     .retry-row { width: 100%; max-width: 380px; text-align: center; margin-top: 6px; margin-bottom: 14px; }
     .btn-ghost {
@@ -129,16 +138,14 @@
   <!-- START -->
   <div class="screen active" id="s-start">
     <div class="start-glow">🌗</div>
-    <div class="start-kicker mono">BOOTH 02 · 気づき・警告</div>
-    <div class="start-title">思わせぶりに<br>振り回されていませんか。</div>
+    <div class="start-kicker mono">恋愛未来実験展 · 思わせぶり傾向診断</div>
+    <div class="start-title">誰かに振り回されている<br>かもしれない、と思ったら。</div>
     <div class="start-desc">
-      8つの質問に答えると、「振り回されがちな傾向」と「思わせぶりにしてしまいがちな傾向」を、
-      それぞれ別のメーターで診断します。相手を判定するものではなく、自分の傾向を知るための診断です。
+      「なんで毎回こうなるんだろう」と感じたことはありますか。<br>
+      8問に答えると、振り回されやすい傾向と、知らずに相手を振り回しているかもしれない傾向を、
+      別々のメーターで可視化します。
     </div>
     <button class="btn-primary" onclick="startQuiz()">はじめる →</button>
-    <div class="research-tip">
-      💡 一定しない態度が、かえって強い執着を生むことがあります。心理学ではこれを「間歇強化（かんけつきょうか）」と呼び、ギャンブル依存の仕組みと同じ原理だとされています。
-    </div>
   </div>
 
   <!-- QUIZ -->
@@ -155,7 +162,7 @@
 
   <!-- RESULT -->
   <div class="screen" id="s-result">
-    <div class="r-kicker mono">BOOTH 02 · RESULT</div>
+    <div class="r-kicker mono">RESULT · 思わせぶり傾向診断</div>
     <div class="r-title" id="rTitle">診断結果</div>
 
     <div class="dual-meter-card">
@@ -178,6 +185,11 @@
     <div class="advice-card">
       <div class="card-heading">今、できそうなこと</div>
       <p class="card-text" id="adviceText">–</p>
+    </div>
+
+    <div class="na-card">
+      <div class="card-heading">今週やってみること</div>
+      <div id="naList"></div>
     </div>
 
     <div class="retry-row">
@@ -209,6 +221,28 @@
     { label: "ややある", v: 2 },
     { label: "よくある", v: 3 },
   ];
+
+  const NA_STEPS = {
+    '振り回されがちタイプ': [
+      '「今週の相手の態度の平均」を点数にしてみる（優しかった1回より全体のパターンで判断する）',
+      '24時間返信がなかったら、その日はこちらからの送信をいったん止めてみる',
+      '「この関係を続けたいか、終わりにしたいか」を紙に書いて自分に聞いてみる',
+    ],
+    '一進一退タイプ': [
+      '「今この関係にどう感じているか」を短くメモしてみる',
+      '複数気になる人がいるなら、1人に集中する期間を1週間だけ試してみる',
+      '「自分はどうしたいのか」を、相手の反応を考えずに言葉にしてみる',
+    ],
+    '気持ち決めかねタイプ': [
+      '「まだ答えが出ていない」と相手に正直に伝えてみる',
+      '「なぜ決められないのか」を紙に書き出してみる',
+      '関係をはっきりさせることで何が怖いか、具体的に考えてみる',
+    ],
+    '白黒はっきりタイプ': [
+      '今のバランス感覚を大切に続けていく',
+      '同じ悩みを持っている人がいれば、この診断をすすめてあげてください',
+    ],
+  };
 
   let qIdx = 0;
   let answers = [];
@@ -284,6 +318,10 @@
     document.getElementById('adviceText').textContent = advice;
     document.getElementById('receivedPct').textContent = receivedPct + '%';
     document.getElementById('givenPct').textContent = givenPct + '%';
+    const steps = NA_STEPS[type] || [];
+    document.getElementById('naList').innerHTML = steps.map(s =>
+      `<div class="na-item"><span class="na-mark">»</span><span>${s}</span></div>`
+    ).join('');
 
     goTo('s-result');
     requestAnimationFrame(() => {
