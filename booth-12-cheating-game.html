@@ -282,46 +282,91 @@
 
     .ans-area {
       width: 100%;
-      padding: 14px 16px 28px;
+      padding: 10px 20px 28px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 4px;
       flex-shrink: 0;
+      position: relative;
+    }
+
+    .ans-area::before {
+      content: '';
+      position: absolute;
+      left: 41px;
+      top: 26px;
+      bottom: 26px;
+      width: 2px;
+      background: linear-gradient(180deg, #4472C4, #C44444, #8B5CF6, #34A880);
+      opacity: 0.3;
     }
 
     .btn-ans {
       width: 100%;
       min-height: 62px;
-      padding: 13px 18px;
-      border-radius: 14px;
-      border: 1.5px solid var(--line);
-      background: var(--paper);
+      padding: 10px 4px;
+      border: none;
+      background: none;
       color: var(--ink);
-      font-family: 'Noto Serif JP', serif;
-      font-size: 16px;
-      font-weight: 400;
       cursor: pointer;
-      transition: transform 0.08s, background 0.15s, border-color 0.15s;
+      transition: transform 0.08s;
       display: flex;
       align-items: center;
       text-align: left;
-      line-height: 1.5;
       gap: 14px;
+      position: relative;
     }
 
-    .btn-ans:active { transform: scale(0.97); }
+    .btn-ans:active { transform: scale(0.98); }
 
-    .btn-ans.flash {
+    .ans-node {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      flex-shrink: 0;
+      background: var(--paper);
+      border: 2px solid var(--line);
+      position: relative;
+      z-index: 1;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .btn-ans:active .ans-node { transform: scale(0.88); }
+
+    .ans-body {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1.5px solid var(--line);
+      background: var(--paper);
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .ans-stage {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.55;
+      margin-bottom: 3px;
+    }
+
+    .ans-text {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+
+    .btn-ans.flash .ans-body {
       background: var(--ink);
       color: var(--paper);
       border-color: var(--ink);
     }
-
-    .btn-ans-emoji {
-      font-size: 20px;
-      flex-shrink: 0;
-      line-height: 1;
-    }
+    .btn-ans.flash .ans-stage { color: var(--paper) !important; opacity: 0.7; }
 
     /* ════════════════════════════
        RESULT SCREEN
@@ -756,6 +801,13 @@
 
   /* ════ PHASES ════ */
 
+  const STAGE_META = {
+    S: { name: 'ショック', color: '#4472C4' },
+    A: { name: '怒り',     color: '#C44444' },
+    W: { name: '揺れ',     color: '#8B5CF6' },
+    F: { name: '前進',     color: '#34A880' },
+  };
+
   const PHASES = {
     S: {
       label: 'SHOCK PHASE',
@@ -903,13 +955,19 @@
     document.getElementById('q-text').textContent = q.text;
     document.getElementById('q-hint').textContent = q.hint;
 
-    // 選択肢ボタンを生成
+    // 選択肢ボタンを生成（フェーズの「道のり」に沿ったノードとして表示）
     const ansArea = document.getElementById('ans-area');
     ansArea.innerHTML = '';
     q.choices.forEach((choice, ci) => {
+      const meta = STAGE_META[choice.phase];
       const btn = document.createElement('button');
       btn.className = 'btn-ans';
-      btn.innerHTML = `<span class="btn-ans-emoji">${choice.emoji}</span><span>${choice.text}</span>`;
+      btn.innerHTML =
+        `<div class="ans-node" style="border-color:${meta.color}66;">${choice.emoji}</div>` +
+        `<div class="ans-body">` +
+          `<div class="ans-stage" style="color:${meta.color};">${meta.name}期</div>` +
+          `<div class="ans-text">${choice.text}</div>` +
+        `</div>`;
       btn.addEventListener('click', () => answer(choice.phase, ci));
       ansArea.appendChild(btn);
     });
