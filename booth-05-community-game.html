@@ -402,6 +402,84 @@
       color: rgba(255,71,87,0.75);
     }
 
+    /* ── Checklist (multi-select) ── */
+    .ck-wrap {
+      flex: 1;
+      width: 100%;
+      overflow-y: auto;
+      padding: 4px 16px 10px;
+    }
+    .ck-intro {
+      font-size: 11.5px;
+      color: var(--sub);
+      line-height: 1.7;
+      padding: 10px 2px 14px;
+    }
+    .ck-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.08s;
+    }
+    .ck-item:active { transform: scale(0.98); }
+    .ck-item.selected {
+      border-color: var(--pink);
+      background: rgba(255,107,157,0.08);
+    }
+    .ck-item-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--line);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: transparent;
+      transition: all 0.15s;
+    }
+    .ck-item.selected .ck-item-check {
+      border-color: var(--pink);
+      background: var(--pink);
+      color: #1a0a10;
+    }
+    .ck-item-body { flex: 1; }
+    .ck-item-cat {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 4px;
+      display: block;
+    }
+    .ck-item-text {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--ink);
+      white-space: pre-line;
+    }
+    .ck-footer {
+      flex-shrink: 0;
+      padding: 10px 16px 24px;
+      border-top: 1px solid var(--line);
+      background: var(--bg);
+    }
+    .ck-footer-hint {
+      text-align: center;
+      font-size: 11px;
+      color: var(--sub);
+      margin-bottom: 10px;
+      font-family: 'Space Grotesk', monospace;
+    }
+
     .btn-no.flash {
       background: var(--red);
       color: #fff;
@@ -743,24 +821,19 @@
       <div class="safety-fill" id="safety-fill"></div>
     </div>
     <div class="q-status">
-      <div class="q-counter" id="q-counter">Q1 / 10</div>
+      <div class="q-counter" id="q-counter">チェック式</div>
       <div class="q-safety-label" id="q-safety-label">— 安全度</div>
       <div class="q-score-display" id="q-score-display">0 pt</div>
     </div>
 
-    <div class="q-cat-badge" id="q-cat-badge">接触の質</div>
-
-    <div class="q-area">
-      <div class="q-card" id="q-card">
-        <div class="q-text" id="q-text"></div>
-        <div class="q-divider"></div>
-        <div class="q-hint" id="q-hint"></div>
-      </div>
+    <div class="ck-wrap">
+      <p class="ck-intro">当てはまるものを、いくつでもタップして選んでください。選ぶたびに上の安全度が更新されます。</p>
+      <div id="ckList"></div>
     </div>
 
-    <div class="ans-row">
-      <button class="btn-ans btn-no"  id="btn-no"  onclick="answer(false)">✕ いいえ</button>
-      <button class="btn-ans btn-yes" id="btn-yes" onclick="answer(true)">✓ はい</button>
+    <div class="ck-footer">
+      <div class="ck-footer-hint" id="ckCount">0 / 10 選択中</div>
+      <button class="btn-ans btn-yes" style="width:100%;" onclick="showResults()">診断結果を見る →</button>
     </div>
   </div>
 
@@ -789,7 +862,7 @@
     </div>
 
     <div class="r-advice" id="r-advice">
-      <div class="r-advice-head">次のアクション</div>
+      <div class="r-advice-head" id="r-advice-head">次のアクション</div>
       <div id="r-steps"></div>
     </div>
 
@@ -936,9 +1009,7 @@
   };
 
   /* ════ STATE ════ */
-  let qIdx = 0;
-  let score = 0;
-  let busy = false;
+  let selected = new Array(QUESTIONS.length).fill(false);
 
   /* ════ INIT ════ */
   show('s-start');
@@ -988,59 +1059,42 @@
 
   /* ════ GAME FLOW ════ */
   function startGame() {
-    qIdx = 0;
-    score = 0;
-    busy = false;
+    selected = new Array(QUESTIONS.length).fill(false);
+    renderChecklist();
     updateSafetyUI(0, 0);
-    showQuestion(0);
-  }
-
-  function showQuestion(idx) {
-    busy = false;
-    qIdx = idx;
-    var q = QUESTIONS[idx];
-
-    // Re-trigger card animation
-    var card = document.getElementById('q-card');
-    card.style.animation = 'none';
-    void card.offsetWidth;
-    card.style.animation = '';
-
-    document.getElementById('q-text').textContent = q.text;
-    document.getElementById('q-hint').textContent = q.hint;
-    document.getElementById('q-counter').textContent = 'Q' + (idx + 1) + ' / 10';
-    document.getElementById('q-cat-badge').textContent = q.category;
-
     show('s-question');
   }
 
-  function answer(isYes) {
-    if (busy) return;
-    busy = true;
+  function renderChecklist() {
+    var list = document.getElementById('ckList');
+    list.innerHTML = '';
+    QUESTIONS.forEach(function(q, i) {
+      var item = document.createElement('div');
+      item.className = 'ck-item' + (selected[i] ? ' selected' : '');
+      item.innerHTML =
+        '<div class="ck-item-check">✓</div>' +
+        '<div class="ck-item-body">' +
+          '<span class="ck-item-cat">' + q.category + '</span>' +
+          '<div class="ck-item-text">' + q.text.replace(/\n/g, ' ') + '</div>' +
+        '</div>';
+      item.addEventListener('click', function() { toggleItem(i); });
+      list.appendChild(item);
+    });
+  }
 
-    // Flash feedback on button
-    var btnId = isYes ? 'btn-yes' : 'btn-no';
-    var btn = document.getElementById(btnId);
-    btn.classList.add('flash');
-    setTimeout(function() { btn.classList.remove('flash'); }, 260);
+  function toggleItem(i) {
+    selected[i] = !selected[i];
+    var items = document.querySelectorAll('.ck-item');
+    items[i].classList.toggle('selected', selected[i]);
 
-    if (isYes) {
-      score++;
-      updateSafetyUI(score, qIdx + 1);
-    }
-
-    var next = qIdx + 1;
-    setTimeout(function() {
-      if (next >= QUESTIONS.length) {
-        showResults();
-      } else {
-        showQuestion(next);
-      }
-    }, 320);
+    var score = selected.filter(Boolean).length;
+    updateSafetyUI(score, score);
+    document.getElementById('ckCount').textContent = score + ' / ' + QUESTIONS.length + ' 選択中';
   }
 
   /* ════ RESULTS ════ */
   function showResults() {
+    var score = selected.filter(Boolean).length;
     var zk = getZoneKey(score);
     var z = ZONES[zk];
 
@@ -1062,26 +1116,50 @@
     void nameEl.offsetWidth;
     nameEl.style.animation = '';
 
-    document.getElementById('r-score').textContent = 'スコア ' + score + ' / 10 pt';
+    document.getElementById('r-score').textContent = 'チェック ' + score + ' / ' + QUESTIONS.length + ' pt';
     document.getElementById('r-desc').textContent = z.desc;
 
-    // Steps
+    // Steps — personalized: unmet checklist items become your next-action list
     var stepsEl = document.getElementById('r-steps');
     stepsEl.innerHTML = '';
-    z.steps.forEach(function(step, i) {
-      var div = document.createElement('div');
-      div.className = 'r-step';
-      var numDiv = document.createElement('div');
-      numDiv.className = 'r-step-num';
-      numDiv.style.background = z.color;
-      numDiv.textContent = i + 1;
-      var textDiv = document.createElement('div');
-      textDiv.className = 'r-step-text';
-      textDiv.textContent = step;
-      div.appendChild(numDiv);
-      div.appendChild(textDiv);
-      stepsEl.appendChild(div);
-    });
+    var unmetIdx = [];
+    selected.forEach(function(v, i) { if (!v) unmetIdx.push(i); });
+    var headEl = document.getElementById('r-advice-head');
+
+    if (unmetIdx.length > 0) {
+      headEl.textContent = 'あなた用のネクストステップ（未チェックの項目から）';
+      unmetIdx.slice(0, 5).forEach(function(qi) {
+        var q = QUESTIONS[qi];
+        var div = document.createElement('div');
+        div.className = 'r-step';
+        var numDiv = document.createElement('div');
+        numDiv.className = 'r-step-num';
+        numDiv.style.background = z.color;
+        numDiv.textContent = '✓';
+        var textDiv = document.createElement('div');
+        textDiv.className = 'r-step-text';
+        textDiv.innerHTML = '<b>' + q.text.replace(/\n/g, ' ') + '</b><br><span style="color:var(--sub);font-size:12.5px;">' + q.hint + '</span>';
+        div.appendChild(numDiv);
+        div.appendChild(textDiv);
+        stepsEl.appendChild(div);
+      });
+    } else {
+      headEl.textContent = '次のアクション';
+      z.steps.forEach(function(step, i) {
+        var div = document.createElement('div');
+        div.className = 'r-step';
+        var numDiv = document.createElement('div');
+        numDiv.className = 'r-step-num';
+        numDiv.style.background = z.color;
+        numDiv.textContent = i + 1;
+        var textDiv = document.createElement('div');
+        textDiv.className = 'r-step-text';
+        textDiv.textContent = step;
+        div.appendChild(numDiv);
+        div.appendChild(textDiv);
+        stepsEl.appendChild(div);
+      });
+    }
 
     // Advice border
     var adviceEl = document.getElementById('r-advice');
@@ -1105,9 +1183,7 @@
 
   /* ════ RESET ════ */
   function resetGame() {
-    score = 0;
-    qIdx = 0;
-    busy = false;
+    selected = new Array(QUESTIONS.length).fill(false);
     document.getElementById('s-result').scrollTop = 0;
     show('s-start');
   }
