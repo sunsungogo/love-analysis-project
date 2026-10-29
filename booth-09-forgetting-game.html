@@ -334,6 +334,62 @@
       font-family: 'Space Grotesk', sans-serif;
       transition: opacity 0.4s;
     }
+    .orb-word {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Noto Serif JP', serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(90, 60, 40, 0.75);
+      text-align: center;
+      line-height: 1.5;
+      max-width: 112px;
+      pointer-events: none;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .orb-word.releasing {
+      opacity: 0 !important;
+      transform: translate(-50%, -50%) translateY(-120px) scale(0.3);
+    }
+
+    /* ======= RELEASE INPUT ======= */
+    #release-input {
+      background: linear-gradient(160deg, #FAF6F0 0%, #F5EAE2 60%, #EDE8F5 100%);
+      align-items: center;
+      justify-content: center;
+      padding: 40px 28px 60px;
+      text-align: center;
+    }
+    .ri-input {
+      width: 100%;
+      max-width: 320px;
+      background: rgba(255,255,255,0.6);
+      border: 1.5px solid rgba(196,131,74,0.3);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-family: 'Noto Serif JP', serif;
+      font-size: 15px;
+      color: var(--text);
+      text-align: center;
+      outline: none;
+      margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+    .ri-input:focus { border-color: var(--amber); }
+    .ri-input::placeholder { color: rgba(90,60,40,0.3); }
+    .btn-skip {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      font-size: 12px;
+      font-family: inherit;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: 16px;
+      padding: 8px;
+    }
 
     .released-msg {
       opacity: 0;
@@ -441,16 +497,26 @@
     </div>
   </div>
   <div class="r-footer">
-    <button class="btn-retry" onclick="goRelease()">最後に「手放すモーション」を体験する →</button>
+    <button class="btn-retry" onclick="goReleaseInput()">最後に「手放すモーション」を体験する →</button>
   </div>
+</section>
+
+<!-- RELEASE INPUT -->
+<section class="screen" id="release-input">
+  <h2 class="rel-title">その気持ちに、<br>一言だけ名前をつけるなら？</h2>
+  <p class="rel-sub">短い言葉でいい。誰にも見せません。<br>書いたら、その言葉を光に込めて手放します。</p>
+  <input type="text" id="riInput" class="ri-input" maxlength="24" placeholder="例）ありがとう、さようなら">
+  <button class="btn-warm" onclick="goRelease()">この言葉を手放しにいく →</button><br>
+  <button class="btn-skip" onclick="goRelease()">書かずに進む</button>
 </section>
 
 <!-- RELEASE -->
 <section class="screen" id="release">
   <h2 class="rel-title" id="relTitle">今日だけでいい。<br>一度だけ、手放してみよう。</h2>
-  <p class="rel-sub">元恋人への気持ちを、この光に込めて。<br>タップすると、空に放ちます。</p>
+  <p class="rel-sub">タップすると、この言葉を空に放ちます。</p>
   <div class="orb-wrap" id="orbWrap" onclick="releaseOrb()">
     <div class="orb" id="orb"></div>
+    <div class="orb-word" id="orbWord"></div>
   </div>
   <div class="orb-hint" id="orbHint">タップして手放す</div>
   <div class="released-msg" id="releasedMsg">
@@ -632,6 +698,12 @@ function showResult() {
   showScreen('result');
 }
 
+function goReleaseInput() {
+  document.getElementById('riInput').value = '';
+  showScreen('release-input');
+  setTimeout(() => document.getElementById('riInput').focus(), 300);
+}
+
 function goRelease() {
   // reset orb state
   const orb = document.getElementById('orb');
@@ -641,6 +713,13 @@ function goRelease() {
   retryBtn.style.opacity = '0';
   retryBtn.style.pointerEvents = 'none';
   document.getElementById('orbHint').style.opacity = '1';
+
+  const word = document.getElementById('riInput').value.trim();
+  const orbWord = document.getElementById('orbWord');
+  orbWord.classList.remove('releasing');
+  orbWord.textContent = word;
+  orbWord.style.opacity = word ? '1' : '0';
+
   showScreen('release');
 }
 
@@ -648,6 +727,7 @@ function releaseOrb() {
   const orb = document.getElementById('orb');
   if (orb.classList.contains('releasing')) return;
   orb.classList.add('releasing');
+  document.getElementById('orbWord').classList.add('releasing');
   document.getElementById('orbHint').style.opacity = '0';
   setTimeout(() => {
     document.getElementById('releasedMsg').classList.add('show');
